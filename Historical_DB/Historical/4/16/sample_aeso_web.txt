@@ -1,0 +1,372 @@
+<HTML><BODY><TABLE CLASS="ReportHeaderStyle" BORDER="0" CELLPADDING="0" CELLSPACING="0" WIDTH="100%" HEIGHT="22px" BGCOLOR="#99B3FF"><TR><TH ALIGN="LEFT" WIDTH="100%"><FONT FACE="Arial" SIZE="3">Current Supply Demand Report</FONT></TH><TH><a HREF="HelpTextServlet?service=CSDReport"><IMG SRC="/ets_web/Images/HelpImage.gif" ALIGN="top" BORDER="0"></a></TH></TR></TABLE><layer name='infoLayer' visibility='SHOW'>
+  <div id='infoDiv' class='infoMessage'>
+    <p>The report is downloading, please wait...</p>
+  </div>
+</layer>
+
+<script language="JavaScript" for="window" event="onload">
+<!--
+    IE4 = (document.all) ? 1 : 0;
+    DOM = ((document.getElementById)&&(!IE4)) ? 1 : 0;
+    NS4 = ((navigator.appName == "Netscape")&&(!DOM)) ? 1 : 0;
+    verSupported = (NS4 || IE4 || DOM) ? 1 : 0;
+    function initNS() {
+        if (!verSupported) return;
+        if (NS4) {
+        onLoad = hideLayer;
+        }
+    }	function initIE() {
+        if (!verSupported) return;
+        if (IE4) {
+        hideLayer();
+        }
+    }  function initDOM() {
+        if (!verSupported) return;
+        if (DOM) {
+        hideLayer();
+        }
+    }
+    function hideLayer() {
+        if (!verSupported) return;
+        if (NS4) {
+            document.infoLayer.visibility = "hide";
+        } else if(IE4) {
+            divCollection = document.all.tags("DIV");
+            for (i=0; i<divCollection.length; i++) {
+                oDiv = divCollection(i);
+                if (oDiv.className == "infoMessage") oDiv.style.display = "none";
+            }
+        } else if(DOM) {
+                oDiv = document.getElementById("infoDiv");
+                oDiv.style.display = "none";
+        }
+    }
+    initNS();
+    initIE();
+    initDOM();
+//-->
+</script>
+</BODY>
+<HEAD>
+    <META HTTP-EQUIV="refresh" CONTENT="60">
+
+<STYLE>
+DUMMY {};
+TABLE.ReportHeaderStyle     { margin: 0; padding: 0; border-style: none}
+TABLE.ReportHeaderStyle TH  { margin: 0; padding: 0; font-family: Arial; font-weight: bold;   font-size:10pt; text-align: left; background-color: #99B3FF; }
+TABLE.ReportHeaderStyle TD  { margin: 0; padding: 0; font-family: Arial; font-weight: normal; font-size:10pt; text-align: left; }
+
+TABLE { padding: .15em; }
+TH    { margin: 0; padding: 0; font-family: Arial; font-size:10pt; text-align: center; background-color: #D0D0D0; }
+TD    { margin: 0; padding: 0; font-family: Arial; font-size:8pt;  text-align: right;  }
+.leftText { margin: 0; padding: 0; font-family: Arial; font-size:8pt;  text-align: left; }
+H1    { margin: 0; padding: 0; font-family: Arial; font-size:12pt; text-align:center; font-style:italic; }
+</STYLE>
+
+    <LINK REL="STYLESHEET" TYPE="text/css" NAME="/ets_web/docroot/StyleSheets/reports.css">
+
+</HEAD>
+
+<BODY>
+
+
+<TABLE>
+<TR>
+    <TABLE WIDTH=100%>
+        <TR>
+            <td class="leftText" width=75% colspan="2"><table><tr><td class="leftText">Legend</td></tr></table></td>
+            <td><table><tr><td> <TR><TD>Last Update : Apr 15, 2015 23:59</TD></TR>
+ </td></tr></table></td>
+        </tr>
+        <tr>
+            <td class="leftText" width=40%>DCR - Dispatched (and Accepted) Contingency Reserve</td>
+            <td class="leftText" >TNG - Total Net Generation</td>
+            <TD> All values listed are in MW</TD>
+        </TR>
+        <TR>
+            <td class="leftText" >MC - Maximum Capability</td>
+            <td class="leftText" >* Indicates that the value reported in MC column actually represents the asset's MCR</td>
+        </TR>
+    </TABLE>
+</TR>
+
+<tr>
+    <TABLE WIDTH=100%>
+        <TD VALIGN="TOP" WIDTH="30%">
+            <TABLE BORDER="1" WIDTH="100%">
+            <TR>
+                <TH COLSPAN="3"><CENTER><B>SUMMARY</B></CENTER></TH>
+            </TR>
+            <TR><TD>Alberta Total Net Generation</TD><TD>8157</TD></TR>
+<TR><TD>Net Actual Interchange</TD><TD>111</TD></TR>
+<TR><TD>Alberta Internal Load (AIL)</TD><TD>8046</TD></TR>
+<TR><TD>Net-To-Grid Generation</TD><TD>6577</TD></TR>
+<TR><TD>Contingency Reserve Required</TD><TD>454</TD></TR>
+<TR><TD>Dispatched Contingency Reserve (DCR)</TD><TD>460</TD></TR>
+<TR><TD>Dispatched Contingency Reserve -Gen</TD><TD>451</TD></TR>
+<TR><TD>Dispatched Contingency Reserve -Other</TD><TD>9</TD></TR>
+<TR><TD>LSSi Armed Dispatch</TD><TD>0</TD></TR>
+<TR><TD>LSSi Offered Volume</TD><TD>270</TD></TR>
+
+            </TABLE>
+        </TD>
+        
+
+        <TD VALIGN="TOP" WIDTH="40%">
+            <TABLE BORDER="1" WIDTH="100%">
+                <TR>
+                    <TH COLSPAN="4"><CENTER><B>GENERATION</B></CENTER></TH>
+                </TR>
+                <TR>
+                    <TD BGCOLOR="#336699"> <P ALIGN=RIGHT><FONT SIZE="-2" FACE="Arial,Helvetica" COLOR="White">GROUP</FONT></TD>
+                    <TD BGCOLOR="#336699"> <P ALIGN=RIGHT><FONT SIZE="-2" FACE="Arial,Helvetica" COLOR="White">MC</FONT></TD>
+                    <TD BGCOLOR="#336699"> <P ALIGN=RIGHT><FONT SIZE="-2" FACE="Arial,Helvetica" COLOR="White">TNG</FONT></TD>
+                    <TD BGCOLOR="#336699"> <P ALIGN=RIGHT><FONT SIZE="-2" FACE="Arial,Helvetica" COLOR="White">DCR</FONT></TD>
+                </TR>
+                <TR><TD>COAL</TD><TD>6271</TD><TD>3772</TD><TD>25</TD></TR>
+<TR><TD>GAS</TD><TD>7172</TD><TD>3386</TD><TD>267</TD></TR>
+<TR><TD>HYDRO</TD><TD>894</TD><TD>75</TD><TD>159</TD></TR>
+<TR><TD>OTHER</TD><TD>428</TD><TD>167</TD><TD>0</TD></TR>
+<TR><TD>WIND</TD><TD>1434</TD><TD>757</TD><TD>0</TD></TR>
+<TR><TD>TOTAL</TD><TD>16199</TD><TD>8157</TD><TD>451</TD></TR>
+
+            </TABLE>
+        </TD>
+        
+        <TD VALIGN="TOP" WIDTH="30%">
+            <TABLE BORDER="1" WIDTH="100%">
+                <TR>
+                    <TH COLSPAN=2><CENTER><B>INTERCHANGE</B></CENTER></TH>
+                </TR>
+
+                <TR>
+                    <TD BGCOLOR="#336699"><P ALIGN=RIGHT><FONT SIZE="-2" FACE="Arial,Helvetica" COLOR="White">PATH</FONT></TD>
+                    <TD BGCOLOR="#336699"><P ALIGN=RIGHT><FONT SIZE="-2" FACE="Arial,Helvetica" COLOR="White">ACTUAL FLOW</FONT></TD>
+                </TR>
+                <TR><TD>British Columbia</TD><TD>112</TD></TR>
+<TR><TD>Montana</TD><TD>0</TD></TR>
+<TR><TD>Saskatchewan</TD><TD>-1</TD></TR>
+<TR><TD>TOTAL</TD><TD>111</TD></TR>
+
+            </TABLE>
+        </TD>
+
+    </table>
+</tr>
+
+<TR>
+<table width="100%">
+<td VALIGN="TOP" WIDTH="65%">
+    <Table WIDTH="100%">
+        <TD VALIGN="TOP" WIDTH="50%">
+            <TABLE BORDER="1" WIDTH="100%">
+                <TR><TH COLSPAN="4">COAL</TH></TR>
+                <TR>
+                    <TD BGCOLOR="#336699"> <P ALIGN=RIGHT><FONT SIZE="-2" FACE="Arial,Helvetica" COLOR="White">ASSET</FONT></TD>
+                    <TD BGCOLOR="#336699"> <P ALIGN=RIGHT><FONT SIZE="-2" FACE="Arial,Helvetica" COLOR="White">MC</FONT></TD>
+                    <TD BGCOLOR="#336699"> <P ALIGN=RIGHT><FONT SIZE="-2" FACE="Arial,Helvetica" COLOR="White">TNG</FONT></TD>
+                    <TD BGCOLOR="#336699"> <P ALIGN=RIGHT><FONT SIZE="-2" FACE="Arial,Helvetica" COLOR="White">DCR</FONT></TD>
+                </TR>
+            <TR><TD>Battle River #3 (BR3)</TD><TD>149</TD><TD>50</TD><TD>0</TD></TR>
+<TR><TD>Battle River #4 (BR4)</TD><TD>155</TD><TD>50</TD><TD>0</TD></TR>
+<TR><TD>Battle River #5 (BR5)</TD><TD>385</TD><TD>0</TD><TD>0</TD></TR>
+<TR><TD>Genesee #1 (GN1)</TD><TD>400</TD><TD>393</TD><TD>0</TD></TR>
+<TR><TD>Genesee #2 (GN2)</TD><TD>400</TD><TD>372</TD><TD>0</TD></TR>
+<TR><TD>Genesee #3 (GN3)</TD><TD>466</TD><TD>455</TD><TD>0</TD></TR>
+<TR><TD>H.R. Milner (HRM)</TD><TD>144</TD><TD>0</TD><TD>0</TD></TR>
+<TR><TD>Keephills #1 (KH1)</TD><TD>395</TD><TD>0</TD><TD>0</TD></TR>
+<TR><TD>Keephills #2 (KH2)</TD><TD>395</TD><TD>394</TD><TD>0</TD></TR>
+<TR><TD>Keephills #3 (KH3)</TD><TD>463</TD><TD>441</TD><TD>0</TD></TR>
+<TR><TD>Sheerness #1 (SH1)</TD><TD>390</TD><TD>136</TD><TD>0</TD></TR>
+<TR><TD>Sheerness #2 (SH2)</TD><TD>390</TD><TD>137</TD><TD>0</TD></TR>
+<TR><TD>Sundance #1 (SD1)</TD><TD>288</TD><TD>205</TD><TD>0</TD></TR>
+<TR><TD>Sundance #2 (SD2)</TD><TD>288</TD><TD>197</TD><TD>0</TD></TR>
+<TR><TD>Sundance #3 (SD3)</TD><TD>362</TD><TD>0</TD><TD>0</TD></TR>
+<TR><TD>Sundance #4 (SD4)</TD><TD>406</TD><TD>312</TD><TD>0</TD></TR>
+<TR><TD>Sundance #5 (SD5)</TD><TD>406</TD><TD>278</TD><TD>25</TD></TR>
+<TR><TD>Sundance #6 (SD6)</TD><TD>389</TD><TD>352</TD><TD>0</TD></TR>
+
+            </TABLE>
+        </TD>
+        
+        <TD VALIGN="TOP" WIDTH="50%">
+            <TABLE BORDER="1" WIDTH="100%">
+                <TR><TH COLSPAN=4>GAS</TH></TR>
+            <TR BGCOLOR=#CEE3F6><TD COLSPAN=4><FONT  FACE=Arial><center><b>Simple Cycle</b></center></FONT></TD></TR>
+<TR BGCOLOR=#336699><TD><FONT  COLOR=White FACE=Arial SIZE=-2>ASSET</FONT></TD><TD><FONT  COLOR=White FACE=Arial SIZE=-2>MC</FONT></TD><TD><FONT  COLOR=White FACE=Arial SIZE=-2>TNG</FONT></TD><TD><FONT  COLOR=White FACE=Arial SIZE=-2>DCR</FONT></TD></TR>
+<TR><TD>AB Newsprint (ANC1)</TD><TD>63</TD><TD>0</TD><TD>0</TD></TR>
+<TR><TD>AltaGas Bantry (ALP1)</TD><TD>7</TD><TD>0</TD><TD>0</TD></TR>
+<TR><TD>AltaGas Parkland (ALP2)</TD><TD>10</TD><TD>0</TD><TD>9</TD></TR>
+<TR><TD>Carson Creek (GEN5)</TD><TD>15</TD><TD>0</TD><TD>0</TD></TR>
+<TR><TD>Cloverbar #1 (ENC1)</TD><TD>48</TD><TD>0</TD><TD>0</TD></TR>
+<TR><TD>Cloverbar #2 (ENC2)</TD><TD>101</TD><TD>0</TD><TD>0</TD></TR>
+<TR><TD>Cloverbar #3 (ENC3)</TD><TD>101</TD><TD>0</TD><TD>0</TD></TR>
+<TR><TD>Crossfield Energy Centre #1 (CRS1)</TD><TD>48</TD><TD>0</TD><TD>0</TD></TR>
+<TR><TD>Crossfield Energy Centre #2 (CRS2)</TD><TD>48</TD><TD>0</TD><TD>0</TD></TR>
+<TR><TD>Crossfield Energy Centre #3 (CRS3)</TD><TD>48</TD><TD>0</TD><TD>0</TD></TR>
+<TR><TD>Drywood (DRW1)</TD><TD>6</TD><TD>0</TD><TD>5</TD></TR>
+<TR><TD>Judy Creek (GEN6)</TD><TD>15</TD><TD>0</TD><TD>0</TD></TR>
+<TR><TD>Lethbridge Burdett (ME03)</TD><TD>7</TD><TD>0</TD><TD>7</TD></TR>
+<TR><TD>Lethbridge Coaldale (ME04)</TD><TD>6</TD><TD>0</TD><TD>6</TD></TR>
+<TR><TD>Lethbridge Taber (ME02)</TD><TD>8</TD><TD>0</TD><TD>8</TD></TR>
+<TR><TD>NPC1 Denis St. Pierre (NPC1)</TD><TD>11</TD><TD>0</TD><TD>0</TD></TR>
+<TR><TD>NPC2 JL Landry (NPC2)</TD><TD>9</TD><TD>0</TD><TD>0</TD></TR>
+<TR><TD>Northern Prairie Power Project (NPP1)</TD><TD>93</TD><TD>0</TD><TD>0</TD></TR>
+<TR><TD>Poplar Hill #1 (PH1)</TD><TD>48</TD><TD>4</TD><TD>0</TD></TR>
+<TR><TD>Rainbow #1 (RB1)</TD><TD>30</TD><TD>0</TD><TD>0</TD></TR>
+<TR><TD>Rainbow #2 (RB2)</TD><TD>40</TD><TD>0</TD><TD>0</TD></TR>
+<TR><TD>Rainbow #3 (RB3)</TD><TD>20</TD><TD>0</TD><TD>0</TD></TR>
+<TR><TD>Rainbow #5 (RB5)</TD><TD>50</TD><TD>0</TD><TD>0</TD></TR>
+<TR><TD>Valley View 1 (VVW1)</TD><TD>50</TD><TD>0</TD><TD>0</TD></TR>
+<TR><TD>Valley View 2 (VVW2)</TD><TD>50</TD><TD>0</TD><TD>30</TD></TR>
+<TR><TD>West Cadotte (WCD1)</TD><TD>20</TD><TD>7</TD><TD>0</TD></TR>
+<TR BGCOLOR=#CEE3F6><TD COLSPAN=4><FONT  FACE=Arial><center><b>Cogeneration</b></center></FONT></TD></TR>
+<TR BGCOLOR=#336699><TD><FONT  COLOR=White FACE=Arial SIZE=-2>ASSET</FONT></TD><TD><FONT  COLOR=White FACE=Arial SIZE=-2>MC</FONT></TD><TD><FONT  COLOR=White FACE=Arial SIZE=-2>TNG</FONT></TD><TD><FONT  COLOR=White FACE=Arial SIZE=-2>DCR</FONT></TD></TR>
+<TR><TD>ATCO Scotford Upgrader (APS1)</TD><TD>195</TD><TD>83</TD><TD>0</TD></TR>
+<TR><TD>Air Liquide Scotford #1 (ALS1)</TD><TD>96</TD><TD>41</TD><TD>30</TD></TR>
+<TR><TD>AltaGas Harmattan (HMT1)</TD><TD>45</TD><TD>26</TD><TD>0</TD></TR>
+<TR><TD>Bear Creek 1 (BCRK)</TD><TD>64</TD><TD>49</TD><TD>0</TD></TR>
+<TR><TD>Bear Creek 2 (BCR2)</TD><TD>36</TD><TD>0</TD><TD>0</TD></TR>
+<TR><TD>BuckLake (PW01)</TD><TD>5</TD><TD>0</TD><TD>0</TD></TR>
+<TR><TD>CNRL Horizon (CNR5)*</TD><TD>103</TD><TD>107</TD><TD>0</TD></TR>
+<TR><TD>Carseland Cogen (TC01)</TD><TD>95</TD><TD>64</TD><TD>0</TD></TR>
+<TR><TD>Dow Hydrocarbon (DOWG)</TD><TD>326</TD><TD>92</TD><TD>40</TD></TR>
+<TR><TD>Foster Creek (EC04)</TD><TD>98</TD><TD>79</TD><TD>0</TD></TR>
+<TR><TD>Joffre #1 (JOF1)</TD><TD>474</TD><TD>106</TD><TD>25</TD></TR>
+<TR><TD>Kearl (IOR3)</TD><TD>84</TD><TD>0</TD><TD>0</TD></TR>
+<TR><TD>MEG1 Christina Lake (MEG1)</TD><TD>202</TD><TD>165</TD><TD>0</TD></TR>
+<TR><TD>MacKay River (MKRC)</TD><TD>197</TD><TD>179</TD><TD>0</TD></TR>
+<TR><TD>Mahkeses (IOR1)</TD><TD>180</TD><TD>163</TD><TD>0</TD></TR>
+<TR><TD>Muskeg River (MKR1)</TD><TD>202</TD><TD>86</TD><TD>0</TD></TR>
+<TR><TD>Nabiye (IOR2)</TD><TD>195</TD><TD>171</TD><TD>0</TD></TR>
+<TR><TD>Nexen Inc #2 (NX02)</TD><TD>220</TD><TD>78</TD><TD>0</TD></TR>
+<TR><TD>Primrose #1 (PR1)</TD><TD>100</TD><TD>84</TD><TD>0</TD></TR>
+<TR><TD>Rainbow Lake #1 (RL1)</TD><TD>47</TD><TD>40</TD><TD>0</TD></TR>
+<TR><TD>Redwater Cogen (TC02)</TD><TD>46</TD><TD>35</TD><TD>0</TD></TR>
+<TR><TD>Shell Caroline (SHCG)*</TD><TD>19</TD><TD>7</TD><TD>0</TD></TR>
+<TR><TD>Suncor #1 (SCR1)</TD><TD>901</TD><TD>759</TD><TD>0</TD></TR>
+<TR><TD>Syncrude #1 (SCL1)*</TD><TD>510</TD><TD>253</TD><TD>0</TD></TR>
+<TR><TD>Talisman Edson (TLM2)</TD><TD>13</TD><TD>10</TD><TD>0</TD></TR>
+<TR><TD>U of C Generator (UOC1)*</TD><TD>12</TD><TD>0</TD><TD>0</TD></TR>
+<TR><TD>University of Alberta (UOA1)*</TD><TD>39</TD><TD>9</TD><TD>15</TD></TR>
+<TR BGCOLOR=#CEE3F6><TD COLSPAN=4><FONT  FACE=Arial><center><b>Combined Cycle</b></center></FONT></TD></TR>
+<TR BGCOLOR=#336699><TD><FONT  COLOR=White FACE=Arial SIZE=-2>ASSET</FONT></TD><TD><FONT  COLOR=White FACE=Arial SIZE=-2>MC</FONT></TD><TD><FONT  COLOR=White FACE=Arial SIZE=-2>TNG</FONT></TD><TD><FONT  COLOR=White FACE=Arial SIZE=-2>DCR</FONT></TD></TR>
+<TR><TD>Cavalier (EC01)</TD><TD>120</TD><TD>3</TD><TD>0</TD></TR>
+<TR><TD>ENMAX Calgary Energy Centre (CAL1)</TD><TD>320</TD><TD>135</TD><TD>12</TD></TR>
+<TR><TD>Fort Nelson (FNG1)</TD><TD>73</TD><TD>24</TD><TD>0</TD></TR>
+<TR><TD>Medicine Hat #1 (CMH1)</TD><TD>210</TD><TD>77</TD><TD>30</TD></TR>
+<TR><TD>Nexen Inc #1 (NX01)</TD><TD>120</TD><TD>19</TD><TD>15</TD></TR>
+<TR><TD>Shepard (EGC1)</TD><TD>873</TD><TD>431</TD><TD>35</TD></TR>
+
+            </TABLE>
+        </TD>
+    </table>
+</td>
+        
+<td VALIGN="TOP" WIDTH="35%">
+    <table WIDTH="100%">
+        <tr>
+            <td VALIGN="TOP" WIDTH="100%">
+                <TABLE BORDER="1" WIDTH="100%">
+                    <TR><TH COLSPAN="4">HYDRO</TH></TR>
+                    <TR>
+                        <TD WIDTH="70%" BGCOLOR="#336699"> <P ALIGN=RIGHT><FONT SIZE="-2" FACE="Arial,Helvetica" COLOR="White">ASSET</FONT></TD>
+                        <TD WIDTH="10%" BGCOLOR="#336699"> <P ALIGN=RIGHT><FONT SIZE="-2" FACE="Arial,Helvetica" COLOR="White">MC</FONT></TD>
+                        <TD WIDTH="10%" BGCOLOR="#336699"> <P ALIGN=RIGHT><FONT SIZE="-2" FACE="Arial,Helvetica" COLOR="White">TNG</FONT></TD>
+                        <TD WIDTH="10%" BGCOLOR="#336699"> <P ALIGN=RIGHT><FONT SIZE="-2" FACE="Arial,Helvetica" COLOR="White">DCR</FONT></TD>
+                    </TR>
+                <TR><TD>Bighorn Hydro (BIG)</TD><TD>120</TD><TD>14</TD><TD>23</TD></TR>
+<TR><TD>Bow River Hydro (BOW1)</TD><TD>320</TD><TD>34</TD><TD>52</TD></TR>
+<TR><TD>Brazeau Hydro (BRA)</TD><TD>350</TD><TD>0</TD><TD>84</TD></TR>
+<TR><TD>CUPC Oldman River (OMRH)</TD><TD>32</TD><TD>20</TD><TD>0</TD></TR>
+<TR><TD>Chin Chute (CHIN)</TD><TD>15</TD><TD>0</TD><TD>0</TD></TR>
+<TR><TD>Dickson Dam (DKSN)</TD><TD>15</TD><TD>7</TD><TD>0</TD></TR>
+<TR><TD>Irrican Hydro (ICP1)</TD><TD>7</TD><TD>0</TD><TD>0</TD></TR>
+<TR><TD>Raymond Reservoir (RYMD)</TD><TD>21</TD><TD>0</TD><TD>0</TD></TR>
+<TR><TD>Taylor Hydro (TAY1)</TD><TD>14</TD><TD>0</TD><TD>0</TD></TR>
+
+                </TABLE>
+            </td>
+        </tr>
+    
+        <tr>
+            <td VALIGN="TOP" WIDTH="100%">
+                <TABLE BORDER="1" WIDTH="100%">
+                    <TR><TH COLSPAN="4">WIND</TH></TR>
+                    <TR>
+                        <TD WIDTH="70%" BGCOLOR="#336699"> <P ALIGN=RIGHT><FONT SIZE="-2" FACE="Arial,Helvetica" COLOR="White">ASSET</FONT></TD>
+                        <TD WIDTH="10%" BGCOLOR="#336699"> <P ALIGN=RIGHT><FONT SIZE="-2" FACE="Arial,Helvetica" COLOR="White">MC</FONT></TD>
+                        <TD WIDTH="10%" BGCOLOR="#336699"> <P ALIGN=RIGHT><FONT SIZE="-2" FACE="Arial,Helvetica" COLOR="White">TNG</FONT></TD>
+                        <TD WIDTH="10%" BGCOLOR="#336699"> <P ALIGN=RIGHT><FONT SIZE="-2" FACE="Arial,Helvetica" COLOR="White">DCR</FONT></TD>
+                    </TR>
+                <TR><TD>Ardenville Wind (ARD1)*</TD><TD>68</TD><TD>67</TD><TD>0</TD></TR>
+<TR><TD>Blackspring Ridge (BSR1)*</TD><TD>300</TD><TD>40</TD><TD>0</TD></TR>
+<TR><TD>Blue Trail Wind (BTR1)*</TD><TD>66</TD><TD>54</TD><TD>0</TD></TR>
+<TR><TD>Castle River #1 (CR1)*</TD><TD>39</TD><TD>31</TD><TD>0</TD></TR>
+<TR><TD>Castle Rock Wind Farm (CRR1)*</TD><TD>77</TD><TD>45</TD><TD>0</TD></TR>
+<TR><TD>Cowley Ridge (CRW1)*</TD><TD>38</TD><TD>21</TD><TD>0</TD></TR>
+<TR><TD>Enmax Taber (TAB1)*</TD><TD>81</TD><TD>10</TD><TD>0</TD></TR>
+<TR><TD>Ghost Pine (NEP1)*</TD><TD>82</TD><TD>61</TD><TD>0</TD></TR>
+<TR><TD>Halkirk Wind Power Facility (HAL1)*</TD><TD>150</TD><TD>62</TD><TD>0</TD></TR>
+<TR><TD>Kettles Hill (KHW1)*</TD><TD>63</TD><TD>44</TD><TD>0</TD></TR>
+<TR><TD>McBride Lake Windfarm (AKE1)*</TD><TD>73</TD><TD>62</TD><TD>0</TD></TR>
+<TR><TD>Oldman 2 Wind Farm 1 (OWF1)*</TD><TD>46</TD><TD>36</TD><TD>0</TD></TR>
+<TR><TD>Soderglen Wind  (GWW1)*</TD><TD>71</TD><TD>63</TD><TD>0</TD></TR>
+<TR><TD>Summerview 1 (IEW1)*</TD><TD>66</TD><TD>33</TD><TD>0</TD></TR>
+<TR><TD>Summerview 2 (IEW2)*</TD><TD>66</TD><TD>33</TD><TD>0</TD></TR>
+<TR><TD>Suncor Chin Chute (SCR3)*</TD><TD>30</TD><TD>27</TD><TD>0</TD></TR>
+<TR><TD>Suncor Magrath (SCR2)*</TD><TD>30</TD><TD>20</TD><TD>0</TD></TR>
+<TR><TD>Suncor Wintering Hills (SCR4)*</TD><TD>88</TD><TD>48</TD><TD>0</TD></TR>
+
+                </TABLE>
+            </td>
+        </tr>
+    	
+        <tr>
+            <td VALIGN="TOP" WIDTH="100%">
+                <TABLE BORDER="1" WIDTH="100%">
+                    <TR><TH COLSPAN="4">BIOMASS AND OTHER</TH></TR>
+                    <TR>
+                        <TD WIDTH="70%" BGCOLOR="#336699"> <P ALIGN=RIGHT><FONT SIZE="-2" FACE="Arial,Helvetica" COLOR="White">ASSET</FONT></TD>
+                        <TD WIDTH="10%" BGCOLOR="#336699"> <P ALIGN=RIGHT><FONT SIZE="-2" FACE="Arial,Helvetica" COLOR="White">MC</FONT></TD>
+                        <TD WIDTH="10%" BGCOLOR="#336699"> <P ALIGN=RIGHT><FONT SIZE="-2" FACE="Arial,Helvetica" COLOR="White">TNG</FONT></TD>
+                        <TD WIDTH="10%" BGCOLOR="#336699"> <P ALIGN=RIGHT><FONT SIZE="-2" FACE="Arial,Helvetica" COLOR="White">DCR</FONT></TD>
+                    </TR>
+                <TR><TD>APF Athabasca (AFG1)*</TD><TD>131</TD><TD>61</TD><TD>0</TD></TR>
+<TR><TD>Cancarb Medicine Hat (CCMH)</TD><TD>42</TD><TD>0</TD><TD>0</TD></TR>
+<TR><TD>DAI1 Daishowa (DAI1)</TD><TD>52</TD><TD>47</TD><TD>0</TD></TR>
+<TR><TD>Drayton Valley (DV1)</TD><TD>11</TD><TD>8</TD><TD>0</TD></TR>
+<TR><TD>Gold Creek Facility (GOC1)</TD><TD>5</TD><TD>0</TD><TD>0</TD></TR>
+<TR><TD>Grande Prairie EcoPower (GPEC)</TD><TD>27</TD><TD>12</TD><TD>0</TD></TR>
+<TR><TD>NRGreen (NRG3)</TD><TD>19</TD><TD>0</TD><TD>0</TD></TR>
+<TR><TD>Weldwood #1 (WWD1)*</TD><TD>50</TD><TD>0</TD><TD>0</TD></TR>
+<TR><TD>Westlock (WST1)</TD><TD>18</TD><TD>14</TD><TD>0</TD></TR>
+<TR><TD>Weyerhaeuser (WEY1)</TD><TD>48</TD><TD>0</TD><TD>0</TD></TR>
+<TR><TD>Whitecourt Power (EAGL)</TD><TD>25</TD><TD>25</TD><TD>0</TD></TR>
+
+                </TABLE>
+            </td>
+        </tr>
+    </table>
+</td>
+</table>
+</tr>
+</TABLE>
+
+
+
+
+
+<BR>
+<B><U><FONT FACE="Arial, Helvetica"><FONT SIZE=-1>Report Disclaimer</FONT></FONT></U></B>
+<BR><FONT FACE="Arial, Helvetica"><FONT SIZE=-1>The information contained in this document is published in 
+accordance with the AESO's legislative obligations and is for information purposes only. As such, 
+the AESO makes no warranties or representations as to the accuracy, completeness or fitness for any 
+particular purpose with respect to the information contained herein, whether express or implied. 
+While the AESO has made every attempt to ensure the information presented here is accurate, 
+the AESO is not responsible for any errors or omissions. Consequently, any reliance placed on 
+the information contained herein is at the readers' sole risk.</FONT></FONT>
+
+</BODY>
+
+</HTML>
