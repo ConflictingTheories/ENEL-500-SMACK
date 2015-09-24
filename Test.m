@@ -6,7 +6,7 @@ for i = 1:n
 end
 
 disp(add);
-disp('is the added value of the code');
+disp('is the final added value of the code');
 
 %changes made
 %more changes 
