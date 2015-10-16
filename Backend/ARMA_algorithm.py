@@ -1,3 +1,4 @@
+"""ARMA_algorithm.py"""
 #ARMA algorithm model for project
 #taken from NWP data set 00
 #starting with a simple linear regression tutorial example from
@@ -7,20 +8,12 @@ from pyspark.mllib.regression import LabeledPoint, LinearRegressionWithSGD, Line
 
 #set up spark context
 from pyspark import SparkContext
-
-logFile = "C:/Users/Andrew/Dropbox/Homework/Spark/spark-1.5.0-bin-hadoop2.6/README.md"  # Should be some file on your system
-sc = SparkContext("local", "Simple App")
-logData = sc.textFile(logFile).cache()
-
-numAs = logData.filter(lambda s: 'a' in s).count()
-numBs = logData.filter(lambda s: 'b' in s).count()
-
-print("Lines with a: %i, lines with b: %i" % (numAs, numBs))
+sc = SparkContext("local", "ARMA_algorithm")
 
 # Load and parse the data
-"""
+
 def parsePoint(line):
-    values = [float(x) for x in lin.replace(',',' ').split(' ')]
+    values = [float(x) for x in line.replace(',',' ').split(' ')]
     return LabeledPoint(values[0], values[1:])
 
 data = sc.textFile("data/mllib/ridge-data/lpsa.data")
@@ -37,3 +30,4 @@ print("Mean Squared Error = " + str(MSE))
 # Save and load model
 model.save(sc, "myModelPath")
 sameModel = LinearRegressionModel.load(sc, "myModelPath")
+
