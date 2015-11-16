@@ -25,9 +25,6 @@ def loadRecord(line): #row by row
 #load the CSV file 
 input = sc.textFile("csv/00_NWP_Sample.csv").map(loadRecord)
 
-print num_commas
-print "Is the number of commas in this csv file"
-
 first_element = input.first()
 
 print first_element
@@ -35,7 +32,7 @@ print "This is the first row of the table"
 
 csv_array_type1 = input.collect();
 
-print csv_array[1]
+print csv_array_type1[1]
 print "this is the second row of the table"
 
 def loadRecords(fileNameContents): #load all records in a given file
@@ -69,7 +66,7 @@ def load_X_coord(fileNameContents):
     i = 0
     for row in reader:
         X[i] = row['X coordinate']
-        print row['X coordinate']
+        #print row['X coordinate']
         i = i + 1
     return X
 
@@ -86,6 +83,26 @@ print "first x coordinate entry"
 print x_coords[356] #356 + 1 since the entry starts at 0
 print "357th x coordinate entry"
 
+#saving CSVs
+def writeRecords(records):
+    """Write out CSV lines"""
+    output = StringIO.StringIO()
+    writer = csv.DictWriter(output, fieldnames=["At Date", "At Time", "For Date", "For Time","Runtime",
+                                                "X coordinate", "Y coordinate", "Latitude", "Longitude",
+                                               "WIND_TGL_10", "WIND_TGL_40", "WIND_TGL_80", "WIND_TGL_120",
+                                               "WDIR_TGL_10", "WDIR_TGL_40", "WDIR_TGL_80", "WDIR_TGL_120",
+                                               "UGRD_TGL_10","UGRD_TGL_40", "UGRD_TGL_80", "UGRD_TGL_120",
+                                               "VGRD_TGL_10", "VGRD_TGL_40", "VGRD_TGL_80","VGRD_TGL_120",
+                                              "TMP_TGL_2", "SPFH_TGL_2", "PRES_SFC_0", "TCDC_SFC_0", "NSWRS_SFC_0"])
+    for record in records:
+        writer.writerow(record)
+        
+    return [output.getvalue()]
 
+#save a new csv file
+input.mapPartitions(writeRecords).saveAsTextFile("csv/new_00_NWP")
+
+#save in a readable csv format. This is a command done through cmd using hadoop
+#hdfs dfs -getmerge csv/new_00_NWP new_00_NWP.csv
 
 
