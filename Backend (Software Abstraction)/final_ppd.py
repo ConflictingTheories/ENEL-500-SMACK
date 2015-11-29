@@ -129,7 +129,7 @@ wdir_80_RDD = sc.wholeTextFiles("csv/00_NWP_Sample.csv").flatMap(load_wind_dir_8
 #Create RDDs for data to be parsed
 data_10_40_v = v_10_RDD.zip(v_40_RDD) #speed at 10/40m
 
-data = data_10_40_v.zip(v_80_RDD) #speed at 10/40/80m
+data = data_10_40_v.zip(v_80_RDD).cache() #speed at 10/40/80m
 
 #Display a sample of data that will be analyzed
 data_array = data.collect()
@@ -151,7 +151,7 @@ def parsePoint(line):       #dir and speed 10/40
 
 #remove the header of the file to deal with numbers only
 header = data.first()
-filtered_data = data.filter(lambda x: x != header)
+filtered_data = data.filter(lambda x: x != header).cache()
 
 #Parse the filtered data
 #socket exception occurs here because of removal of header
