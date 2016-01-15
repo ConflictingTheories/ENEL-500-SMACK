@@ -9,10 +9,10 @@ from pyspark.mllib.regression import LabeledPoint, LinearRegressionWithSGD, Line
 #set up spark context
 from pyspark import SparkConf, SparkContext
 
-conf = SparkConf().setMaster("local").setAppName("ppd.py")
+conf = SparkConf().setMaster("local[2]").setAppName("ppd.py") #use 2 cores
 sc = SparkContext(conf = conf)
 
-#Finctions to Load the data
+#Functions to Load the data
 
 def load_wind_speed_10(fileNameContents):
     """load windspeed at 10m"""
