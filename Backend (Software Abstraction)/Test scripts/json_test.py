@@ -17,7 +17,7 @@ dataframe_example = sqlContext.read.json("examples/src/main/resources/people.jso
 dataframe_colors = sqlContext.read.json("json/colors.json")
 dataframe_NWP = sqlContext.read.json("json/00_NWP_Sample_snip.json")
 
-#display spark example dataframe
+#display spark example dataframe and colors dataframe
 dataframe_example.show()
 dataframe_example.printSchema()
 dataframe_colors.show()
@@ -30,21 +30,13 @@ dataframe_NWP.printSchema()
 print str(X_array) + " Are the x coordinates\n"
 print str(X_array[0]) + " is the first x coordinate\n"
 
+#extract single value
+print "x coord types:\n"
+print str(dataframe_NWP.select("X").dtypes)
 
-#Unstructured method
-input = sc.wholeTextFiles("json/00_NWP_Sample_snip.json")
-#input = sc.textFile("json/colors.json")
-
-data = input.map(lambda x: json.loads(x))
-
-#data_array = data.collect()
-
-#num_forecasted = data.filter("Forecasted_at_date").count()
-#print num_forecasted 
-
-#RED_hex = data.filter("red")
-#RED_hex_data = collect.RED_hex
-#print RED_hex_data
+for row in X_array:
+    print row[0]
+    print str(type(row[0])) + " is the type"
 
 #saving json files
 #in this case save x coordinates
