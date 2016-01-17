@@ -176,12 +176,12 @@ wget --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2F
 rpm -ivh jdk-7u79-linux-x64.rpm
 # Add version 1.7 to list
 alternatives --install /usr/bin/java java /usr/java/jdk1.7.0_79/bin/java 2
-alternatives --install /usr/bin/jar jar /usr/java/jdk1.7.0_79/bin/jar 2
 alternatives --install /usr/bin/javac javac /usr/java/jdk1.7.0_79/bin/javac 2
+	#alternatives --install /usr/bin/jar jar /usr/java/jdk1.7.0_79/bin/jar 2
 # Set Version to 1.7
 alternatives --set java /usr/java/jdk1.7.0_79/bin/java
 alternatives --set javac /usr/java/jdk1.7.0_79/bin/javac
-alternatives --set jar /usr/java/jdk1.7.0_79/bin/jar
+	#alternatives --set jar /usr/java/jdk1.7.0_79/bin/jar
 # set Variables
 JAVA_HOME=/usr/java/jdk1.7.0_79
 JRE_HOME=$JAVA_HOME/jre
@@ -195,14 +195,14 @@ cd /tmp/java8
 wget --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/8u40-b25/jdk-8u40-linux-x64.rpm"
 # RPM Method?
 rpm -ivh jdk-8u40-linux-x64.rpm
-# Add version 1.7 to list
+# Add version 1.8 to list
 alternatives --install /usr/bin/java java /usr/java/jdk1.8.0_40/bin/java 2
-alternatives --install /usr/bin/jar jar /usr/java/jdk1.8.0_40/bin/jar 2
 alternatives --install /usr/bin/javac javac /usr/java/jdk1.8.0_40/bin/javac 2
-# Set Version to 1.7
+	#alternatives --install /usr/bin/jar jar /usr/java/jdk1.8.0_40/bin/jar 2
+# Set Version to 1.8
 alternatives --set java /usr/java/jdk1.8.0_40/bin/java
 alternatives --set javac /usr/java/jdk1.8.0_40/bin/javac
-alternatives --set jar /usr/java/jdk1.8.0_40/bin/jar
+	#alternatives --set jar /usr/java/jdk1.8.0_40/bin/jar
 # set Variables
 JAVA_HOME=/usr/java/jdk1.8.0_40
 JRE_HOME=$JAVA_HOME/jre
@@ -215,7 +215,7 @@ echo -e "\nJDK/JRE 7+8: COMPLETE" >> $SMACK_INSTALL_LOG
 
 # INSTALL RELATED CRON JOBS
 #-----------------------------------
-CRON_PATH = $SMACK_DIR/cron
+CRON_PATH=$SMACK_DIR/cron
 # Make CRON directory
 mkdir $CRON_PATH
 mkdir $CRON_PATH/bin
@@ -268,7 +268,7 @@ cd \$TMP_DIR
 #	* download and store into tmp directory
 #
 T = time
-echo -e "\nret_nwp.sh - run @ $T\n" >> $CRON_PATH/log/nwp-load.log
+echo -e "\nret_nwp.sh - run @ \$T\n" >> $CRON_PATH/log/nwp-load.log
 EOF
 
 # Generate Related Cron Files
@@ -295,7 +295,7 @@ cd \$TMP_DIR
 #	* Download missing variables
 #
 T = time
-echo -e "\chk_nwp.sh - run @ $T\n" >> $CRON_PATH/log/nwp-load.log
+echo -e "\chk_nwp.sh - run @ \$T\n" >> $CRON_PATH/log/nwp-load.log
 EOF
 
 # Generate Related Cron Files
@@ -322,7 +322,7 @@ cd \$TMP_DIR
 #	* Upload to swift object storage
 #
 T = time
-echo -e "\nstr_nwp.sh - run @ $T\n" >> $CRON_PATH/log/nwp-load.log
+echo -e "\nstr_nwp.sh - run @ \$T\n" >> $CRON_PATH/log/nwp-load.log
 EOF
 
 # Generate Related Cron Files
@@ -347,12 +347,11 @@ cd \$TMP_DIR
 #
 rm -rf *.grib2
 T = time
-echo -e "\nclr_nwp.sh - run @ $T\n" >> $CRON_PATH/log/nwp-load.log
+echo -e "\nclr_nwp.sh - run @ \$T\n" >> $CRON_PATH/log/nwp-load.log
 EOF
 
 # Initialize all Schedules for Deployment
 crontab $CRON_PATH/nwp-load.cron
-
 # Log Reporting
 echo -e "\nCRON SCHEDULING: COMPLETE" >> $SMACK_INSTALL_LOG
 
@@ -423,7 +422,7 @@ cat << EOF > $SHINY_SRV/api_demo/app.R
 library(shiny)
 library(shinydashboard)
 ui <- dashboardPage(
-	dashboardHeader(title="SMACK Energy Forecastingc- API Demo"),
+	dashboardHeader(title="SMACK Energy Forecasting- API Demo"),
 	dashboardSidebar(),	
 	dashboardBody()
 )
@@ -580,6 +579,7 @@ stty -echo
 read -p "Please enter your SMACK Openstack password: " PASSWD
 stty echo
 read -p "Please enter your Project (ie. blank for personal or enter 'SMACK'): " PROJECT
+echo -e "\n"
 # URLs for API Access (may need to change)
 export KEYSTONE_URL="https://keystone-yyc.cloud.cybera.ca:5000/v2.0"
 export NOVA_URL="https://nova-yyc.cloud.cybera.ca:8774/v2/2b86ecd5b18f4fafb1d55adb79072def"
@@ -713,10 +713,16 @@ EOF
 
 # SET PERMISSIONS FOR COMMANDS
 #-----------------------------------
+# SMACK Directory
 chmod 755 $SMACK_DIR_BIN
 chmod 700 $SMACK_DIR/skel
+chmod 777 $SMACK_DIR_TMP
 chmod 600 $SMACK_DIR_LOG/*
 chmod +x $SMACK_DIR_BIN/*
+# CRON Directory
+chmod 755 $CRON_PATH/bin
+chmod +x $CRON_PATH/bin/*
+chmod 600 $CRON_PATH/log/*
 # Log Reporting
 echo -e "\nPERMISSIONS: COMPLETE" >> $SMACK_INSTALL_LOG
 	
@@ -727,5 +733,4 @@ touch $SMACK_LOAD
 echo -e "\n### INSTALL: COMPLETE ###" >> $SMACK_INSTALL_LOG
 
 fi
-
 # FINISHED

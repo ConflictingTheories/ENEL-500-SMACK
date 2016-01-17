@@ -89,8 +89,6 @@ JRE_HOME=$JAVA_HOME/jre
 # cleanup
 cd /
 rm -rf /tmp/java7
-
-
 # JRE 8
 mkdir /tmp/java8
 cd /tmp/java8
@@ -214,6 +212,18 @@ server <- function(input, output) {}
 shinyApp(ui,server)
 EOF
 # End Of Shiny File ----
+
+# INSTALL RELATED CRON JOBS
+#-----------------------------------
+CRON_PATH = $SMACK_DIR/cron
+# Make CRON directory
+mkdir $CRON_PATH
+mkdir $CRON_PATH/bin
+mkdir $CRON_PATH/log
+# Initialize Cron jobs
+#
+# Log Reporting
+echo -e "\nCRON SCHEDULING: COMPLETE" >> $SMACK_INSTALL_LOG
 
 # ADD ADDITIONAL SOFTWARE BELOW
 #-----------------------------------
