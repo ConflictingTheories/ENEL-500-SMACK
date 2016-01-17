@@ -20,6 +20,7 @@
 SMACK_DIR=/usr/local/smack
 SMACK_DIR_BIN=/usr/local/smack/bin
 SMACK_DIR_LOG=/usr/local/smack/log
+SMACK_DIR_SKEL=/usr/local/smack/skel
 SMACK_DIR_TMP=/usr/local/smack/tmp
 SMACK_LOAD=$SMACK_DIR_LOG/smack_loaded
 SMACK_INSTALL_LOG=$SMACK_DIR_LOG/install_log
@@ -640,32 +641,121 @@ fi
 
 # SUSPEND INSTANCE COMMAND
 #-----------------------------------
+cat << EOF > $SMACK_DIR_BIN/smack-suspend
+#!/bin/bash
+# Display Message
+figlet -c SMACK Energy Forecasting
+figlet -cf digital Suspending...
+# Suspend Instance Here
 #
+#	......
 #
+EOF
+# Log Reporting
+if [ -e "$SMACK_DIR_BIN/smack-suspend" ]; then
+	echo -e "\nSUSPEND: COMPLETE" >> $SMACK_INSTALL_LOG
+else
+	echo -e "\nSUSPEND: ERROR" >> $SMACK_INSTALL_LOG
+fi
 
 # TERMINATE INSTANCE COMMAND
 #-----------------------------------
+cat << EOF > $SMACK_DIR_BIN/smack-terminate
+#!/bin/bash
+# Display Message
+figlet -c SMACK Energy Forecasting
+figlet -cf digital Terminating...
+# Terminate Instance Here
 #
+#	......
 #
+EOF
+# Log Reporting
+if [ -e "$SMACK_DIR_BIN/smack-terminate" ]; then
+	echo -e "\nTERMINATE: COMPLETE" >> $SMACK_INSTALL_LOG
+else
+	echo -e "\nTERMINATE: ERROR" >> $SMACK_INSTALL_LOG
+fi
 
 # ASSOCIATE FLOATING IP COMMAND 
 #-----------------------------------
+cat << EOF > $SMACK_DIR_BIN/smack-setip
+#!/bin/bash
+# Display Message
+figlet -c SMACK Energy Forecasting
+figlet -cf digital IP Config
+# Configure IP Here
 #
+#	......
 #
+EOF
+# Log Reporting
+if [ -e "$SMACK_DIR_BIN/smack-setip" ]; then
+	echo -e "\nIP CONFIG: COMPLETE" >> $SMACK_INSTALL_LOG
+else
+	echo -e "\nIP CONFIG: ERROR" >> $SMACK_INSTALL_LOG
+fi
 
 # UPLOAD FILE TO CONTAINER COMMAND
 #-----------------------------------
+cat << EOF > $SMACK_DIR_BIN/smack-upload
+#!/bin/bash
+# Display Message
+figlet -c SMACK Energy Forecasting
+figlet -cf digital Object Storage Upload Wizard
+# Upload Files to Swift Here
 #
+#	......
 #
+EOF
+# Log Reporting
+if [ -e "$SMACK_DIR_BIN/smack-upload" ]; then
+	echo -e "\nSWIFT UPLOAD: COMPLETE" >> $SMACK_INSTALL_LOG
+else
+	echo -e "\nSWIFT UPLOAD: ERROR" >> $SMACK_INSTALL_LOG
+fi
 
 # DOWNLOAD FILE FROM CONTAINER COMMAND
 #-----------------------------------
+cat << EOF > $SMACK_DIR_BIN/smack-download
+#!/bin/bash
+# Display Message
+figlet -c SMACK Energy Forecasting
+figlet -cf digital Object Storage Download Wizard
+# Download from Swift Here
 #
+#	......
 #
+EOF
+# Log Reporting
+if [ -e "$SMACK_DIR_BIN/smack-download" ]; then
+	echo -e "\nSWIFT DOWNLOAD: COMPLETE" >> $SMACK_INSTALL_LOG
+else
+	echo -e "\nSWIFT DOWNLOAD: ERROR" >> $SMACK_INSTALL_LOG
+fi
+
+# LIST CONTAINERS FROM OBJECT STORAGE COMMAND
+#-----------------------------------
+cat << EOF > $SMACK_DIR_BIN/smack-lsdb
+#!/bin/bash
+# Display Message
+figlet -c SMACK Energy Forecasting
+figlet -cf digital Object Storage Listing
+# List Info from Swift Here
+#
+#	......
+#
+EOF
+# Log Reporting
+if [ -e "$SMACK_DIR_BIN/smack-lsdb" ]; then
+	echo -e "\nSWIFT LIST CONTAINER: COMPLETE" >> $SMACK_INSTALL_LOG
+else
+	echo -e "\nSWIFT LIST CONTAINER: ERROR" >> $SMACK_INSTALL_LOG
+fi
 
 # ADD SKELETON SETUP FILE ONTO SERVER
 #-----------------------------------
-mkdir $SMACK_DIR/skel
+mkdir $SMACK_DIR_SKEL
 cat << EOF > $SMACK_DIR/skel/setup-node.sh
 #!/bin/bash
 #--------------------------------------------------------

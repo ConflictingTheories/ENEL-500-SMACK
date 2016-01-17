@@ -1,0 +1,154 @@
+#################################################################
+#			SMACK FILE DIRECTORY LISTING BY CATEGORY			#
+#			----------------------------------------			#
+#				 Created on: January 15, 2016					#
+#			Last Updated on: January 17, 2016					#
+#################################################################
+#	The purpose of this document is to keep a record of all the #
+#	files which will be created for our project and initialized #
+#	on the virtual machine instance. Some of these files may be #
+#	held locally on a physical 'development machine'. This will #
+#	act as a log for the various categories of files that will	#
+#	end up in the final project. 								#
+#																#
+#	* NOTE: Some of the files may be old and some may be not be	#
+#	properly updated to reflect the current state. As much as   #
+#	is possible will be done to ensure that this is relatively	#
+#	accurate.													#
+#################################################################
+
+
+----------------
+MAIN DIRECTORIES
+================
+
+	SMACK
+	-----
+		SMACK_DIR=/usr/local/smack
+		SMACK_DIR_BIN=/usr/local/smack/bin
+		SMACK_DIR_LOG=/usr/local/smack/log
+		SMACK_DIR_SKEL=/usr/local/smack/skel
+		SMACK_DIR_TMP=/usr/local/smack/tmp
+		SMACK_LOAD=$SMACK_DIR_LOG/smack_loaded
+		SMACK_INSTALL_LOG=$SMACK_DIR_LOG/install_log
+
+	JAVA
+	----
+		JAVA_HOME=/usr/java/jdk1.7.0_79
+		JRE_HOME=$JAVA_HOME/jre
+		JAVA_HOME=/usr/java/jdk1.8.0_40
+		JRE_HOME=$JAVA_HOME/jre
+
+
+	SHINY
+	-----
+		SHINY_SRV=/srv/shiny-server
+
+	CRON
+	----
+		CRON_PATH=$SMACK_DIR/cron
+
+	SPARK
+	-----
+
+	HADOOP
+	------
+
+	HIVE
+	----
+
+	YARN
+	----
+
+
+------------------
+DEPLOYMENT SCRIPTS
+==================
+
+	CLOUD-INIT SCRIPTS
+	------------------
+		devhost-setup.sh
+		setup-node.sh
+
+
+	HEAT SCRIPTS
+	------------
+
+
+	SKELETON FILES
+	--------------
+		$SMACK_DIR_SKEL/setup-node.sh
+
+
+------------------
+SCHEDULING SCRIPTS
+==================
+	
+	CRON SCRIPTS
+	------------
+		$SMACK_DIR/cron/nwp-load.cron
+			$CRON_PATH/bin/clr_nwp.sh
+			$CRON_PATH/bin/str_nwp.sh
+			$CRON_PATH/bin/chk_nwp.sh
+			$CRON_PATH/bin/ret_nwp.sh
+
+-------------------
+SYSTEM FILE CHANGES
+===================
+
+	INITIALIZATION SCRIPTS
+	----------------------
+		/etc/bashrc
+
+
+------------------
+TOOL-CHAIN SCRIPTS
+==================
+
+	SMACK CLUSTER CONTROL
+	---------------------
+		$SMACK_DIR_BIN/smack-lsnode
+		$SMACK_DIR_BIN/smack-mknode
+		$SMACK_DIR_BIN/smack-login
+		$SMACK_DIR_BIN/smack-logout
+		$SMACK_DIR_BIN/smack-suspend
+		$SMACK_DIR_BIN/smack-terminate
+		$SMACK_DIR_BIN/smack-setip
+
+
+	DATABASE CONTROL
+	----------------
+		$SMACK_DIR_BIN/smack-lsdb
+		$SMACK_DIR_BIN/smack-upload
+		$SMACK_DIR_BIN/smack-download
+
+
+	SPARK JOBS
+	----------
+
+
+	FRONTEND/WEB
+	------------
+		/srv/shiny-server/index.html
+		$SHINY_SRV/demo/app.R
+		$SHINY_SRV/api_demo/app.R
+
+
+---------
+LOG-FILES
+=========
+
+	INSTALLATION
+	------------
+		SMACK_LOAD=$SMACK_DIR_LOG/smack_loaded
+		SMACK_INSTALL_LOG=$SMACK_DIR_LOG/install_log
+
+	SOFTWARE_ADSTRACTION
+	--------------------
+
+	HARDWARE_ABSTRACTION
+	--------------------
+
+	CRON
+	----
+		$CRON_PATH/log/nwp-load.log
