@@ -30,7 +30,7 @@
 # ------------------------------------------------------
 # ------------------------------------------------------
 # TESTING RELEASE NOTES (As of January 17, 2016):
-##
+#
 #	- Added skeletons for new toolchain files that will
 #	be developed using the previously described mention
 #	method. If a tool doesn't work - please checking the
@@ -151,6 +151,8 @@ echo -e "\nPIP 2.7/3.5: COMPLETE" >> $SMACK_INSTALL_LOG
 /usr/local/bin/pip2.7 install python-openstackclient
 /usr/local/bin/pip2.7 install python-swiftclient
 /usr/local/bin/pip2.7 install --upgrade setuptools
+# Adjust for warnings
+cat /usr/local/lib/python2.7/site-packages/keystoneclient/service_catalog.py | sed -e 's/import warnings/import warnings\nwarnings.filterwarning("ignore")/' > /usr/local/lib/python2.7/site-packages/keystoneclient/service_catalog.py
 # Log Reporting
 echo -e "\nOPENSTACK CLIENTS: COMPLETE" >> $SMACK_INSTALL_LOG
 
@@ -162,6 +164,7 @@ echo -e "\nOPENSTACK CLIENTS: COMPLETE" >> $SMACK_INSTALL_LOG
 # scipy
 /usr/local/bin/pip2.7 install scipy
 /usr/local/bin/pip3.5 install scipy
+
 
 
 # INSTALL R FROM CRAN		- FOR WEBSERVER DEV

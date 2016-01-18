@@ -100,6 +100,9 @@ SYSTEM FILE CHANGES
 	----------------------
 		/etc/bashrc
 
+	PYTHON OPENSTACK ERROR SUPPRESSION
+	----------------------------------
+		/usr/local/lib/python2.7/site-packages/keystoneclient/service_catalog.py
 
 ------------------
 TOOL-CHAIN SCRIPTS

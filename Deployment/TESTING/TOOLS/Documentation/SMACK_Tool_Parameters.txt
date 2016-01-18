@@ -1,0 +1,65 @@
+GENERAL BASH EXAMPLE:
+---------------------
+
+#REQUIRED PARAMTERS:
+
+	while getopts u:d:p:f: option
+	do
+	        case "${option}"
+	        in
+	                u) USER=${OPTARG};;
+	                d) DATE=${OPTARG};;
+	                p) PRODUCT=${OPTARG};;
+	                f) FORMAT=$OPTARG;;
+	        esac
+	done
+
+	# The above says that the parameters -u -d -p -f are expected to be there
+	# and require a value
+
+
+#OPTIONAL AND REQUIRED PARAMTERS:
+
+	while getopts u:dp:f option
+	do
+	        case "${option}"
+	        in
+	                u) USER=${OPTARG};;
+	                d) DATE=${OPTARG};;
+	                p) PRODUCT=${OPTARG};;
+	                f) FORMAT=$OPTARG;;
+	        esac
+	done
+
+	# the above says that the parameters -u -p are required, and that -d and -f are optional.
+
+
+
+SMACK UPLOAD PARAMETERS
+
+	-a	:	upload all files in current directory
+	-e	:	upload all files of extension passed
+	-f 	:	upload individual file passed
+	-c 	: 	container to be uploaded into
+	-o 	:	object name to be saved as
+
+SMACK DOWNLOAD PARAMETERS
+
+	-a 	:	download all objects in container
+	-o 	:	download single object as passed
+	-c 	:	specify container to be downloaded from
+	-f 	: 	specify single file to be output as
+
+SMACK LSDB PARAMETERS
+
+SMACK MKNODE PARAMETERS
+
+SMACK LSNODE PARAMETERS
+
+SMACK SUSPEND PARAMETERS
+
+SMACK TERMINATE PARAMETERS
+
+SMACK LOGIN PARAMETERS
+
+SMACK LOGOUT PARAMETERS
