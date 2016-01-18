@@ -22,13 +22,13 @@ do
         esac
 done
 # -h
-if [ HELP == "TRUE" ]; then
+if [ "$HELP" == "TRUE" ]; then
 	echo -e "\nSMACK Object Storage Listing\n\nUsage\n\t\t-l\tList Root Container\n\t\t-h\tList This Help Message\n\t\t-s\tList Container Statistics\n\t\t-c\tContainer to List\n\t\t-o\tObject to List Statistics\n"
 	exit
 fi
 
 # -l 
-if [ ROOT == "TRUE" ]; then
+if [ "$ROOT" == "TRUE" ]; then
 	swift list
 	exit
 fi
@@ -38,10 +38,13 @@ if [ -z "$CONTAINER" ]; then
 	echo -e "\nCONTAINERS:"
 	swift list
 	read -p "Which Container (type quit to exit): " CONTAINER
+else
+	swift list $CONTAINER
+	exit
 fi
 
 # -s
-if [ STAT == "TRUE" ]; then
+if [ "$STAT" == "TRUE" ]; then
 	swift stat $CONTAINER
 	exit
 fi
@@ -51,6 +54,7 @@ if [ -n "$OBJECT" ]; then
 	exit
 fi
 
+# Prompting Loop
 while [ "$CONTAINER" != "quit" ]; do
 	swift list $CONTAINER
 	read -p "Which Container (Leave empty to quit): " CONTAINER

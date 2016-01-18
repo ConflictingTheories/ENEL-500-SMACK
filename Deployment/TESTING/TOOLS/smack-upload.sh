@@ -8,7 +8,7 @@ if [ -z "$OS_USERNAME" ] || [ -z "$OS_PASSWORD" ]; then
 	echo -e "\nPlease Login First. Use 'smack-login' and follow the prompts.\n"
 	exit
 fi
-
+# Manual Usage
 while getopts ac:e:f:ho: option
 do
         case "${option}"
