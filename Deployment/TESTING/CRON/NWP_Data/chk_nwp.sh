@@ -7,11 +7,11 @@
 # Temporary Working Directory
 TMP_DIR=$SMACK_DIR_TMP/nwp-load
 # Check for Existence
-if ![ -e \$TMP_DIR ]; then
-	mkdir \$TMP_DIR
+if ![ -e $TMP_DIR ]; then
+	mkdir $TMP_DIR
 fi 
 # Move into Tmp Directory
-cd \$TMP_DIR
+cd $TMP_DIR
 # Begin Downloading Missed Files from NWP (For Recent Time)
 #
 # For all Variables that are missing download appropriate time
