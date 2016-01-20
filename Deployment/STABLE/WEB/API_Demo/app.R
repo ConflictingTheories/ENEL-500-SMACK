@@ -1,0 +1,9 @@
+library(shiny)
+library(shinydashboard)
+ui <- dashboardPage(
+	dashboardHeader(title="SMACK Energy Forecasting- API Demo"),
+	dashboardSidebar(),	
+	dashboardBody()
+)
+server <- function(input, output) {}
+shinyApp(ui,server)

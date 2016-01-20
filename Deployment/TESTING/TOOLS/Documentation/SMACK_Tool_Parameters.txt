@@ -1,0 +1,79 @@
+THIS DOCUMENT WILL CONTAIN A LISTING OF THE VARIOUS PARAMETERS THAT WILL BE IMPLEMENTED INTO THE TOOLCHAIN. THE BEGINNING LISTS A BASIC EXAMPLE OF HOW TO IMPLEMENT THESE PARAMETERS VIA BASH'S EASY TO USE getopts FUNCTION.
+
+
+GENERAL BASH EXAMPLE:
+---------------------
+
+#REQUIRED PARAMTERS:
+
+	while getopts u:d:p:f: option
+	do
+	        case "${option}"
+	        in
+	                u) USER=${OPTARG};;
+	                d) DATE=${OPTARG};;
+	                p) PRODUCT=${OPTARG};;
+	                f) FORMAT=$OPTARG;;
+	        esac
+	done
+
+	# The above says that the parameters -u -d -p -f are expected to be there
+	# and require a value
+
+
+#OPTIONAL AND REQUIRED PARAMTERS:
+
+	while getopts u:dp:f option
+	do
+	        case "${option}"
+	        in
+	                u) USER=${OPTARG};;
+	                d) DATE=${OPTARG};;
+	                p) PRODUCT=${OPTARG};;
+	                f) FORMAT=$OPTARG;;
+	        esac
+	done
+
+	# the above says that the parameters -u -p are required, and that -d and -f are optional.
+
+============================================================================
+
+SMACK UPLOAD PARAMETERS
+	-a	:	upload all files in current directory
+	-e	:	upload all files of extension passed
+	-f 	:	upload individual file passed (local file)
+	-c 	: 	container to be uploaded into
+	-o 	:	object name to be saved as (remote file)
+	-h 	:	display help message
+
+SMACK DOWNLOAD PARAMETERS
+	-a 	:	download all objects in container
+	-o 	:	download single object as passed (remote file)
+	-c 	:	specify container to be downloaded from
+	-f 	: 	specify single file to be output as (local file)
+	-h 	:	display help message
+
+SMACK LSDB PARAMETERS
+	-l 	:	Display Root Listing
+	-s 	:	Display Statistics instead
+	-o 	:	Display Object Statistics
+	-c 	:	container to be displayed
+	-h 	:	display help message
+
+SMACK MKNODE PARAMETERS
+	-h 	:	display help message
+
+SMACK LSNODE PARAMETERS
+	-h 	:	display help message
+
+SMACK SUSPEND PARAMETERS
+	-h 	:	display help message
+
+SMACK TERMINATE PARAMETERS
+	-h 	:	display help message
+
+SMACK LOGIN PARAMETERS
+	-h 	:	display help message
+
+SMACK LOGOUT PARAMETERS
+	-h 	:	display help message

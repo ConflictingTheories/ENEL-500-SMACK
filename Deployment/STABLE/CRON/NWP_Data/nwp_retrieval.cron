@@ -1,0 +1,22 @@
+#--------------------------------------------------------
+# 				SMACK ENERGY FORECASTING 
+#--------------------------------------------------------
+#			- CRON Tab for SMACK Data Retrieval -
+#--------------------------------------------------------
+#	This CRON tab is designed to retrieve and store data
+#	from environment Canada - NWP - by downloading and
+#	storing GRIB2 files and placing them into an organized
+#	Swift Storage Database
+#--------------------------------------------------------
+
+# Define Path for Scripts
+CRON_PATH=/usr/local/smack/cron
+
+# Retrieve and Store Temporarily (starting 00:05 - every 06:00)
+5 */6 * * * $CRON_PATH/bin/ret_tmp.sh
+# Check Retrieved Files and Fill if necessary
+25 */6 * * * $CRON_PATH/bin/chk_tmp.sh
+# Store files to Swift Storage
+45 */6 * * * $CRON_PATH/bin/str_tmp.sh
+# Clear Temp Files
+0 */6 * * * $CRON_PATH/bin/clr_tmp.sh
