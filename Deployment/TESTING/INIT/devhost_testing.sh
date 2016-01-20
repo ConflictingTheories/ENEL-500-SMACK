@@ -66,6 +66,8 @@ SMACK_LOAD=$SMACK_DIR_LOG/smack_loaded
 SMACK_INSTALL_LOG=$SMACK_DIR_LOG/install_log
 # Shiny
 SHINY_SRV=/srv/shiny-server
+# API Server
+API_SRV=/srv/api-server
 # Log Reporting
 echo -e "\n### INSTALL BEGINNING ###" >> $SMACK_INSTALL_LOG
 
@@ -85,7 +87,7 @@ echo -e "\nDIRECTORIES: COMPLETE" >> $SMACK_INSTALL_LOG
 #yum -y update
 yum -y install gcc-c++ wget curl curl-devel figlet python
 yum -y install make binutils git nmap man maven libffi-devel
-yum -y install nano python-devel python-pip links
+yum -y install nano python-devel python-pip links nodejs npm
 yum -y groupinstall "Development Tools"
 yum -y install zlib-devel bzip2-devel openssl-devel libxml2-devel
 yum -y install ncurses-devel sqlite-devel readline-devel zlibrary-devel
@@ -222,6 +224,28 @@ cat << EOF > /srv/shiny-server/index.html
 EOF
 # Log Reporting
 echo -e "\nR AND SHINY SERVER: COMPLETE" >> $SMACK_INSTALL_LOG
+
+# INSTALL API SERVER AND CONFIGURE
+#------------------------------------
+# Make Server Directory
+mkdir $API_SRV
+cd $API_SRV
+# Generate Package.json file
+#
+# cat << EOF > Package.json
+#
+# Install Express and Request Libraries
+npm install express --save
+npm install request --save
+# Generate API Backend
+#
+#	cat << EOF > app.js
+#
+# Initialize and start nodejs server
+#
+#
+
+
 
 # INSTALL JAVA RUNTIME VERSION (7/8)
 #------------------------------------

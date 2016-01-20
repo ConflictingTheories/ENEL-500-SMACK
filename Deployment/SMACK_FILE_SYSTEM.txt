@@ -39,9 +39,12 @@ MAIN DIRECTORIES
 		JAVA_HOME=/usr/java/jdk1.8.0_40
 		JRE_HOME=$JAVA_HOME/jre
 
+	API SERVER
+	----------
+		API_SRV=/srv/api-server
 
-	SHINY
-	-----
+	SHINY SERVER
+	------------
 		SHINY_SRV=/srv/shiny-server
 
 	CRON
