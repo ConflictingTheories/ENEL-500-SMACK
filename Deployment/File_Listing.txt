@@ -135,9 +135,10 @@ TOOL-CHAIN SCRIPTS
 
 	FRONTEND/WEB
 	------------
-		/srv/shiny-server/index.html
+		$SHINY_SRV/index.html
 		$SHINY_SRV/demo/app.R
 		$SHINY_SRV/api_demo/app.R
+		$API_SRV/api_demo/app.js
 
 
 ---------

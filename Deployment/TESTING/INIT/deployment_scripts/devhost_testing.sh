@@ -20,10 +20,16 @@
 # 	stable vs. testing will be done. This file will serve
 # 	as the stable version.
 #
+#	* THIS IS A TESTING VERSION - SOME THINGS MAY NOT
+#	WORK QUITE AS INTENDED. IF YOU WANT STABILITY, PLEASE
+#	LOOK AT THE STABLE VERSION. THIS VERSION WILL BE THE
+#	MOST RECENT STABLE VERSION PLUS ANY CHANGES THAT ARE
+#	CURRENTLY IN THE PROCESS OF BEING DONE.
+#
 #
 # ------------------------------------------------------
 # ------------------------------------------------------
-# STABLE RELEASE NOTES (As of January 17, 2016:
+# TESTING RELEASE NOTES (As of January 17, 2016):
 #
 #	- Added skeletons for new toolchain files that will
 #	be developed using the previously described mention
@@ -60,6 +66,8 @@ SMACK_LOAD=$SMACK_DIR_LOG/smack_loaded
 SMACK_INSTALL_LOG=$SMACK_DIR_LOG/install_log
 # Shiny
 SHINY_SRV=/srv/shiny-server
+# API Server
+API_SRV=/srv/api-server
 # Log Reporting
 echo -e "\n### INSTALL BEGINNING ###" >> $SMACK_INSTALL_LOG
 
@@ -79,7 +87,7 @@ echo -e "\nDIRECTORIES: COMPLETE" >> $SMACK_INSTALL_LOG
 #yum -y update
 yum -y install gcc-c++ wget curl curl-devel figlet python
 yum -y install make binutils git nmap man maven libffi-devel
-yum -y install nano python-devel python-pip links
+yum -y install nano python-devel python-pip links nodejs npm
 yum -y groupinstall "Development Tools"
 yum -y install zlib-devel bzip2-devel openssl-devel libxml2-devel
 yum -y install ncurses-devel sqlite-devel readline-devel zlibrary-devel
@@ -145,6 +153,21 @@ echo -e "\nPIP 2.7/3.5: COMPLETE" >> $SMACK_INSTALL_LOG
 /usr/local/bin/pip2.7 install python-openstackclient
 /usr/local/bin/pip2.7 install python-swiftclient
 /usr/local/bin/pip2.7 install --upgrade setuptools
+# Adjust for warnings
+cd /usr/local/lib/python2.7/site-packages/keystoneclient/
+cp service_catalog.py _backup_service_catalog.py
+cat service_catalog.py | sed -e 's/import warnings/import warnings\nwarnings.filterwarning("ignore")/' > service_catalog.py
+# OPENSTACK TOOLS FOR PYTHON 3.5
+#-------------------------------------
+/usr/local/bin/pip3.5 install requests['security']
+/usr/local/bin/pip3.5 install python-openstackclient
+/usr/local/bin/pip3.5 install python-swiftclient
+/usr/local/bin/pip3.5 install --upgrade setuptools
+# Adjust for warnings
+cd /usr/local/lib/python3.5/site-packages/keystoneclient/
+cp service_catalog.py _backup_service_catalog.py
+cat service_catalog.py | sed -e 's/import warnings/import warnings\nwarnings.filterwarning("ignore")/' > service_catalog.py
+
 # Log Reporting
 echo -e "\nOPENSTACK CLIENTS: COMPLETE" >> $SMACK_INSTALL_LOG
 
@@ -156,6 +179,7 @@ echo -e "\nOPENSTACK CLIENTS: COMPLETE" >> $SMACK_INSTALL_LOG
 # scipy
 /usr/local/bin/pip2.7 install scipy
 /usr/local/bin/pip3.5 install scipy
+
 
 
 # INSTALL R FROM CRAN		- FOR WEBSERVER DEV
@@ -175,7 +199,7 @@ wget "https://download3.rstudio.org/centos5.9/x86_64/shiny-server-1.4.1.759-rh5-
 yum -y install --nogpgcheck shiny-server-1.4.1.759-rh5-x86_64.rpm
 # Set to Port 80
 mv /etc/shiny-server/shiny-server.conf /etc/shiny-server/shiny-server.conf.bak
-cat /etc/shiny-server/shiny-server.conf.bak | sed 's:3838:80:g' > /etc/shiny-server/shiny-server.conf
+cat /etc/shiny-server/shiny-server.conf.bak | sed 's/3838/80/g' > /etc/shiny-server/shiny-server.conf
 # Web Server Index Page
 cat << EOF > /srv/shiny-server/index.html
 <!DOCTYPE html>
@@ -200,6 +224,28 @@ cat << EOF > /srv/shiny-server/index.html
 EOF
 # Log Reporting
 echo -e "\nR AND SHINY SERVER: COMPLETE" >> $SMACK_INSTALL_LOG
+
+# INSTALL API SERVER AND CONFIGURE
+#------------------------------------
+# Make Server Directory
+mkdir $API_SRV
+cd $API_SRV
+# Generate Package.json file
+#
+# cat << EOF > Package.json
+#
+# Install Express and Request Libraries
+npm install express --save
+npm install request --save
+# Generate API Backend
+#
+#	cat << EOF > app.js
+#
+# Initialize and start nodejs server
+#
+#
+
+
 
 # INSTALL JAVA RUNTIME VERSION (7/8)
 #------------------------------------
@@ -289,7 +335,7 @@ cat << EOF > $CRON_PATH/bin/ret_nwp.sh
 # Temporary Working Directory
 TMP_DIR=$SMACK_DIR_TMP/nwp-load
 # Check for Existence
-if ![ -e \$TMP_DIR ]; then
+if ! [ -e "\$TMP_DIR" ]; then
 	mkdir \$TMP_DIR
 fi 
 # Move into Tmp Directory
@@ -302,7 +348,7 @@ cd \$TMP_DIR
 #	* use current time and known time stamp
 #	* download and store into tmp directory
 #
-T = time
+T=`date`
 echo -e "\nret_nwp.sh - run @ \$T\n" >> $CRON_PATH/log/nwp-load.log
 EOF
 
@@ -317,7 +363,7 @@ cat << EOF > $CRON_PATH/bin/chk_nwp.sh
 # Temporary Working Directory
 TMP_DIR=$SMACK_DIR_TMP/nwp-load
 # Check for Existence
-if ![ -e \$TMP_DIR ]; then
+if ! [ -e "\$TMP_DIR" ]; then
 	mkdir \$TMP_DIR
 fi 
 # Move into Tmp Directory
@@ -329,7 +375,7 @@ cd \$TMP_DIR
 #	* Check off any missing
 #	* Download missing variables
 #
-T = time
+T=`date`
 echo -e "\chk_nwp.sh - run @ \$T\n" >> $CRON_PATH/log/nwp-load.log
 EOF
 
@@ -344,7 +390,7 @@ cat << EOF > $CRON_PATH/bin/str_nwp.sh
 # Temporary Working Directory
 TMP_DIR=$SMACK_DIR_TMP/nwp-load
 # Check for Existence
-if ![ -e \$TMP_DIR ]; then
+if ! [ -e "\$TMP_DIR" ]; then
 	mkdir \$TMP_DIR
 fi 
 # Move into Tmp Directory
@@ -356,7 +402,7 @@ cd \$TMP_DIR
 #	* Make sure proper time
 #	* Upload to swift object storage
 #
-T = time
+T=`date`
 echo -e "\nstr_nwp.sh - run @ \$T\n" >> $CRON_PATH/log/nwp-load.log
 EOF
 
@@ -371,7 +417,7 @@ cat << EOF > $CRON_PATH/bin/clr_nwp.sh
 # Temporary Working Directory
 TMP_DIR=$SMACK_DIR_TMP/nwp-load
 # Check for Existence
-if ![ -e \$TMP_DIR ]; then
+if ! [ -e "\$TMP_DIR" ]; then
 	mkdir \$TMP_DIR
 fi 
 # Move into Tmp Directory
@@ -381,7 +427,7 @@ cd \$TMP_DIR
 #	* Remove all Grib2 Files
 #
 rm -rf *.grib2
-T = time
+T=`date`
 echo -e "\nclr_nwp.sh - run @ \$T\n" >> $CRON_PATH/log/nwp-load.log
 EOF
 

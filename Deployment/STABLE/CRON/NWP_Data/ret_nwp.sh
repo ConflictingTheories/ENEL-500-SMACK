@@ -7,11 +7,11 @@
 # Temporary Working Directory
 TMP_DIR=$SMACK_DIR_TMP/nwp-load
 # Check for Existence
-if ![ -e \$TMP_DIR ]; then
-	mkdir \$TMP_DIR
+if ! [ -e "$TMP_DIR" ]; then
+	mkdir $TMP_DIR
 fi 
 # Move into Tmp Directory
-cd \$TMP_DIR
+cd $TMP_DIR
 # Begin Downloading Files from NWP (for Recent Time)
 #
 # For all needed variables, download file for time
@@ -20,5 +20,5 @@ cd \$TMP_DIR
 #	* use current time and known time stamp
 #	* download and store into tmp directory
 #
-T = time
-echo -e "\nret_nwp.sh - run @ \$T\n" >> $CRON_PATH/log/nwp-load.log
+T=`date`
+echo -e "\nret_nwp.sh - run @ $T\n" >> $CRON_PATH/log/nwp-load.log

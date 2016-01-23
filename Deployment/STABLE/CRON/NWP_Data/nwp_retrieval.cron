@@ -13,10 +13,10 @@
 CRON_PATH=/usr/local/smack/cron
 
 # Retrieve and Store Temporarily (starting 00:05 - every 06:00)
-5 */6 * * * $CRON_PATH/bin/ret_tmp.sh
+5 */6 * * * $CRON_PATH/bin/ret_nwp.sh
 # Check Retrieved Files and Fill if necessary
-25 */6 * * * $CRON_PATH/bin/chk_tmp.sh
+25 */6 * * * $CRON_PATH/bin/chk_nwp.sh
 # Store files to Swift Storage
-45 */6 * * * $CRON_PATH/bin/str_tmp.sh
+45 */6 * * * $CRON_PATH/bin/str_nwp.sh
 # Clear Temp Files
-0 */6 * * * $CRON_PATH/bin/clr_tmp.sh
+0 */6 * * * $CRON_PATH/bin/clr_nwp.sh
