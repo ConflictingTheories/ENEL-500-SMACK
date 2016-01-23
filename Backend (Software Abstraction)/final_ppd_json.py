@@ -62,24 +62,24 @@ print "The length of the entire dataset is " + str(len(data_array))
 
 #function to parsedata
 def parsePoint(line):
-    print line[0][0]
-    print line[0][1]
-    print line[1]
+##    print line[0][0]
+##    print line[0][1]
+##    print line[1]
     
     for row in line[0][0]:
       #print row
       speed_10 = row
-      break
+      #break
 
     for row in line[0][1]:
       #print row
       speed_40 = row
-      break
+      #break
 
     for row in line[1]:
       #print row
       speed_80 = row
-      break
+      #break
     
     speed_weight_10_40 = speed_10/speed_40
     speed_weight_40_80 = speed_40/speed_80
