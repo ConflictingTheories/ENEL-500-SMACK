@@ -28,11 +28,10 @@ fi
 declare -i fcnt=0
 # Loop through each file and Upload:
 for filename in *\${nwp_ds}*.grib2; do
-	#echo -e "Uploading to Swift: ${filename}\n"
-	smack-upload -c "\${nwp_con}" -f "\${filename}" -o "\${nwp_pse}/\${filename}" > /dev/null
+	smack-put "\${STORAGE_URL}/\${nwp_con}/\${nwp_pse}/\${filename}"
 	# Count # of Uploads
 	\(\(fcnt=\${fcnt}+1\)\)
 done
 # Log Recording
-T=`date`
+declare T="\$(date)"
 echo -e "\nstr_nwp.sh - run @ \${T}\n\tStored: \${fcnt} Files\n" >> "\${CRON_PATH}/log/nwp-load.log"
