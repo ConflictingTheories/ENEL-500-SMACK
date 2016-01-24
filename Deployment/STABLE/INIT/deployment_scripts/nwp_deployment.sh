@@ -529,7 +529,7 @@ echo -e "\nclr_nwp.sh - run @ \${T}\n\tRemoved: \${fcnt} Files\n" >> $CRON_PATH/
 EOF
 
 # Initialize all Schedules for Deployment
-crontab $CRON_PATH/nwp-load.cron
+crontab -u centos $CRON_PATH/nwp-load.cron
 # Log Reporting
 echo -e "\nCRON SCHEDULING: COMPLETE" >> $SMACK_INSTALL_LOG
 

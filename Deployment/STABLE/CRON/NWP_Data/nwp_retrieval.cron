@@ -1,3 +1,4 @@
+# Defintions environment for cron
 SMACK_DIR=/usr/local/smack
 SMACK_DIR_BIN=/usr/local/smack/bin
 SMACK_DIR_LOG=/usr/local/smack/log
@@ -22,8 +23,11 @@ STORAGE_ACCT="AUTH_4b6be558d44e4dba8fb6e4aa49934c0b"
 STORAGE_TOKEN="7eefd48208754002a2e03bf0de11c3e4"
 STORAGE_URL="https://swift-yyc.cloud.cybera.ca:8080/v1/AUTH_4b6be558d44e4dba8fb6e4aa49934c0b"
 PATH=/bin:/usr/bin:/usr/local/smack/bin:/usr/local/smack/cron/bin:/usr/local/bin
-
+# Retrieve NWP Data (Every 6 Hours)
 5 */6 * * * /usr/local/smack/cron/bin/ret_nwp.sh
+# Check NWP Data (Every 6 Hours)
 25 */6 * * * /usr/local/smack/cron/bin/chk_nwp.sh
+# Store NWP Data (Every 6 Hours)
 45 */6 * * * /usr/local/smack/cron/bin/str_nwp.sh
+# Clear NWP Data (Daily)
 0 0 * * * /usr/local/smack/cron/bin/clr_nwp.sh

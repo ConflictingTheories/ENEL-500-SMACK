@@ -155,11 +155,36 @@ cd /
 rm -rf /tmp/java8
 echo -e "\nJDK/JRE 7+8: COMPLETE" >> $SMACK_INSTALL_LOG
 cat << EOF > $SMACK_DIR/cron/nwp-load.cron
-source /usr/local/smack/smack-env.sh
-5 */6 * * * \${CRON_PATH}/bin/ret_nwp.sh
-25 */6 * * * \${CRON_PATH}/bin/chk_nwp.sh
-45 */6 * * * \${CRON_PATH}/bin/str_nwp.sh
-0 0 * * * \${CRON_PATH}/bin/clr_nwp.sh
+SMACK_DIR=/usr/local/smack
+SMACK_DIR_BIN=/usr/local/smack/bin
+SMACK_DIR_LOG=/usr/local/smack/log
+SMACK_DIR_SKEL=/usr/local/smack/skel
+SMACK_DIR_TMP=/usr/local/smack/tmp
+SMACK_LOAD=/usr/local/smack/log/smack_loaded
+SMACK_INSTALL_LOG=/usr/local/smack/log/install_log
+CRON_PATH=/usr/local/smack/cron
+SHINY_SRV=/srv/shiny-server
+API_SRV=/srv/api-server
+KEYSTONE_URL="https://keystone-yyc.cloud.cybera.ca:5000/v2.0"
+NOVA_URL="https://nova-yyc.cloud.cybera.ca:8774/v2/2b86ecd5b18f4fafb1d55adb79072def"
+CINDER_URL="https://cinder-yyc.cloud.cybera.ca:8776/v1/2b86ecd5b18f4fafb1d55adb79072def"
+CINDER2_URL="https://cinder-yyc.cloud.cybera.ca:8776/v2/2b86ecd5b18f4fafb1d55adb79072def"
+GLANCE_URL="http://glance-yyc.cloud.cybera.ca:9292"
+EC2_URL="https://nova-yyc.cloud.cybera.ca:8773/services/Cloud"
+SWIFT_URL="https://swift-yyc.cloud.cybera.ca:8080/v1/AUTH_2b86ecd5b18f4fafb1d55adb79072def"
+OS_PROJECT_NAME="SMACK"
+OS_ZONE="Nova"
+OS_REGION="Calgary"
+STORAGE_ACCT="AUTH_4b6be558d44e4dba8fb6e4aa49934c0b"
+STORAGE_TOKEN="7eefd48208754002a2e03bf0de11c3e4"
+STORAGE_URL="https://swift-yyc.cloud.cybera.ca:8080/v1/AUTH_4b6be558d44e4dba8fb6e4aa49934c0b"
+JAVA_HOME=/usr/java/jdk1.8.0_40
+JRE_HOME=/usr/java/jdk1.8.0_40/jre
+PATH=/bin:/usr/bin:/usr/local/smack/bin:/usr/local/smack/cron/bin:/usr/local/bin
+5 */6 * * * /usr/local/smack/cron/bin/ret_nwp.sh
+25 */6 * * * /usr/local/smack/cron/bin/chk_nwp.sh
+45 */6 * * * /usr/local/smack/cron/bin/str_nwp.sh
+0 0 * * * /usr/local/smack/cron/bin/clr_nwp.sh
 EOF
 cat << EOF > $CRON_PATH/bin/ret_nwp.sh
 #!/bin/bash
@@ -261,6 +286,7 @@ rm -f "*\${nwp_ds}*.grib2"
 T="\$(date)"
 echo -e "\nclr_nwp.sh - run @ \${T}\n\tRemoved: \${fcnt} Files\n" >> $CRON_PATH/log/nwp-load.log
 EOF
+#crontab -u centos $CRON_PATH/nwp-load.cron
 echo -e "\nCRON SCHEDULING: COMPLETE" >> $SMACK_INSTALL_LOG
 cat << EOF >> $SMACK_DIR/smack-env.sh
 declare -r -x SMACK_DIR=/usr/local/smack

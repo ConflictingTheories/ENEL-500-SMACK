@@ -286,6 +286,7 @@ rm -f "*\${nwp_ds}*.grib2"
 T="\$(date)"
 echo -e "\nclr_nwp.sh - run @ \${T}\n\tRemoved: \${fcnt} Files\n" >> $CRON_PATH/log/nwp-load.log
 EOF
+#crontab -u centos $CRON_PATH/nwp-load.cron
 echo -e "\nCRON SCHEDULING: COMPLETE" >> $SMACK_INSTALL_LOG
 cat << EOF >> $SMACK_DIR/smack-env.sh
 declare -r -x SMACK_DIR=/usr/local/smack
