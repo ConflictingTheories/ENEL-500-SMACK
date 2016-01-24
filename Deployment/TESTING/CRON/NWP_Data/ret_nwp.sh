@@ -22,12 +22,12 @@ declare -r nwp_srv="http://dd.weather.gc.ca/model_hrdps/west/grib2"
 # Readout Times
 declare -r -a nwp_tz=( "00" "06" "12" "18" )
 # Sections
-declare -r -a nwp_sec=( "000" "001" "002" "003" "004" "005" "006" \
-						"007" "008" "009" "010" "011" "012" "013" \
-						"014" "015" "016" "017" "018" "019" "020" \
-						"021" "022" "023" "024" "025" "026" "027" \
-						"028" "029" "030" "031" "032" "033" "034" \
-						"035" "036" "037" "038" "039" "040" "041" \
+declare -r -a nwp_sec=( "000" "001" "002" "003" "004" "005" "006" \\
+						"007" "008" "009" "010" "011" "012" "013" \\
+						"014" "015" "016" "017" "018" "019" "020" \\
+						"021" "022" "023" "024" "025" "026" "027" \\
+						"028" "029" "030" "031" "032" "033" "034" \\
+						"035" "036" "037" "038" "039" "040" "041" \\
 						"042" "043" "044" "045" "046" "047" "048")
 # File Prefix
 declare -r nwp_pre="CMC_hrdps_west_"
@@ -36,21 +36,21 @@ declare -r nwp_suf="-00.grib2"
 # Date Stamp
 declare -r nwp_ds="\$(date +%Y%m%d)"
 # Wind Variables
-declare -r -a nwp_var=( "WIND_ISBL_0050_ps2.5km_" "WIND_ISBL_0100_ps2.5km_" \
-						"WIND_ISBL_0150_ps2.5km_" "WIND_ISBL_0175_ps2.5km_" \
-						"WIND_ISBL_0200_ps2.5km_" "WIND_ISBL_0225_ps2.5km_" \
-						"WIND_ISBL_0250_ps2.5km_" "WIND_ISBL_0275_ps2.5km_" \
-						"WIND_ISBL_0300_ps2.5km_" "WIND_ISBL_0350_ps2.5km_" \
-						"WIND_ISBL_0400_ps2.5km_" "WIND_ISBL_0450_ps2.5km_" \
-						"WIND_ISBL_0500_ps2.5km_" "WIND_ISBL_0550_ps2.5km_" \
-						"WIND_ISBL_0600_ps2.5km_" "WIND_ISBL_0650_ps2.5km_" \
-						"WIND_ISBL_0700_ps2.5km_" "WIND_ISBL_0750_ps2.5km_" \
-						"WIND_ISBL_0800_ps2.5km_" "WIND_ISBL_0850_ps2.5km_" \
-						"WIND_ISBL_0875_ps2.5km_" "WIND_ISBL_0900_ps2.5km_" \
-						"WIND_ISBL_0925_ps2.5km_" "WIND_ISBL_0950_ps2.5km_" \
-						"WIND_ISBL_0970_ps2.5km_" "WIND_ISBL_0985_ps2.5km_" \
-						"WIND_ISBL_1000_ps2.5km_" "WIND_ISBL_1015_ps2.5km_" \
-						"WIND_TGL_10_ps2.5km_" "WIND_TGL_40_ps2.5km_" \
+declare -r -a nwp_var=( "WIND_ISBL_0050_ps2.5km_" "WIND_ISBL_0100_ps2.5km_" \\
+						"WIND_ISBL_0150_ps2.5km_" "WIND_ISBL_0175_ps2.5km_" \\
+						"WIND_ISBL_0200_ps2.5km_" "WIND_ISBL_0225_ps2.5km_" \\
+						"WIND_ISBL_0250_ps2.5km_" "WIND_ISBL_0275_ps2.5km_" \\
+						"WIND_ISBL_0300_ps2.5km_" "WIND_ISBL_0350_ps2.5km_" \\
+						"WIND_ISBL_0400_ps2.5km_" "WIND_ISBL_0450_ps2.5km_" \\
+						"WIND_ISBL_0500_ps2.5km_" "WIND_ISBL_0550_ps2.5km_" \\
+						"WIND_ISBL_0600_ps2.5km_" "WIND_ISBL_0650_ps2.5km_" \\
+						"WIND_ISBL_0700_ps2.5km_" "WIND_ISBL_0750_ps2.5km_" \\
+						"WIND_ISBL_0800_ps2.5km_" "WIND_ISBL_0850_ps2.5km_" \\
+						"WIND_ISBL_0875_ps2.5km_" "WIND_ISBL_0900_ps2.5km_" \\
+						"WIND_ISBL_0925_ps2.5km_" "WIND_ISBL_0950_ps2.5km_" \\
+						"WIND_ISBL_0970_ps2.5km_" "WIND_ISBL_0985_ps2.5km_" \\
+						"WIND_ISBL_1000_ps2.5km_" "WIND_ISBL_1015_ps2.5km_" \\
+						"WIND_TGL_10_ps2.5km_" "WIND_TGL_40_ps2.5km_" \\
 						"WIND_TGL_80_ps2.5km_" "WIND_TGL_120_ps2.5km_")
 # File Counter
 declare -i fcnt=0
