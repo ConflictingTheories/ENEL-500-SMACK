@@ -47,8 +47,6 @@
 
 # SMACK ENERGY FORECASTING - ENVIRONMENT VARIABLES
 #-------------------------------------------------
-# OPENSTACK ENVIRONMENT
-# URLs for API Access (may need to change)
 declare -x KEYSTONE_URL="https://keystone-yyc.cloud.cybera.ca:5000/v2.0"
 declare -x NOVA_URL="https://nova-yyc.cloud.cybera.ca:8774/v2/2b86ecd5b18f4fafb1d55adb79072def"
 declare -x CINDER_URL="https://cinder-yyc.cloud.cybera.ca:8776/v1/2b86ecd5b18f4fafb1d55adb79072def"
@@ -79,9 +77,9 @@ declare -r -x SHINY_SRV=/srv/shiny-server
 # API SERVER ROOT
 declare -r -x API_SRV=/srv/api-server
 # EXECUTABLE PATH
-export PATH=\${PATH}:\${SMACK_DIR_BIN}
-export PATH=\${PATH}:\${JAVA_HOME}/bin
-export PATH=\${PATH}:/usr/local/bin
+export PATH=${PATH}:${SMACK_DIR_BIN}
+export PATH=${PATH}:${JAVA_HOME}/bin
+export PATH=${PATH}:/usr/local/bin
 # Log Reporting
 echo -e "\n### INSTALL BEGINNING ###" >> $SMACK_INSTALL_LOG
 echo -e "\n### DECLARATIONS: COMPLETE" >> $SMACK_INSTALL_LOG

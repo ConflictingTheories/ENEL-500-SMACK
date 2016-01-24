@@ -22,9 +22,9 @@ declare -r -x SMACK_INSTALL_LOG=/usr/local/smack/log/install_log
 declare -r -x CRON_PATH=/usr/local/smack/cron
 declare -r -x SHINY_SRV=/srv/shiny-server
 declare -r -x API_SRV=/srv/api-server
-export PATH=\${PATH}:\${SMACK_DIR_BIN}
-export PATH=\${PATH}:\${JAVA_HOME}/bin
-export PATH=\${PATH}:/usr/local/bin
+export PATH=${PATH}:${SMACK_DIR_BIN}
+export PATH=${PATH}:${JAVA_HOME}/bin
+export PATH=${PATH}:/usr/local/bin
 echo -e "\n### INSTALL BEGINNING ###" >> $SMACK_INSTALL_LOG
 echo -e "\n### DECLARATIONS: COMPLETE" >> $SMACK_INSTALL_LOG
 mkdir ${SMACK_DIR}
