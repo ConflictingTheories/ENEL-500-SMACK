@@ -22,9 +22,9 @@ declare -r -x SMACK_INSTALL_LOG=/usr/local/smack/log/install_log
 declare -r -x CRON_PATH=/usr/local/smack/cron
 declare -r -x SHINY_SRV=/srv/shiny-server
 declare -r -x API_SRV=/srv/api-server
-export PATH=${PATH}:${SMACK_DIR_BIN}
-export PATH=${PATH}:${JAVA_HOME}/bin
-export PATH=${PATH}:/usr/local/bin
+export PATH=\${PATH}:\${SMACK_DIR_BIN}
+export PATH=\${PATH}:\${JAVA_HOME}/bin
+export PATH=\${PATH}:/usr/local/bin
 echo -e "\n### INSTALL BEGINNING ###" >> $SMACK_INSTALL_LOG
 echo -e "\n### DECLARATIONS: COMPLETE" >> $SMACK_INSTALL_LOG
 mkdir ${SMACK_DIR}
@@ -97,38 +97,6 @@ R -e "install.packages('shinydashboard', repos='http://cran.stat.sfu.ca/')"
 R -e "install.packages('devtools', repos='http://cran.stat.sfu.ca/')"
 R -e "install.packages('ggplot2', repos='http://cran.stat.sfu.ca/')"
 R -e "install.packages('dplyr', repos='http://cran.stat.sfu.ca/')"
-mkdir /tmp/shiny
-cd /tmp/shiny
-wget "https://download3.rstudio.org/centos5.9/x86_64/shiny-server-1.4.1.759-rh5-x86_64.rpm"
-yum -y install --nogpgcheck shiny-server-1.4.1.759-rh5-x86_64.rpm
-mv /etc/shiny-server/shiny-server.conf /etc/shiny-server/shiny-server.conf.bak
-cat /etc/shiny-server/shiny-server.conf.bak | sed 's/3838/80/g' > /etc/shiny-server/shiny-server.conf
-cat << EOF > /srv/shiny-server/index.html
-<!DOCTYPE html>
-<html>
-<head>
-<title>SMACK Energy Forecasting</title>
-</head>
-<body>
-<h1> SMACK Energy Forecasting - * DRAFT * </h1>
-<br/>
-<h2> This page was loaded using the SMACK Deployment Method! </h2>
-<br/>
-<h3> Please select from the available demos: </h3>
-<ul>
-<li><a href="/sample-apps/hello">Hello</a></li>
-<li><a href="/demo">Simple UI</a></li>
-<li><a href="/api_demo">API Demo</a></li>
-</ul>
-<h2>Thank you for choosing SMACK!</h2>
-</body>
-</html>
-EOF
-echo -e "\nR AND SHINY SERVER: COMPLETE" >> $SMACK_INSTALL_LOG
-cd $API_SRV
-npm install express --save
-npm install request --save
-echo -e "\nAPI BACKEND: COMPLETE\n" >> $SMACK_INSTALL_LOG
 mkdir /tmp/java7
 cd /tmp/java7
 wget --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/7u79-b15/jdk-7u79-linux-x64.rpm"
@@ -154,113 +122,6 @@ JRE_HOME=$JAVA_HOME/jre
 cd /
 rm -rf /tmp/java8
 echo -e "\nJDK/JRE 7+8: COMPLETE" >> $SMACK_INSTALL_LOG
-cat << EOF > $SMACK_DIR/cron/nwp-load.cron
-source /usr/local/smack/smack-env.sh
-5 */6 * * * \${CRON_PATH}/bin/ret_nwp.sh
-25 */6 * * * \${CRON_PATH}/bin/chk_nwp.sh
-45 */6 * * * \${CRON_PATH}/bin/str_nwp.sh
-0 0 * * * \${CRON_PATH}/bin/clr_nwp.sh
-EOF
-cat << EOF > $CRON_PATH/bin/ret_nwp.sh
-#!/bin/bash
-source /usr/local/smack/smack-env.sh
-declare -r TMP_DIR="\${SMACK_DIR_TMP}/nwp-load"
-if ! [ -e "\${TMP_DIR}" ]; then
-	mkdir "\${TMP_DIR}"
-fi 
-cd "\${TMP_DIR}"
-declare -r nwp_srv="http://dd.weather.gc.ca/model_hrdps/west/grib2"
-declare -r -a nwp_tz=( "00" "06" "12" "18" )
-declare -r -a nwp_sec=( "000" "001" "002" "003" "004" "005" "006" \
-						"007" "008" "009" "010" "011" "012" "013" \
-						"014" "015" "016" "017" "018" "019" "020" \
-						"021" "022" "023" "024" "025" "026" "027" \
-						"028" "029" "030" "031" "032" "033" "034" \
-						"035" "036" "037" "038" "039" "040" "041" \
-						"042" "043" "044" "045" "046" "047" "048")
-declare -r nwp_pre="CMC_hrdps_west_"
-declare -r nwp_suf="-00.grib2"
-declare -r nwp_ds=$(date +%Y%m%d)
-declare -r -a nwp_var=( "WIND_ISBL_0050_ps2.5km_" "WIND_ISBL_0100_ps2.5km_" \
-						"WIND_ISBL_0150_ps2.5km_" "WIND_ISBL_0175_ps2.5km_" \
-						"WIND_ISBL_0200_ps2.5km_" "WIND_ISBL_0225_ps2.5km_" \
-						"WIND_ISBL_0250_ps2.5km_" "WIND_ISBL_0275_ps2.5km_" \
-						"WIND_ISBL_0300_ps2.5km_" "WIND_ISBL_0350_ps2.5km_" \
-						"WIND_ISBL_0400_ps2.5km_" "WIND_ISBL_0450_ps2.5km_" \
-						"WIND_ISBL_0500_ps2.5km_" "WIND_ISBL_0550_ps2.5km_" \
-						"WIND_ISBL_0600_ps2.5km_" "WIND_ISBL_0650_ps2.5km_" \
-						"WIND_ISBL_0700_ps2.5km_" "WIND_ISBL_0750_ps2.5km_" \
-						"WIND_ISBL_0800_ps2.5km_" "WIND_ISBL_0850_ps2.5km_" \
-						"WIND_ISBL_0875_ps2.5km_" "WIND_ISBL_0900_ps2.5km_" \
-						"WIND_ISBL_0925_ps2.5km_" "WIND_ISBL_0950_ps2.5km_" \
-						"WIND_ISBL_0970_ps2.5km_" "WIND_ISBL_0985_ps2.5km_" \
-						"WIND_ISBL_1000_ps2.5km_" "WIND_ISBL_1015_ps2.5km_" \
-						"WIND_TGL_10_ps2.5km_" "WIND_TGL_40_ps2.5km_" \
-						"WIND_TGL_80_ps2.5km_" "WIND_TGL_120_ps2.5km_")
-declare -i fcnt=0
-for a in \${nwp_tz[\@]}; do
-	for b in \${nwp_sec[\@]}; do
-		for c in \${nwp_var[\@]}; do
-			declare filename="\${nwp_pre}\${c}\${nwp_ds}\${a}_P\${b}\${nwp_suf}"
-			declare directory="/\${a}/\${b}/"
-			declare http_path="\${nwp_srv}\${directory}\${filename}"
-			curl -s -O "\${http_path}" > /dev/null
-			\(\(fcnt=\${fcnt}+1\)\)
-		done
-	done
-done
-T=`date`
-touch "\${CRON_PATH}/log/nwp-load.log"
-echo -e "\nret_nwp.sh - run @ \${T}\n\tRetreived: \${fcnt} Files" >> "\$CRON_PATH/log/nwp-load.log"
-EOF
-cat << EOF > $CRON_PATH/bin/chk_nwp.sh
-source /usr/local/smack/smack-env.sh
-declare -r TMP_DIR="\${SMACK_DIR_TMP}/nwp-load"
-if ! [ -e "\${TMP_DIR}" ]; then
-	mkdir "\${TMP_DIR}"
-fi 
-cd "\${TMP_DIR}"
-declare T=`date`
-echo -e "\chk_nwp.sh - run @ \${T}\n" >> "\${CRON_PATH}"/log/nwp-load.log
-EOF
-cat << EOF > $CRON_PATH/bin/str_nwp.sh
-source /usr/local/smack/smack-env.sh
-declare -r TMP_DIR="\${SMACK_DIR_TMP}/nwp-load"
-if ! [ -e "\${TMP_DIR}" ]; then
-	mkdir "\${TMP_DIR}"
-fi 
-cd "\${TMP_DIR}"
-declare -r nwp_ds="\$(date +%Y%m%d)"
-declare -r nwp_con="nwp"
-declare -r nwp_pse="grib2"
-if [ -z "$(smack-lsdb | grep \${nwp_con})" ]; then
-	smack-mkdb -c "\${nwp_con}" > /dev/null
-fi
-declare -i fcnt=0
-for filename in *\${nwp_ds}*.grib2; do
-	smack-put "\${STORAGE_URL}/\${nwp_con}/\${nwp_pse}/\${filename}"
-	\(\(fcnt=\${fcnt}+1\)\)
-done
-T=`date`
-echo -e "\nstr_nwp.sh - run @ \${T}\n\tStored: \${fcnt} Files\n" >> "\${CRON_PATH}/log/nwp-load.log"
-EOF
-cat << EOF > $CRON_PATH/bin/clr_nwp.sh
-#!/bin/bash
-source /usr/local/smack/smack-env.sh
-declare -r TMP_DIR="\${SMACK_DIR_TMP}/nwp-load"
-if ! [ -e "\${TMP_DIR}" ]; then
-	mkdir "\${TMP_DIR}"
-fi 
-cd "\${TMP_DIR}"
-declare -r nwp_ds="\$(date +%Y%m%d)"
-declare -a files="\$(ls *\${nwp_ds}*.grib2 2> /dev/null)"
-declare -i fcnt="\${\#files[\@]}";\(\(fcnt=\${fcnt}-1\)\)
-rm -f "*\${nwp_ds}*.grib2"
-T=`date`
-echo -e "\nclr_nwp.sh - run @ \${T}\n\tRemoved: \${fcnt} Files\n" >> $CRON_PATH/log/nwp-load.log
-EOF
-#crontab $CRON_PATH/nwp-load.cron
-echo -e "\nCRON SCHEDULING: COMPLETE" >> $SMACK_INSTALL_LOG
 cat << EOF >> $SMACK_DIR/smack-env.sh
 declare -r -x SMACK_DIR=/usr/local/smack
 declare -r -x SMACK_DIR_BIN=/usr/local/smack/bin
@@ -299,50 +160,6 @@ declare -x PATH=\${PATH}:\${SMACK_DIR_BIN}
 declare -x PATH=\${PATH}:\${JAVA_HOME}/bin
 declare -x PATH=\${PATH}:/usr/local/bin
 EOF
-mkdir $SHINY_SRV/demo
-cat << EOF > $SHINY_SRV/demo/app.R
-library(shiny)
-library(shinydashboard)
-ui <- dashboardPage(
-	dashboardHeader(title="SMACK Energy Forecasting"),
-	dashboardSidebar(
-		sidebarMenu(
-			menuItem("Overview", tabName="overview", icon=icon("dashboard")),
-			menuItem("Data", tabName="data", icon=icon("th")),
-			menuItem("Other", tabName="other")
-		)
-	),	
-	dashboardBody(
-		tabItems(
-			tabItem(tabName="overview",
-				h2("SMACK Overview")
-			),
-			tabItem(tabName="data",
-				h2("SMACK Data")
-			),
-			tabItem(tabName="other",
-				h2("SMACK Other")
-			)
-		)
-	)
-)
-server <- function(input, output) {}
-shinyApp(ui,server)
-EOF
-echo -e "\nSHINY DEMO: COMPLETE" >> $SMACK_INSTALL_LOG
-mkdir $SHINY_SRV/api_demo
-cat << EOF > $SHINY_SRV/api_demo/app.R
-library(shiny)
-library(shinydashboard)
-ui <- dashboardPage(
-	dashboardHeader(title="SMACK Energy Forecasting- API Demo"),
-	dashboardSidebar(),	
-	dashboardBody()
-)
-server <- function(input, output) {}
-shinyApp(ui,server)
-EOF
-echo -e "\nAPI DEMO: COMPLETE" >> $SMACK_INSTALL_LOG
 cat << EOT >> /etc/bashrc
 source /usr/local/smack/smack-env.sh
 figlet -c SMACK Energy Forecasting
