@@ -1,16 +1,19 @@
-"""Final Power Prediction Demo (final_ppd.py)"""
+"""Final Power Prediction Demo with csv (final_ppd_online.py)"""
 #import all required libraries
 
+import json
 import csv
 import StringIO
 
 from pyspark.mllib.regression import LabeledPoint, LinearRegressionWithSGD, LinearRegressionModel
 
-#set up spark context
+#set up spark context and sql context for structured dataframe from json
 from pyspark import SparkConf, SparkContext
+from pyspark.sql import SQLContext
 
-conf = SparkConf().setMaster("local[2]").setAppName("ppd.py") #use 2 cores
+conf = SparkConf().setMaster("local[2]").setAppName("final_ppd_online.py") #use 2 cores
 sc = SparkContext(conf = conf)
+sqlContext = SQLContext(sc)
 
 #Functions to Load the data
 
@@ -116,14 +119,38 @@ def load_wind_dir_80(fileNameContents):
         i = i + 1
     return wdir_80
 
-#create RDDs 
+#Load data and create dataframe (df) from sample json file
+NWP_df = sqlContext.read.json("json/00_NWP_Sample_snip.json")
+print "Data information:\n"
+NWP_df.printSchema()
+
+#create RDDs and dataframes
+print "Loading wind speed at 10/40/80 m in m/s:\n"
+v_10_df = NWP_df.select("WIND_TGL_10")
+v_10_df.show()
 v_10_RDD = sc.wholeTextFiles("csv/00_NWP_Sample.csv").flatMap(load_wind_speed_10)
+
+v_40_df = NWP_df.select("WIND_TGL_40")
+v_40_df.show()
+v_40_RDD = sc.wholeTextFiles("csv/00_NWP_Sample.csv").flatMap(load_wind_speed_40)
+
+v_80_df = NWP_df.select("WIND_TGL_80")
+v_80_df.show()
+v_80_RDD = sc.wholeTextFiles("csv/00_NWP_Sample.csv").flatMap(load_wind_speed_80)
+
+
+print "Loading wind direction at 10/40/80 m relative to i,j comp of grid:\n"
+
+wdir_10_df = NWP_df.select("WDIR_TGL_10")
+wdir_10_df.show()
 wdir_10_RDD = sc.wholeTextFiles("csv/00_NWP_Sample.csv").flatMap(load_wind_dir_10)
 
-v_40_RDD = sc.wholeTextFiles("csv/00_NWP_Sample.csv").flatMap(load_wind_speed_40)
+wdir_40_df = NWP_df.select("WDIR_TGL_40")
+wdir_40_df.show()
 wdir_40_RDD = sc.wholeTextFiles("csv/00_NWP_Sample.csv").flatMap(load_wind_dir_40)
 
-v_80_RDD = sc.wholeTextFiles("csv/00_NWP_Sample.csv").flatMap(load_wind_speed_80)
+wdir_80_df = NWP_df.select("WDIR_TGL_80")
+wdir_80_df.show()
 wdir_80_RDD = sc.wholeTextFiles("csv/00_NWP_Sample.csv").flatMap(load_wind_dir_80)
 
 #Create RDDs for data to be parsed
@@ -131,13 +158,10 @@ data_10_40_v = v_10_RDD.zip(v_40_RDD) #speed at 10/40m
 
 data = data_10_40_v.zip(v_80_RDD).cache() #speed at 10/40/80m
 
-#Display a sample of data that will be analyzed
+#Display size of entire data set
 data_array = data.collect()
-print "\nTitle for wind speed " + str(data_array[0]) + " \nat 10/40/80m"
-print "The dataset is " + str(data_array[1]) + " at the first row for the speed \nat 10/40/80m"
-print "The dataset is " + str(data_array[2]) + " for the second row for the speed at 10/40/80m\n"
-
 print "The length of the entire dataset is " + str(len(data_array))
+print "Running power prediction calculations..."
 
 #function to parsedata
 def parsePoint(line):       #dir and speed 10/40

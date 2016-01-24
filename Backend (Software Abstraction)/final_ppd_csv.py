@@ -1,4 +1,4 @@
-"""Final Power Prediction Demo (final_ppd.py)"""
+"""Final Power Prediction Demo with csv (final_ppd_csv.py)"""
 #import all required libraries
 
 import csv
@@ -9,7 +9,7 @@ from pyspark.mllib.regression import LabeledPoint, LinearRegressionWithSGD, Line
 #set up spark context
 from pyspark import SparkConf, SparkContext
 
-conf = SparkConf().setMaster("local[2]").setAppName("ppd.py") #use 2 cores
+conf = SparkConf().setMaster("local[2]").setAppName("final_ppd_csv.py") #use 2 cores
 sc = SparkContext(conf = conf)
 
 #Functions to Load the data
