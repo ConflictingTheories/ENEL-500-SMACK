@@ -1,3 +1,4 @@
+#!/bin/bash
 # SMACK ENERGY FORECASTING - ENVIRONMENT VARIABLES
 #-------------------------------------------------
 #
