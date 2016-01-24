@@ -1227,13 +1227,13 @@ EOF
 #-----------------------------------
 # SMACK Directory
 chmod 777 $SMACK_DIR_BIN
-chmod 700 $SMACK_DIR/skel
-chmod 700 $SMACK_DIR_LOG/*
+chmod 777 $SMACK_DIR/skel
+chmod 777 $SMACK_DIR_LOG
 chmod 777 $SMACK_DIR_TMP
 chmod +x $SMACK_DIR_BIN/*
 # CRON Directory
-chmod 755 $CRON_PATH/bin
-chmod 700 $CRON_PATH/log/*
+chmod 777 $CRON_PATH/bin
+chmod 777 $CRON_PATH/log
 chmod +x $CRON_PATH/bin/*
 # Log Reporting
 echo -e "\nPERMISSIONS: COMPLETE" >> $SMACK_INSTALL_LOG
