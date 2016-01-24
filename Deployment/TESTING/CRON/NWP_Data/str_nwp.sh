@@ -22,7 +22,7 @@ declare -r nwp_con="nwp"
 # Pseudo-container
 declare -r nwp_pse="grib2"
 # Create Container if Non-existent
-if [ -z "$(smack-lsdb | grep \${nwp_con})" ]; then
+if [ -z "\$(smack-lsdb | grep \${nwp_con})" ]; then
 	smack-mkdb -c "\${nwp_con}" > /dev/null
 fi
 declare -i fcnt=0
@@ -30,7 +30,7 @@ declare -i fcnt=0
 for filename in *\${nwp_ds}*.grib2; do
 	smack-put "\${STORAGE_URL}/\${nwp_con}/\${nwp_pse}/\${filename}"
 	# Count # of Uploads
-	\(\(fcnt=\${fcnt}+1\)\)
+	((fcnt=\${fcnt}+1))
 done
 # Log Recording
 declare T="\$(date)"

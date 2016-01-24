@@ -34,7 +34,7 @@ declare -r nwp_pre="CMC_hrdps_west_"
 # File Suffix
 declare -r nwp_suf="-00.grib2"
 # Date Stamp
-declare -r nwp_ds=$(date +%Y%m%d)
+declare -r nwp_ds="\$(date +%Y%m%d)"
 # Wind Variables
 declare -r -a nwp_var=( "WIND_ISBL_0050_ps2.5km_" "WIND_ISBL_0100_ps2.5km_" \
 						"WIND_ISBL_0150_ps2.5km_" "WIND_ISBL_0175_ps2.5km_" \
@@ -56,11 +56,11 @@ declare -r -a nwp_var=( "WIND_ISBL_0050_ps2.5km_" "WIND_ISBL_0100_ps2.5km_" \
 declare -i fcnt=0
 # Loop through all file and Retrieve
 # Time Zones
-for a in \${nwp_tz[\@]}; do
+for a in \${nwp_tz[@]}; do
 	# sections
-	for b in \${nwp_sec[\@]}; do
+	for b in \${nwp_sec[@]}; do
 		# variables
-		for c in \${nwp_var[\@]}; do
+		for c in \${nwp_var[@]}; do
 			# Generate Proper File Name
 			declare filename="\${nwp_pre}\${c}\${nwp_ds}\${a}_P\${b}\${nwp_suf}"
 			# Generate Directory
@@ -71,11 +71,11 @@ for a in \${nwp_tz[\@]}; do
 			#echo -e "Downloading: ${http_path}\n"
 			curl -s -O "\${http_path}" > /dev/null
 			# Count # of Uploads
-			\(\(fcnt=\${fcnt}+1\)\)
+			((fcnt=\${fcnt}+1))
 		done
 	done
 done
 # Log Run into History
-T=`date`
+T="\$(date)"
 touch "\${CRON_PATH}/log/nwp-load.log"
 echo -e "\nret_nwp.sh - run @ \${T}\n\tRetreived: \${fcnt} Files" >> "\$CRON_PATH/log/nwp-load.log"

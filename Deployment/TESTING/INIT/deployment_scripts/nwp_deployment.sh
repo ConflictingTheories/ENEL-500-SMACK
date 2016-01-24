@@ -79,9 +79,9 @@ declare -r -x SHINY_SRV=/srv/shiny-server
 # API SERVER ROOT
 declare -r -x API_SRV=/srv/api-server
 # EXECUTABLE PATH
-export PATH=\${PATH}:\${SMACK_DIR_BIN}
-export PATH=\${PATH}:\${JAVA_HOME}/bin
-export PATH=\${PATH}:/usr/local/bin
+export PATH=${PATH}:${SMACK_DIR_BIN}
+export PATH=${PATH}:${JAVA_HOME}/bin
+export PATH=${PATH}:/usr/local/bin
 # Log Reporting
 echo -e "\n### INSTALL BEGINNING ###" >> $SMACK_INSTALL_LOG
 echo -e "\n### DECLARATIONS: COMPLETE" >> $SMACK_INSTALL_LOG
@@ -1226,13 +1226,13 @@ EOF
 #-----------------------------------
 # SMACK Directory
 chmod 777 $SMACK_DIR_BIN
-chmod 700 $SMACK_DIR/skel
-chmod 700 $SMACK_DIR_LOG/*
+chmod 777 $SMACK_DIR/skel
+chmod 777 $SMACK_DIR_LOG
 chmod 777 $SMACK_DIR_TMP
 chmod +x $SMACK_DIR_BIN/*
 # CRON Directory
-chmod 755 $CRON_PATH/bin
-chmod 700 $CRON_PATH/log/*
+chmod 777 $CRON_PATH/bin
+chmod 777 $CRON_PATH/log
 chmod +x $CRON_PATH/bin/*
 # Log Reporting
 echo -e "\nPERMISSIONS: COMPLETE" >> $SMACK_INSTALL_LOG

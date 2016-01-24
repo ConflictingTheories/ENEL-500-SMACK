@@ -18,8 +18,8 @@ cd "\${TMP_DIR}"
 declare -r nwp_ds="\$(date +%Y%m%d)"
 # Remove all Today's Files
 declare -a files="\$(ls *\${nwp_ds}*.grib2 2> /dev/null)"
-declare -i fcnt="\${\#files[\@]}";\(\(fcnt=\${fcnt}-1\)\)
+declare -i fcnt="\${\#files[\@]}";((fcnt=\${fcnt}-1))
 rm -f "*\${nwp_ds}*.grib2"
 # Logging
-T=`date`
+T="\$(date)"
 echo -e "\nclr_nwp.sh - run @ \${T}\n\tRemoved: \${fcnt} Files\n" >> $CRON_PATH/log/nwp-load.log
