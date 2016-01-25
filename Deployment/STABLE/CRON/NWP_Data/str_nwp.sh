@@ -30,7 +30,7 @@ fi
 declare -i fcnt=0
 # Loop through each file and Upload:
 for filename in *\${nwp_ds}*.grib2; do
-	smack-upload -c "\${nwp_con}" -o "\${nwp_pse}/\${filename}" -f "\${filename}" > /dev/null
+	smack-upload -c "\${nwp_con}" -o "\${nwp_pse}/\${filename}" -f "\${filename}" > /dev/null &
 	# Count # of Uploads
 	((fcnt=\${fcnt}+1))
 done
