@@ -1,4 +1,5 @@
 #!/bin/bash
+# SMACK -  Make Upload Utility
 # Display Message
 figlet -c SMACK Energy Forecasting
 figlet -cf digital Object Storage Upload Wizard
@@ -31,12 +32,14 @@ fi
 # -a Set
 if [ "\${ALL}" == "TRUE" ]; then
 	# Loop Through all files in directory and upload
+	echo -e "Function Not Implemented Yet"
 	exit
 fi
 
 # -e Set
 if ! [ -z "\${EXT}" ]; then
 	# Upload all files of extension passed
+	echo -e "Function Not Implemented Yet"
 	exit
 fi
 
@@ -53,5 +56,6 @@ if [ -z "\${NAME}" ]; then
 	read -p "Please Enter a name for the object: " NAME
 fi
 echo -e "\nUploading \${FILE} into container \${CONTAINER}...\n"
-swift upload --object-name "\${NAME}" $CONTAINER "\${FILE}"
+# TYPE I
+swift upload --object-name "\${NAME}" "\${CONTAINER}" "\${FILE}" 2> /dev/null
 echo -e "\nUploading Object \${NAME} Complete.\n" 

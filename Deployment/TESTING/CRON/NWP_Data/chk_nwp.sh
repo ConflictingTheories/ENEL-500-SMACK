@@ -5,9 +5,10 @@
 #			-  Data Checking Script - NWP -
 #--------------------------------------------------------
 # Declare Environment Definitions
+shopt -s expand_aliases
 source /usr/local/smack/smack-env.sh
 # Temporary Working Directory
-declare -r TMP_DIR="\${SMACK_DIR_TMP}/nwp-load"
+declare TMP_DIR="\${SMACK_DIR_TMP}/nwp-load"
 # Check for Existence
 if ! [ -e "\${TMP_DIR}" ]; then
 	mkdir "\${TMP_DIR}"
@@ -21,5 +22,6 @@ cd "\${TMP_DIR}"
 #	* Check off any missing
 #	* Download missing variables
 #
-declare T="\$(date)"
-echo -e "\chk_nwp.sh - run @ \${T}\n" >> "\${CRON_PATH}"/log/nwp-load.log
+T="\$(date)"
+echo -e "\chk_nwp.sh - run @ \${T}\n" >> "\${CRON_PATH}/log/nwp-load.log"
+smack-logout > /dev/null

@@ -47,5 +47,6 @@ if [ -z "\${OBJECT}" ]; then
 fi
 
 echo -e "Downloading \${OBJECT} from \${CONTAINER}..."
+# TYPE I
 swift download "\${CONTAINER}" "\${OBJECT}"
 echo -e "Downloading \${OBJECT} Complete."

@@ -14,7 +14,7 @@ while getopts c:h option
 do
         case "\${option}"
         in
-                c) CONTAINER=\${OPTARG};;
+                c) CONTAINER="\${OPTARG}";;
                 h) HELP="TRUE";;
         esac
 done
@@ -30,9 +30,7 @@ if [ -z "\${CONTAINER}" ]; then
         echo -e "\nWelcome to the Container Creation Wizard.\n\tTo create a container please follow the instructions.\n\nCurrent Containers:\n"
         swift list 2> /dev/null
         read -p "Enter name of container you wish to create: " CONTAINER
-        swift post "\${CONTAINER}" 2> /dev/null
-        echo -e "\nContainer Successfully Created"
-else
-        swift post "\${CONTAINER}" 2> /dev/null
-        exit
 fi
+# TYPE I    
+swift post "\${CONTAINER}" 2> /dev/null
+echo -e "\nContainer Successfully Created"
