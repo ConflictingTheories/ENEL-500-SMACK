@@ -23,7 +23,7 @@ declare nwp_con="nwp"
 # Pseudo-container
 declare nwp_pse="grib2"
 # Create Container if Non-existent
-if [ "\$(smack-lsdb 2> /dev/null | grep \${nwp_con})" != "\${nwp_con}" ]; then
+if ! [ "\$(smack-lsdb -l 2> /dev/null | grep \${nwp_con})" == "\${nwp_con}" ]; then
 	smack-mkdb -c "\${nwp_con}" > /dev/null
 fi
 declare -i fcnt=0

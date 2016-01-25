@@ -258,7 +258,7 @@ cd "\${TMP_DIR}"
 declare nwp_ds="\$(date +%Y%m%d)"
 declare nwp_con="nwp"
 declare nwp_pse="grib2"
-if [ "\$(smack-lsdb 2> /dev/null | grep \${nwp_con})" != "\${nwp_con}" ]; then
+if [ "\$(smack-lsdb -l 2> /dev/null | grep \${nwp_con})" != "\${nwp_con}" ]; then
 	smack-mkdb -c "\${nwp_con}" > /dev/null
 fi
 declare -i fcnt=0
