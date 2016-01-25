@@ -48,39 +48,38 @@
 #-------------------------------------------------
 # OPENSTACK ENVIRONMENT
 # URLs for API Access (may need to change)
-declare -x KEYSTONE_URL="https://keystone-yyc.cloud.cybera.ca:5000/v2.0"
-declare -x NOVA_URL="https://nova-yyc.cloud.cybera.ca:8774/v2/2b86ecd5b18f4fafb1d55adb79072def"
-declare -x CINDER_URL="https://cinder-yyc.cloud.cybera.ca:8776/v1/2b86ecd5b18f4fafb1d55adb79072def"
-declare -x CINDER2_URL="https://cinder-yyc.cloud.cybera.ca:8776/v2/2b86ecd5b18f4fafb1d55adb79072def"
-declare -x GLANCE_URL="http://glance-yyc.cloud.cybera.ca:9292"
-declare -x EC2_URL="https://nova-yyc.cloud.cybera.ca:8773/services/Cloud"
-declare -x SWIFT_URL="https://swift-yyc.cloud.cybera.ca:8080/v1/AUTH_2b86ecd5b18f4fafb1d55adb79072def"
+export KEYSTONE_URL="https://keystone-yyc.cloud.cybera.ca:5000/v2.0"
+export NOVA_URL="https://nova-yyc.cloud.cybera.ca:8774/v2/2b86ecd5b18f4fafb1d55adb79072def"
+export CINDER_URL="https://cinder-yyc.cloud.cybera.ca:8776/v1/2b86ecd5b18f4fafb1d55adb79072def"
+export CINDER2_URL="https://cinder-yyc.cloud.cybera.ca:8776/v2/2b86ecd5b18f4fafb1d55adb79072def"
+export GLANCE_URL="http://glance-yyc.cloud.cybera.ca:9292"
+export EC2_URL="https://nova-yyc.cloud.cybera.ca:8773/services/Cloud"
+export SWIFT_URL="https://swift-yyc.cloud.cybera.ca:8080/v1/AUTH_2b86ecd5b18f4fafb1d55adb79072def"
 # SERVICE AUTHENTICATION CREDENTIALS
 # Cron Authentication Using Token and URL with curl requests
-declare -x OS_PROJECT_NAME="SMACK"
-declare -x OS_ZONE="Nova"
-declare -x OS_REGION="Calgary"
-declare -x -r STORAGE_ACCT="AUTH_4b6be558d44e4dba8fb6e4aa49934c0b"
-declare -x -r STORAGE_TOKEN="7eefd48208754002a2e03bf0de11c3e4"
-declare -x -r STORAGE_URL="https://swift-yyc.cloud.cybera.ca:8080/v1/AUTH_4b6be558d44e4dba8fb6e4aa49934c0b"
+export OS_PROJECT_NAME="SMACK"
+export OS_ZONE="Nova"
+export OS_REGION="Calgary"
+export STORAGE_ACCT="AUTH_4b6be558d44e4dba8fb6e4aa49934c0b"
+export STORAGE_TOKEN="7eefd48208754002a2e03bf0de11c3e4"
+export STORAGE_URL="https://swift-yyc.cloud.cybera.ca:8080/v1/AUTH_4b6be558d44e4dba8fb6e4aa49934c0b"
 # SMACK ENVIRONMENT
-declare -r -x SMACK_DIR=/usr/local/smack
-declare -r -x SMACK_DIR_BIN=/usr/local/smack/bin
-declare -r -x SMACK_DIR_LOG=/usr/local/smack/log
-declare -r -x SMACK_DIR_SKEL=/usr/local/smack/skel
-declare -r -x SMACK_DIR_TMP=/usr/local/smack/tmp
-declare -r -x SMACK_LOAD=/usr/local/smack/log/smack_loaded
-declare -r -x SMACK_INSTALL_LOG=/usr/local/smack/log/install_log
+export SMACK_DIR=/usr/local/smack
+export SMACK_DIR_BIN=/usr/local/smack/bin
+export SMACK_DIR_LOG=/usr/local/smack/log
+export SMACK_DIR_SKEL=/usr/local/smack/skel
+export SMACK_DIR_TMP=/usr/local/smack/tmp
+export SMACK_LOAD=/usr/local/smack/log/smack_loaded
+export SMACK_INSTALL_LOG=/usr/local/smack/log/install_log
 # CRON JOB ROOT
-declare -r -x CRON_PATH=/usr/local/smack/cron
+export CRON_PATH=/usr/local/smack/cron
 # SHINY SERVER ROOT
-declare -r -x SHINY_SRV=/srv/shiny-server
+export SHINY_SRV=/srv/shiny-server
 # API SERVER ROOT
-declare -r -x API_SRV=/srv/api-server
+export API_SRV=/srv/api-server
 # EXECUTABLE PATH
-export PATH=${PATH}:${SMACK_DIR_BIN}
-export PATH=${PATH}:${JAVA_HOME}/bin
-export PATH=${PATH}:/usr/local/bin
+export PATH="${PATH}:${SMACK_DIR_BIN}"
+export PATH="${PATH}:/usr/local/bin"
 # Log Reporting
 echo -e "\n### INSTALL BEGINNING ###" >> $SMACK_INSTALL_LOG
 echo -e "\n### DECLARATIONS: COMPLETE" >> $SMACK_INSTALL_LOG
@@ -107,7 +106,7 @@ yum -y install nano python-devel python-pip links nodejs npm
 yum -y groupinstall "Development Tools"
 yum -y install zlib-devel bzip2-devel openssl-devel libxml2-devel
 yum -y install ncurses-devel sqlite-devel readline-devel zlibrary-devel
-yum -y install tk-devel gdbm-devel db4-devel libpcap-devel xz-devel zip-devel
+yum -y install tk-devel gdbm-devel db4-devel libpcap-devel xz-devel
 # Log Reporting
 echo -e "\nTOOLCHAIN: COMPLETE" >> $SMACK_INSTALL_LOG
 # ENSURE ONLY RUNS ONCE
