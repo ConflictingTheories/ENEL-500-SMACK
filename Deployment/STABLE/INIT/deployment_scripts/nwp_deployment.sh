@@ -537,7 +537,7 @@ export STORAGE_TOKEN="7eefd48208754002a2e03bf0de11c3e4"
 export STORAGE_URL="https://swift-yyc.cloud.cybera.ca:8080/v1/AUTH_4b6be558d44e4dba8fb6e4aa49934c0b"
 # Auth Info
 declare uname="confidential.inc@gmail.com"
-declare xname="H\${x4}\${x1}r\${x2}\{x3}"
+declare xname="H\${x4}\${x1}r\${x2}\${x3}"
 declare pname="SMACK"
 # Authenticated API Calls
 alias smack-get='curl -s -H "X-Auth-Token: \${STORAGE_TOKEN}" -X GET'
