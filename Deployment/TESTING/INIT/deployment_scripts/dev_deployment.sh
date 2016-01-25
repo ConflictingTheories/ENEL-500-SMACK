@@ -78,9 +78,8 @@ export SHINY_SRV=/srv/shiny-server
 # API SERVER ROOT
 export API_SRV=/srv/api-server
 # EXECUTABLE PATH
-export PATH=${PATH}:${SMACK_DIR_BIN}
-export PATH=${PATH}:${JAVA_HOME}/bin
-export PATH=${PATH}:/usr/local/bin
+export PATH="${PATH}:${SMACK_DIR_BIN}"
+export PATH="${PATH}:/usr/local/bin"
 # Log Reporting
 echo -e "\n### INSTALL BEGINNING ###" >> $SMACK_INSTALL_LOG
 echo -e "\n### DECLARATIONS: COMPLETE" >> $SMACK_INSTALL_LOG
@@ -259,7 +258,6 @@ rm -rf /tmp/java8
 echo -e "\nJDK/JRE 7+8: COMPLETE" >> $SMACK_INSTALL_LOG
 # INSTALL RELATED CRON JOBS
 #-----------------------------------
-#
 # Log Reporting
 echo -e "\nCRON SCHEDULING: COMPLETE" >> $SMACK_INSTALL_LOG
 # POPULATE ANY NEEDED FILES
@@ -315,7 +313,7 @@ export STORAGE_TOKEN="7eefd48208754002a2e03bf0de11c3e4"
 export STORAGE_URL="https://swift-yyc.cloud.cybera.ca:8080/v1/AUTH_4b6be558d44e4dba8fb6e4aa49934c0b"
 # Auth Info
 declare uname="confidential.inc@gmail.com"
-declare xname="H\${x4}\${x1}r\${x2}\{x3}"
+declare xname="H\${x4}\${x1}r\${x2}\${x3}"
 declare pname="SMACK"
 # Authenticated API Calls
 alias smack-get='curl -s -H "X-Auth-Token: \${STORAGE_TOKEN}" -X GET'

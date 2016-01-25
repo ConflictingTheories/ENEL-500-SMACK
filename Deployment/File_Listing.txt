@@ -50,6 +50,9 @@ MAIN DIRECTORIES
 	CRON
 	----
 		CRON_PATH=$SMACK_DIR/cron
+		$CRON_PATH/log
+		$CRON_PATH/bin
+
 
 	SPARK
 	-----
@@ -70,8 +73,10 @@ DEPLOYMENT SCRIPTS
 
 	CLOUD-INIT SCRIPTS
 	------------------
-		devhost-setup.sh
-		setup-node.sh
+		nwp_deployment.sh
+		dev_deployment.sh
+		:----OLD--------------------:devhost-setup.sh
+		:----OLD--------------------:setup-node.sh
 
 
 	HEAT SCRIPTS
@@ -103,9 +108,9 @@ SYSTEM FILE CHANGES
 	----------------------
 		/etc/bashrc
 
-	PYTHON OPENSTACK ERROR SUPPRESSION
-	----------------------------------
-		/usr/local/lib/python2.7/site-packages/keystoneclient/service_catalog.py
+	SMACK ENVIRONMENT SCRIPT
+	------------------------
+		/usr/local/smack/smack-env.sh
 
 ------------------
 TOOL-CHAIN SCRIPTS
@@ -127,7 +132,7 @@ TOOL-CHAIN SCRIPTS
 		$SMACK_DIR_BIN/smack-lsdb
 		$SMACK_DIR_BIN/smack-upload
 		$SMACK_DIR_BIN/smack-download
-
+		$SMACK_DIR_BIN/smack-mkdb
 
 	SPARK JOBS
 	----------

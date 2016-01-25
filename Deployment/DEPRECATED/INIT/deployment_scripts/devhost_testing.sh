@@ -57,17 +57,20 @@
 # DIRECTORY AND FILE INFORMATION
 #-----------------------------------
 # SMACK
-SMACK_DIR=/usr/local/smack
-SMACK_DIR_BIN=/usr/local/smack/bin
-SMACK_DIR_LOG=/usr/local/smack/log
-SMACK_DIR_SKEL=/usr/local/smack/skel
-SMACK_DIR_TMP=/usr/local/smack/tmp
-SMACK_LOAD=$SMACK_DIR_LOG/smack_loaded
-SMACK_INSTALL_LOG=$SMACK_DIR_LOG/install_log
+declare SMACK_DIR=/usr/local/smack
+declare SMACK_DIR_BIN=/usr/local/smack/bin
+declare SMACK_DIR_LOG=/usr/local/smack/log
+declare SMACK_DIR_SKEL=/usr/local/smack/skel
+declare SMACK_DIR_TMP=/usr/local/smack/tmp
+# LOGS
+declare SMACK_LOAD=/usr/local/smack/log/smack_loaded
+declare SMACK_INSTALL_LOG=/usr/local/smack/log/install_log
+# CRON
+declare CRON_PATH=/usr/local/smack/cron
 # Shiny
-SHINY_SRV=/srv/shiny-server
+declare SHINY_SRV=/srv/shiny-server
 # API Server
-API_SRV=/srv/api-server
+declare API_SRV=/srv/api-server
 # Log Reporting
 echo -e "\n### INSTALL BEGINNING ###" >> $SMACK_INSTALL_LOG
 
@@ -153,33 +156,26 @@ echo -e "\nPIP 2.7/3.5: COMPLETE" >> $SMACK_INSTALL_LOG
 /usr/local/bin/pip2.7 install python-openstackclient
 /usr/local/bin/pip2.7 install python-swiftclient
 /usr/local/bin/pip2.7 install --upgrade setuptools
+/usr/local/bin/pip2.7 install numpy
+/usr/local/bin/pip2.7 install scipy
 # Adjust for warnings
 cd /usr/local/lib/python2.7/site-packages/keystoneclient/
-cp service_catalog.py _backup_service_catalog.py
-cat service_catalog.py | sed -e 's/import warnings/import warnings\nwarnings.filterwarning("ignore")/' > service_catalog.py
+cp service_catalog.py service_catalog.py.bak
+cat service_catalog.py | sed -r 's/import warnings/import warnings\nwarnings.filterwarning("ignore")/' > service_catalog.py
 # OPENSTACK TOOLS FOR PYTHON 3.5
 #-------------------------------------
 /usr/local/bin/pip3.5 install requests['security']
 /usr/local/bin/pip3.5 install python-openstackclient
 /usr/local/bin/pip3.5 install python-swiftclient
 /usr/local/bin/pip3.5 install --upgrade setuptools
+/usr/local/bin/pip3.5 install scipy
+/usr/local/bin/pip3.5 install numpy
 # Adjust for warnings
 cd /usr/local/lib/python3.5/site-packages/keystoneclient/
-cp service_catalog.py _backup_service_catalog.py
-cat service_catalog.py | sed -e 's/import warnings/import warnings\nwarnings.filterwarning("ignore")/' > service_catalog.py
-
+cp service_catalog.py service_catalog.py.bak
+cat service_catalog.py | sed -r 's/import warnings/import warnings\nwarnings.filterwarning("ignore")/' > service_catalog.py
 # Log Reporting
 echo -e "\nOPENSTACK CLIENTS: COMPLETE" >> $SMACK_INSTALL_LOG
-
-# INSTALL PYTHON LIBRARIES
-#-----------------------------------
-# numpy
-/usr/local/bin/pip2.7 install numpy
-/usr/local/bin/pip3.5 install numpy
-# scipy
-/usr/local/bin/pip2.7 install scipy
-/usr/local/bin/pip3.5 install scipy
-
 
 
 # INSTALL R FROM CRAN		- FOR WEBSERVER DEV
@@ -200,6 +196,7 @@ yum -y install --nogpgcheck shiny-server-1.4.1.759-rh5-x86_64.rpm
 # Set to Port 80
 mv /etc/shiny-server/shiny-server.conf /etc/shiny-server/shiny-server.conf.bak
 cat /etc/shiny-server/shiny-server.conf.bak | sed 's/3838/80/g' > /etc/shiny-server/shiny-server.conf
+
 # Web Server Index Page
 cat << EOF > /srv/shiny-server/index.html
 <!DOCTYPE html>
@@ -296,7 +293,6 @@ echo -e "\nJDK/JRE 7+8: COMPLETE" >> $SMACK_INSTALL_LOG
 
 # INSTALL RELATED CRON JOBS
 #-----------------------------------
-CRON_PATH=$SMACK_DIR/cron
 # Make CRON directory
 mkdir $CRON_PATH
 mkdir $CRON_PATH/bin

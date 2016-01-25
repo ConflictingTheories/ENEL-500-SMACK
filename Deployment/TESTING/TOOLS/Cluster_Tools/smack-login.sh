@@ -16,6 +16,7 @@ done
 # Help Message
 if [ "\${HELP}" == "TRUE" ]; then
 	echo -e "SMACK Login:\n\n\tUsage:\n\t\t-u\t:\tUsername\n\t\t-x\t:\tPassword\n\t\t-p\t:\tProject Name\n\t\t-h\t:\tHelp Message\n"
+	exit
 fi
 # Login and Set Variables
 if [ -z "\${UNAME}" ]; then

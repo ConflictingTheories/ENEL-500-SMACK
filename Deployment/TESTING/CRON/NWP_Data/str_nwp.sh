@@ -23,13 +23,14 @@ declare nwp_con="nwp"
 # Pseudo-container
 declare nwp_pse="grib2"
 # Create Container if Non-existent
-if [ "\$(smack-lsdb 2> /dev/null | grep \${nwp_con})" != "\${nwp_con}" ]; then
+if ! [ "\$(smack-lsdb -l 2> /dev/null | grep \${nwp_con})" == "\${nwp_con}" ]; then
 	smack-mkdb -c "\${nwp_con}" > /dev/null
 fi
+# Gather Current List of Objects
 declare -i fcnt=0
 # Loop through each file and Upload:
 for filename in *\${nwp_ds}*.grib2; do
-	smack-upload -c "\${nwp_con}" -o "\${nwp_pse}/\${filename}" -f "\${filename}"
+	smack-upload -c "\${nwp_con}" -o "\${nwp_pse}/\${filename}" -f "\${filename}" > /dev/null
 	# Count # of Uploads
 	((fcnt=\${fcnt}+1))
 done

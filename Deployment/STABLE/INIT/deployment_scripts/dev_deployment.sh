@@ -78,9 +78,8 @@ export SHINY_SRV=/srv/shiny-server
 # API SERVER ROOT
 export API_SRV=/srv/api-server
 # EXECUTABLE PATH
-export PATH=${PATH}:${SMACK_DIR_BIN}
-export PATH=${PATH}:${JAVA_HOME}/bin
-export PATH=${PATH}:/usr/local/bin
+export PATH="${PATH}:${SMACK_DIR_BIN}"
+export PATH="${PATH}:/usr/local/bin"
 # Log Reporting
 echo -e "\n### INSTALL BEGINNING ###" >> $SMACK_INSTALL_LOG
 echo -e "\n### DECLARATIONS: COMPLETE" >> $SMACK_INSTALL_LOG
@@ -259,7 +258,6 @@ rm -rf /tmp/java8
 echo -e "\nJDK/JRE 7+8: COMPLETE" >> $SMACK_INSTALL_LOG
 # INSTALL RELATED CRON JOBS
 #-----------------------------------
-#
 # Log Reporting
 echo -e "\nCRON SCHEDULING: COMPLETE" >> $SMACK_INSTALL_LOG
 # POPULATE ANY NEEDED FILES
