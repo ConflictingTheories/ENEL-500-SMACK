@@ -7,6 +7,20 @@ else
 	figlet -c SMACK Energy Forecasting
 fi
 
+while getopts n:f:k:x:i:dh option
+do
+        case "\${option}"
+        in
+                n) NAME="\${OPTARG}";;
+				f) FLAVOUR="\${OPTARG}";;
+				k) KEY="\${OPTARG}";;
+				x) SCRIPT="\${OPTARG}";;
+				i) IMAGE="\${OPTARG}";;
+				d) DEFUALT="TRUE";;
+				h) HELP="TRUE";;
+        esac
+done
+
 # Default Instance Information
 declare INT_NAME="default"
 declare INT_FLAVOR="m1.tiny"
@@ -16,16 +30,31 @@ declare INT_KEY="DevAccess"
 declare INT_SECURITY="Default"
 declare INT_SCRIPT=""
 
-# Boot and Launch Instance
-echo "For Defaults Just Press Enter at Prompt."
-echo -e "\tName (*default):"
-read NAME
-echo -e "\tFlavour (*m1.tiny):"
-read FLAVOUR
-echo -e "\tKey (*DevAccess):"
-read KEY
-echo -e "\tSetup Script (*setup-node.sh):"
-read SCRIPT
+if ! [ "\${HELP}" == "TRUE" ]; then
+	echo -e "\nSMACK LOGIN UTILTIY\n\tUsage:\n\t\t-n\tInstance Name\n\t\t-f\t\Flavour\n\t\t-k\tAccess Key\n\t\t-x\tDeployment Script\n\t\t-d\t\Use Default Values\n\t\t-h\tHelp Message\n"
+fi
+
+# use Wizard or Defaults
+if ! [ "\${DEFAULT}" == "TRUE"]; then
+	echo "For Defaults Just Press Enter at Prompt."
+	if [ -z "\${NAME}" ]; then
+		echo -e "\tName (*default):"
+		read NAME
+	fi
+	if [ -z "\${FLAVOUR}" ]; then
+		echo -e "\tFlavour (*m1.tiny):"
+		read FLAVOUR
+	fi
+	if [ -z "\${KEY}" ]; then
+		echo -e "\tKey (*DevAccess):"
+		read KEY
+	fi
+	if [ -z "\${SCRIPT}" ]; then
+		echo -e "\tSetup Script (*setup-node.sh):"
+		read SCRIPT
+	fi
+fi
+
 #  Check for new name and change if necessary
 if ! [ -z "\${NAME}" ]; then
 	INT_NAME="\${NAME}"
@@ -35,6 +64,9 @@ if ! [ -z "\${FLAVOUR}" ]; then
 fi
 if ! [ -z "\${KEY}" ]; then
 	INT_KEY="\${KEY}"
+fi
+if ! [ -z "\${IMAGE}" ]; then
+	INT_IMAGE="\${IMAGE}"
 fi
 if ! [ -z "\${SCRIPT}" ]; then
 	INT_SCRIPT="\${SCRIPT}"

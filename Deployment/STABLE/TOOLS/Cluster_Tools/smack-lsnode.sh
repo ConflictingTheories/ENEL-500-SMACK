@@ -13,5 +13,4 @@ nova --os-user-name "\${OS_USERNAME}" \\
       	--os-password "\${OS_PASSWORD}" \\
       	--os-region-name "\${OS_REGION}" \\
       	--os-auth-url "\${OS_AUTH_URL}" \\
-      	--os-auth-url "\${OS_AUTH_URL}" \\
       	list

@@ -5,9 +5,10 @@
 #			-  Data Storage Script - NWP -
 #--------------------------------------------------------
 # Declare Environment Definitions
+shopt -s expand_aliases
 source /usr/local/smack/smack-env.sh
 # Temporary Working Directory
-declare -r TMP_DIR="\${SMACK_DIR_TMP}/nwp-load"
+TMP_DIR="\${SMACK_DIR_TMP}/nwp-load"
 # Check for Existence
 if ! [ -e "\${TMP_DIR}" ]; then
 	mkdir "\${TMP_DIR}"
@@ -16,22 +17,23 @@ fi
 cd "\${TMP_DIR}"
 # VARIABLE DECLARATIONS
 # Date Stamp
-declare -r nwp_ds="\$(date +%Y%m%d)"
+declare nwp_ds="\$(date +%Y%m%d)"
 # Container
-declare -r nwp_con="nwp"
+declare nwp_con="nwp"
 # Pseudo-container
-declare -r nwp_pse="grib2"
+declare nwp_pse="grib2"
 # Create Container if Non-existent
-if [ -z "\$(smack-lsdb | grep \${nwp_con})" ]; then
+if [ "\$(smack-lsdb 2> /dev/null | grep \${nwp_con})" != "\${nwp_con}" ]; then
 	smack-mkdb -c "\${nwp_con}" > /dev/null
 fi
 declare -i fcnt=0
 # Loop through each file and Upload:
 for filename in *\${nwp_ds}*.grib2; do
-	smack-put "\${STORAGE_URL}/\${nwp_con}/\${nwp_pse}/\${filename}"
+	smack-upload -c "\${nwp_con}" -o "\${nwp_pse}/\${filename}" -f "\${filename}"
 	# Count # of Uploads
 	((fcnt=\${fcnt}+1))
 done
 # Log Recording
-declare T="\$(date)"
+T="\$(date)"
 echo -e "\nstr_nwp.sh - run @ \${T}\n\tStored: \${fcnt} Files\n" >> "\${CRON_PATH}/log/nwp-load.log"
+smack-logout > /dev/null
