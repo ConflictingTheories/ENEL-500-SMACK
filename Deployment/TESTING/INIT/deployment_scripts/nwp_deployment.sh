@@ -442,7 +442,7 @@ fi
 declare -i fcnt=0
 # Loop through each file and Upload:
 for filename in *\${nwp_ds}*.grib2; do
-	smack-upload -c "\${nwp_con}" -o "\${nwp_pse}/\${filename}" -f "\${filename}" > /dev/null
+	smack-upload -c "\${nwp_con}" -o "\${nwp_pse}/\${filename}" -f "\${filename}" > /dev/null &
 	# Count # of Uploads
 	((fcnt=\${fcnt}+1))
 done
@@ -473,9 +473,9 @@ cd "\${TMP_DIR}"
 # Date Stamp
 declare nwp_ds="\$(date +%Y%m%d)"
 # Remove all Today's Files
-declare -a files="\$(ls *\${nwp_ds}*.grib2 2> /dev/null)"
+declare -a files="(\$(ls *\${nwp_ds}*.grib2 2> /dev/null))"
 declare -i fcnt="\${#files[@]}";((fcnt=\${fcnt}-1))
-rm -f "*\${nwp_ds}*.grib2"
+rm -f *\${nwp_ds}*.grib2
 # Logging
 T="\$(date)"
 echo -e "\nclr_nwp.sh - run @ \${T}\n\tRemoved: \${fcnt} Files\n" >> "\${CRON_PATH}/log/nwp-load.log"
