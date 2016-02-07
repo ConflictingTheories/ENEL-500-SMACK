@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+	<property>
+		<name>fs.defaultFS</name>
+		<value>swift://hdfs.smack/</value>
+		<description>NameNode URI</description>
+	</property>
+	<property>
+		<name>fs.swift.blocksize</name>
+		<value>32768</value>
+	</property>
+	<property>
+		<name>fs.swift.partsize</name>
+		<value>512</value>
+		<description>upload every half MB</description>
+	</property>
+	<property>
+		<name>fs.swift.requestsize</name>
+		<value>128</value>
+	</property>
+	<property>
+		<name>fs.swift.connect.timeout</name>
+		<value>15000</value>
+	</property>
+	<property>
+		<name>fs.swift.socket.timeout</name>
+		<value>60000</value>
+	</property>
+	<property>
+		<name>fs.swift.connect.retry.count</name>
+		<value>4</value>
+	</property>
+	<property>
+		<name>fs.swift.connect.throttle.delay</name>
+		<value>0</value>
+	</property>
+	<property>
+		<name>fs.swift.service.smack.auth.url</name>
+		<value>https://swift-yyc.cloud.cybera.ca:8080/v1/AUTH_2b86ecd5b18f4fafb1d55adb79072def</value>
+		<description>SMACK - Storage URL</description>
+	</property>
+	<property>
+		<name>fs.swift.service.smack.project</name>
+		<value>SMACK</value>
+	</property>
+	<property>
+		<name>fs.swift.service.smack.username</name>
+		<value>confidential.inc@gmail.com</value>
+	</property>
+	<property>
+		<name>fs.swift.service.smack.password</name>
+		<value>Hacker0013</value>
+	</property>
+	<property>
+		<name>fs.swift.service.smack.public</name>
+		<value>true</value>
+	</property>
+</configuration>
