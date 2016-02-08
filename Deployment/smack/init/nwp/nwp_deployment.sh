@@ -66,7 +66,6 @@ export STORAGE_URL="https://swift-yyc.cloud.cybera.ca:8080/v1/AUTH_4b6be558d44e4
 # SMACK ENVIRONMENT
 export SMACK_DIR=/usr/local/smack
 export SMACK_DIR_BIN=/usr/local/smack/bin
-export SMACK_DIR_INIT=/usr/local/smack/init
 export SMACK_DIR_LOG=/usr/local/smack/log
 export SMACK_DIR_SKEL=/usr/local/smack/skel
 export SMACK_DIR_TMP=/usr/local/smack/tmp
@@ -89,7 +88,6 @@ echo -e "\n### DECLARATIONS: COMPLETE" >> $SMACK_INSTALL_LOG
 mkdir ${SMACK_DIR}
 mkdir ${SMACK_DIR_BIN}
 mkdir ${SMACK_DIR_LOG}
-mkdir ${SMACK_DIR_INIT}
 mkdir ${SMACK_DIR_SKEL}
 mkdir ${SMACK_DIR_TMP}
 mkdir ${CRON_PATH}
@@ -260,6 +258,231 @@ rm -rf /tmp/java8
 echo -e "\nJDK/JRE 7+8: COMPLETE" >> $SMACK_INSTALL_LOG
 # INSTALL RELATED CRON JOBS
 #-----------------------------------
+# NWP CRON JOB
+cat << EOF > $SMACK_DIR/cron/nwp-load.cron
+# Defintions environment for cron
+SMACK_DIR=/usr/local/smack
+SMACK_DIR_BIN=/usr/local/smack/bin
+SMACK_DIR_LOG=/usr/local/smack/log
+SMACK_DIR_SKEL=/usr/local/smack/skel
+SMACK_DIR_TMP=/usr/local/smack/tmp
+SMACK_LOAD=/usr/local/smack/log/smack_loaded
+SMACK_INSTALL_LOG=/usr/local/smack/log/install_log
+CRON_PATH=/usr/local/smack/cron
+SHINY_SRV=/srv/shiny-server
+API_SRV=/srv/api-server
+KEYSTONE_URL="https://keystone-yyc.cloud.cybera.ca:5000/v2.0"
+NOVA_URL="https://nova-yyc.cloud.cybera.ca:8774/v2/2b86ecd5b18f4fafb1d55adb79072def"
+CINDER_URL="https://cinder-yyc.cloud.cybera.ca:8776/v1/2b86ecd5b18f4fafb1d55adb79072def"
+CINDER2_URL="https://cinder-yyc.cloud.cybera.ca:8776/v2/2b86ecd5b18f4fafb1d55adb79072def"
+GLANCE_URL="http://glance-yyc.cloud.cybera.ca:9292"
+EC2_URL="https://nova-yyc.cloud.cybera.ca:8773/services/Cloud"
+SWIFT_URL="https://swift-yyc.cloud.cybera.ca:8080/v1/AUTH_2b86ecd5b18f4fafb1d55adb79072def"
+OS_PROJECT_NAME="SMACK"
+OS_ZONE="Nova"
+OS_REGION="Calgary"
+STORAGE_ACCT="AUTH_4b6be558d44e4dba8fb6e4aa49934c0b"
+STORAGE_TOKEN="7eefd48208754002a2e03bf0de11c3e4"
+STORAGE_URL="https://swift-yyc.cloud.cybera.ca:8080/v1/AUTH_4b6be558d44e4dba8fb6e4aa49934c0b"
+PATH=/bin:/usr/bin:/usr/local/smack/bin:/usr/local/smack/cron/bin:/usr/local/bin
+# Retrieve NWP Data (Every 6 Hours)
+5 */6 * * * /usr/local/smack/cron/bin/ret_nwp.sh
+# Check NWP Data (Every 6 Hours)
+25 */6 * * * /usr/local/smack/cron/bin/chk_nwp.sh
+# Store NWP Data (Every 6 Hours)
+45 */6 * * * /usr/local/smack/cron/bin/str_nwp.sh
+# Clear NWP Data (Daily)
+0 0 * * * /usr/local/smack/cron/bin/clr_nwp.sh
+EOF
+# Generate Related Cron Files
+cat << EOF > $CRON_PATH/bin/ret_nwp.sh
+#!/bin/bash
+#--------------------------------------------------------
+# 				SMACK ENERGY FORECASTING 
+#--------------------------------------------------------
+#			-  Data Retrieval Script - NWP -
+#--------------------------------------------------------
+# Declare Environment Definitions
+shopt -s expand_aliases
+source /usr/local/smack/smack-env.sh
+# Temporary Working Directory
+declare TMP_DIR="\${SMACK_DIR_TMP}/nwp-load"
+# Check for Existence
+if ! [ -e "\${TMP_DIR}" ]; then
+	mkdir "\${TMP_DIR}"
+fi 
+# Move into Tmp Directory
+cd "\${TMP_DIR}"
+# REMOTE SERVER INFORMATION
+# Server
+declare nwp_srv="http://dd.weather.gc.ca/model_hrdps/west/grib2"
+# Readout Times
+declare -a nwp_tz=( "00" "06" "12" "18" )
+# Sections
+declare -a nwp_sec=("000" "001" "002" "003" "004" "005" "006" \\
+					"007" "008" "009" "010" "011" "012" "013" \\
+					"014" "015" "016" "017" "018" "019" "020" \\
+					"021" "022" "023" "024" "025" "026" "027" \\
+					"028" "029" "030" "031" "032" "033" "034" \\
+					"035" "036" "037" "038" "039" "040" "041" \\
+					"042" "043" "044" "045" "046" "047" "048")
+# File Prefix
+declare nwp_pre="CMC_hrdps_west_"
+# File Suffix
+declare nwp_suf="-00.grib2"
+# Date Stamp
+declare nwp_ds="\$(date +%Y%m%d)"
+# Wind Variables
+declare -a nwp_var=("WIND_ISBL_0050_ps2.5km_" "WIND_ISBL_0100_ps2.5km_" \\
+					"WIND_ISBL_0150_ps2.5km_" "WIND_ISBL_0175_ps2.5km_" \\
+					"WIND_ISBL_0200_ps2.5km_" "WIND_ISBL_0225_ps2.5km_" \\
+					"WIND_ISBL_0250_ps2.5km_" "WIND_ISBL_0275_ps2.5km_" \\
+					"WIND_ISBL_0300_ps2.5km_" "WIND_ISBL_0350_ps2.5km_" \\
+					"WIND_ISBL_0400_ps2.5km_" "WIND_ISBL_0450_ps2.5km_" \\
+					"WIND_ISBL_0500_ps2.5km_" "WIND_ISBL_0550_ps2.5km_" \\
+					"WIND_ISBL_0600_ps2.5km_" "WIND_ISBL_0650_ps2.5km_" \\
+					"WIND_ISBL_0700_ps2.5km_" "WIND_ISBL_0750_ps2.5km_" \\
+					"WIND_ISBL_0800_ps2.5km_" "WIND_ISBL_0850_ps2.5km_" \\
+					"WIND_ISBL_0875_ps2.5km_" "WIND_ISBL_0900_ps2.5km_" \\
+					"WIND_ISBL_0925_ps2.5km_" "WIND_ISBL_0950_ps2.5km_" \\
+					"WIND_ISBL_0970_ps2.5km_" "WIND_ISBL_0985_ps2.5km_" \\
+					"WIND_ISBL_1000_ps2.5km_" "WIND_ISBL_1015_ps2.5km_" \\
+					"WIND_TGL_10_ps2.5km_" "WIND_TGL_40_ps2.5km_" \\
+					"WIND_TGL_80_ps2.5km_" "WIND_TGL_120_ps2.5km_")
+# File Counter
+declare -i fcnt=0
+# Loop through all file and Retrieve
+# Time Zones
+for a in \${nwp_tz[@]}; do
+	# sections
+	for b in \${nwp_sec[@]}; do
+		# variables
+		for c in \${nwp_var[@]}; do
+			# Generate Proper File Name
+			declare filename="\${nwp_pre}\${c}\${nwp_ds}\${a}_P\${b}\${nwp_suf}"
+			# Generate Directory
+			declare directory="/\${a}/\${b}/"
+			# Generate Full HTTP Path
+			declare http_path="\${nwp_srv}\${directory}\${filename}"
+			# Delare File downloading
+			#echo -e "Downloading: ${http_path}\n"
+			curl -s -O "\${http_path}" > /dev/null
+			# Count # of Uploads
+			((fcnt=\${fcnt}+1))
+		done
+	done
+done
+# Log Run into History
+T="\$(date)"
+touch "\${CRON_PATH}/log/nwp-load.log"
+echo -e "\nret_nwp.sh - run @ \${T}\n\tRetreived: \${fcnt} Files" >> "\$CRON_PATH/log/nwp-load.log"
+smack-logout > /dev/null
+EOF
+# Generate Related Cron Files
+cat << EOF > $CRON_PATH/bin/chk_nwp.sh
+#!/bin/bash
+#--------------------------------------------------------
+# 				SMACK ENERGY FORECASTING 
+#--------------------------------------------------------
+#			-  Data Checking Script - NWP -
+#--------------------------------------------------------
+# Declare Environment Definitions
+shopt -s expand_aliases
+source /usr/local/smack/smack-env.sh
+# Temporary Working Directory
+declare TMP_DIR="\${SMACK_DIR_TMP}/nwp-load"
+# Check for Existence
+if ! [ -e "\${TMP_DIR}" ]; then
+	mkdir "\${TMP_DIR}"
+fi 
+# Move into Tmp Directory
+cd "\${TMP_DIR}"
+# Begin Downloading Missed Files from NWP (For Recent Time)
+#
+# For all Variables that are missing download appropriate time
+#	* Check against known variables
+#	* Check off any missing
+#	* Download missing variables
+#
+T="\$(date)"
+echo -e "\chk_nwp.sh - run @ \${T}\n" >> "\${CRON_PATH}/log/nwp-load.log"
+smack-logout > /dev/null
+EOF
+# Generate Related Cron Files
+cat << EOF > $CRON_PATH/bin/str_nwp.sh
+#!/bin/bash
+#--------------------------------------------------------
+# 				SMACK ENERGY FORECASTING 
+#--------------------------------------------------------
+#			-  Data Storage Script - NWP -
+#--------------------------------------------------------
+# Declare Environment Definitions
+shopt -s expand_aliases
+source /usr/local/smack/smack-env.sh
+# Temporary Working Directory
+TMP_DIR="\${SMACK_DIR_TMP}/nwp-load"
+# Check for Existence
+if ! [ -e "\${TMP_DIR}" ]; then
+	mkdir "\${TMP_DIR}"
+fi 
+# Move into Tmp Directory
+cd "\${TMP_DIR}"
+# VARIABLE DECLARATIONS
+# Date Stamp
+declare nwp_ds="\$(date +%Y%m%d)"
+# Container
+declare nwp_con="nwp"
+# Pseudo-container
+declare nwp_pse="grib2"
+# Create Container if Non-existent
+if ! [ "\$(smack-lsdb -l 2> /dev/null | grep \${nwp_con})" == "\${nwp_con}" ]; then
+	smack-mkdb -c "\${nwp_con}" > /dev/null
+fi
+# Gather Current List of Objects
+declare -i fcnt=0
+# Loop through each file and Upload:
+for filename in *\${nwp_ds}*.grib2; do
+	smack-upload -c "\${nwp_con}" -o "\${nwp_pse}/\${filename}" -f "\${filename}" > /dev/null &
+	# Count # of Uploads
+	((fcnt=\${fcnt}+1))
+done
+# Log Recording
+T="\$(date)"
+echo -e "\nstr_nwp.sh - run @ \${T}\n\tStored: \${fcnt} Files\n" >> "\${CRON_PATH}/log/nwp-load.log"
+smack-logout > /dev/null
+EOF
+# Generate Related Cron Files
+cat << EOF > $CRON_PATH/bin/clr_nwp.sh
+#!/bin/bash
+#--------------------------------------------------------
+# 				SMACK ENERGY FORECASTING 
+#--------------------------------------------------------
+#			-  Data Clearing Script - NWP -
+#--------------------------------------------------------
+# Declare Environment Definitions
+shopt -s expand_aliases
+source /usr/local/smack/smack-env.sh
+# Temporary Working Directory
+declare TMP_DIR="\${SMACK_DIR_TMP}/nwp-load"
+# Check for Existence
+if ! [ -e "\${TMP_DIR}" ]; then
+	mkdir "\${TMP_DIR}"
+fi 
+# Move into Tmp Directory
+cd "\${TMP_DIR}"
+# Date Stamp
+declare nwp_ds="\$(date +%Y%m%d)"
+# Remove all Today's Files
+declare -a files="(\$(ls *\${nwp_ds}*.grib2 2> /dev/null))"
+declare -i fcnt="\${#files[@]}";((fcnt=\${fcnt}-1))
+rm -f *\${nwp_ds}*.grib2
+# Logging
+T="\$(date)"
+echo -e "\nclr_nwp.sh - run @ \${T}\n\tRemoved: \${fcnt} Files\n" >> "\${CRON_PATH}/log/nwp-load.log"
+smack-logout > /dev/null
+EOF
+# Initialize all Schedules for Deployment
+crontab "${CRON_PATH}/nwp-load.cron"
 # Log Reporting
 echo -e "\nCRON SCHEDULING: COMPLETE" >> $SMACK_INSTALL_LOG
 # POPULATE ANY NEEDED FILES
