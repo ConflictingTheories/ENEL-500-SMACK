@@ -13,13 +13,8 @@
 	</property>
 	<property>
   		<name>fs.swift.service.smack.auth.url</name>
-  			<value>https://keystone-yyc.cloud.cybera.ca:5000/v2.0</value>
+  			<value>https://keystone-yyc.cloud.cybera.ca:5000/v2.0/tokens</value>
   			<description>Keystone authenticaiton URL</description>
-	</property>
-	<property>
-  		<name>fs.swift.service.smack.https.port</name>
-  		<value>8080</value>
-  		<description>HTTPS port</description>
 	</property>
 	<property>
   		<name>fs.swift.service.smack.region</name>
@@ -59,11 +54,11 @@
 	</property>
 	<property>
 		<name>fs.swift.connect.timeout</name>
-		<value>15000</value>
+		<value>10000</value>
 	</property>
 	<property>
 		<name>fs.swift.socket.timeout</name>
-		<value>60000</value>
+		<value>10000</value>
 	</property>
 	<property>
 		<name>fs.swift.connect.retry.count</name>
