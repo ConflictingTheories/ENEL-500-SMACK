@@ -36,6 +36,7 @@ export API_SRV=/srv/api-server
 # EXECUTABLE PATH
 export PATH="${PATH}:${SMACK_DIR_BIN}"
 export PATH="${PATH}:/usr/local/bin"
+
 # Log Reporting
 echo -e "\n### INSTALL BEGINNING ###" >> $SMACK_INSTALL_LOG
 echo -e "\n### DECLARATIONS: COMPLETE" >> $SMACK_INSTALL_LOG
@@ -297,14 +298,47 @@ SPARK_MASTER_IP=$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | 
 # - SPARK_NICENESS      The scheduling priority for daemons. (Default: 0)
 EOF
 
-# ADD SPARK USER
-# 
-# 
-
 # ADD SHH AUTHENTICATION
-#
-#
-
+useradd -D /home/smack smack
+mkdir ~/home/smack/.ssh
+# Setup Private Key
+cat << EOF > ~/.ssh/rsa_id
+-----BEGIN RSA PRIVATE KEY-----
+MIIEowIBAAKCAQEAux7gvj7eTMjzSsBDvr3eZcWfTlmDqvS+T9YGAlQb2lVPa8Qy
+QPD7D1cTPXL5mkxXTyM2F+iO7aCS9JqhJFw78eDc8cgEs425oXfKJkX32+YcU50Y
+JOHIC/0CMEZfGCu1sShpgfd/xhrjNFps9EQgOQCJFcKM2kTl+Atc/sDv/p99Q9Oy
+3wyiBCIRhu+P6WbR/FZivDPXORZC1dCtsQB9cfjMusrREkYhhgNPP5NLkDejqevl
+dqdgEz7Opvhb390+Azs4c3hJznA+nq/wzPTIYon+lJ//ndh4HRzFXBqmY9PVwcMF
+enlZ0GzIvL3/6/YoOdhzpNRkL6syjoloQvFjwwIBIwKCAQEAtcY5aFpUSpdSvaTU
+GGCsKFmTcK66a46qPu0qaKl6JI1jGDru/UHd8aULYEPN5ljJ19kP+ffbTTzmhzcg
+MfMy6veyD3HYrmxrLyPo8frThSitzZFKp3w+rI9hNjW7dpDcYvQOuMSKwHHkBvjB
+nNR3Es1R9+GQJH1xryD7QJ4q91dv3Fcc8UWds8ojp4W5k7c0944wmTnjym3fgJkn
+ORzZQPZZKdrtFCDLk6JhLckq8qo5mgZJYSVRbMM7nTu7SbhCVMh/Rqs0fzWtnOCs
+G7MgQjTlyMTS6tze9eaRd/YUuaqG61K0hEYxV+m2Ri1JtbdeOJyhWNnjOH0jUIyI
+nRQPWwKBgQDuHfF8/GvRXrDkGIgZyDGDpRzKeWSH+XKV3/8hlQC4TWK6j36SjMwJ
+/JWY6f6h6VFwC8eqzw/SfMfdUls2xMiV2c4FHsITTJUvlHrK/UjSEVFDJYbxs8V2
+bqvSmHtbmDbqPrptf6jwnKtKyZaQUqCumWl9J9zeYL6PisAR0EzUFQKBgQDJLHl5
++VGfPzAm2Ir62/i17voL4U/z0SODHp1NJPipQ5h6JdvR/9DNgILKxJDfUr5/2fCU
+w5bI0633ukkRfF6B/1ODIo2Ad2AJf03eDYKgZ2uwxhI0yyCUoj/VfNat7l5RkMoL
+VIgnWUHY5yX+EvqYomRQZURnMuRJ9KIVHD0WdwKBgQDZtPoL33iE6Nw+QlCMmcbe
+wth+mt+SQybvbbYQEzPbtHeF/4mqj1t22E5Cqg1g1VHFhxzz8IN+nfiP1kTEXCUb
+Ssr9XfNE2E3iW937aztDuA/IXNMmILSJicGqmgpiX0gmn8BkHPI7EuXAuE8k3dS8
+5Ais8T73M+FtS6hKzRMLCwKBgQCEMytBhpS5GuUg13FFw8CyEhIHzpOgOPoUVfJX
+RC5gmiJe5a214p8n9V1DazqhYkKrybtacea+fHmiyt+PJde0gzbhJVWsMTB7RQdI
+xwyyjRrh4T8qAdOU36ZKdpu0IEycAA++TX4LOqedKi7oyqStcgdoCAhhEtCIXu4r
+IS91KQKBgCuHjXp5SYuoClYNpur+Sn9sRpfpOcDnTY06Lf3ZnWpyVzZmQynlybko
+JinmGtyUH8lw6dziWTjwm/2Z9d94oV51gKIByhoTvfD5axSvYPlrE8Ah8JruFd79
+NFbMlD+/OVxskaqHDu1qJXJI7YZYnAwQG0zXw12h7Eq2m3wGWUzJ
+-----END RSA PRIVATE KEY-----
+EOF
+# Setup Public Key
+cat << EOF > ~/.ssh/rsa_id.pub
+ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAux7gvj7eTMjzSsBDvr3eZcWfTlmDqvS+T9YGAlQb2lVPa8QyQPD7D1cTPXL5mkxXTyM2F+iO7aCS9JqhJFw78eDc8cgEs425oXfKJkX32+YcU50YJOHIC/0CMEZfGCu1sShpgfd/xhrjNFps9EQgOQCJFcKM2kTl+Atc/sDv/p99Q9Oy3wyiBCIRhu+P6WbR/FZivDPXORZC1dCtsQB9cfjMusrREkYhhgNPP5NLkDejqevldqdgEz7Opvhb390+Azs4c3hJznA+nq/wzPTIYon+lJ//ndh4HRzFXBqmY9PVwcMFenlZ0GzIvL3/6/YoOdhzpNRkL6syjoloQvFjww== smack@$(hostname)
+EOF
+# Add to Known Hosts
+cat << EOF >> ~/.ssh/authorized_keys
+ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAux7gvj7eTMjzSsBDvr3eZcWfTlmDqvS+T9YGAlQb2lVPa8QyQPD7D1cTPXL5mkxXTyM2F+iO7aCS9JqhJFw78eDc8cgEs425oXfKJkX32+YcU50YJOHIC/0CMEZfGCu1sShpgfd/xhrjNFps9EQgOQCJFcKM2kTl+Atc/sDv/p99Q9Oy3wyiBCIRhu+P6WbR/FZivDPXORZC1dCtsQB9cfjMusrREkYhhgNPP5NLkDejqevldqdgEz7Opvhb390+Azs4c3hJznA+nq/wzPTIYon+lJ//ndh4HRzFXBqmY9PVwcMFenlZ0GzIvL3/6/YoOdhzpNRkL6syjoloQvFjww== smack@$(hostname)
+EOF
 # START MASTER SERVICE
 $HDP_DIR/bin/hdfs namenode -format
 $SPARK_DIR/sbin/start-master.sh
@@ -335,7 +369,7 @@ export JAVA_HOME=/usr/java/jdk1.8.0_40
 export JRE_HOME=\$JAVA_HOME/jre
 # Spark
 export SPARK_HOME="${SPARK_DIR}"
-export SPARK_MASTER_IP="$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')"
+export SPARK_MASTER_IP="$(hostname -i)"
 # Path
 export PATH=\$PATH:\$HADOOP_HOME/bin:/usr/local/bin
 export PATH=\$PATH:\$HADOOP_HOME/sbin:\$SMACK_DIR_BIN:/usr/bin

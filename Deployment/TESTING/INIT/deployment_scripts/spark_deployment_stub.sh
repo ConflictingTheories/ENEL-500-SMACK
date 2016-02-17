@@ -270,7 +270,7 @@ export JAVA_HOME=/usr/java/jdk1.8.0_40
 export JRE_HOME=\$JAVA_HOME/jre
 # Spark
 export SPARK_HOME="${SPARK_DIR}"
-export SPARK_MASTER_IP="$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')"
+export SPARK_MASTER_IP="$(hostname -i)"
 # Path
 export PATH=\$PATH:\$HADOOP_HOME/bin:/usr/local/bin
 export PATH=\$PATH:\$HADOOP_HOME/sbin:\$SMACK_DIR_BIN:/usr/bin
