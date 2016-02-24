@@ -10,3 +10,11 @@ OLD DIRECTORY CONTAINS DEPRECATED VERSIONS
 STABLE CONTAINS THE MOST RECENT WORKING VERSION
 
 TESTING CONTAINS THE MOST RECENT VERSION - MAY NOT WORK
+
+
+#### UPDATED ######
+
+Bootstrap - for specific modules - like spark master and slave
+
+Deployment - for development
+
