@@ -66,6 +66,7 @@ export STORAGE_URL="https://swift-yyc.cloud.cybera.ca:8080/v1/AUTH_4b6be558d44e4
 # SMACK ENVIRONMENT
 export SMACK_DIR=/usr/local/smack
 export SMACK_DIR_BIN=/usr/local/smack/bin
+export SMACK_DIR_INIT=/usr/local/smack/init
 export SMACK_DIR_LOG=/usr/local/smack/log
 export SMACK_DIR_SKEL=/usr/local/smack/skel
 export SMACK_DIR_TMP=/usr/local/smack/tmp
@@ -88,6 +89,7 @@ echo -e "\n### DECLARATIONS: COMPLETE" >> $SMACK_INSTALL_LOG
 mkdir ${SMACK_DIR}
 mkdir ${SMACK_DIR_BIN}
 mkdir ${SMACK_DIR_LOG}
+mkdir ${SMACK_DIR_INIT}
 mkdir ${SMACK_DIR_SKEL}
 mkdir ${SMACK_DIR_TMP}
 mkdir ${CRON_PATH}
@@ -258,235 +260,6 @@ rm -rf /tmp/java8
 echo -e "\nJDK/JRE 7+8: COMPLETE" >> $SMACK_INSTALL_LOG
 # INSTALL RELATED CRON JOBS
 #-----------------------------------
-# NWP CRON JOB
-cat << EOF > $SMACK_DIR/cron/nwp-load.cron
-# Defintions environment for cron
-SMACK_DIR=/usr/local/smack
-SMACK_DIR_BIN=/usr/local/smack/bin
-SMACK_DIR_LOG=/usr/local/smack/log
-SMACK_DIR_SKEL=/usr/local/smack/skel
-SMACK_DIR_TMP=/usr/local/smack/tmp
-SMACK_LOAD=/usr/local/smack/log/smack_loaded
-SMACK_INSTALL_LOG=/usr/local/smack/log/install_log
-CRON_PATH=/usr/local/smack/cron
-SHINY_SRV=/srv/shiny-server
-API_SRV=/srv/api-server
-KEYSTONE_URL="https://keystone-yyc.cloud.cybera.ca:5000/v2.0"
-NOVA_URL="https://nova-yyc.cloud.cybera.ca:8774/v2/2b86ecd5b18f4fafb1d55adb79072def"
-CINDER_URL="https://cinder-yyc.cloud.cybera.ca:8776/v1/2b86ecd5b18f4fafb1d55adb79072def"
-CINDER2_URL="https://cinder-yyc.cloud.cybera.ca:8776/v2/2b86ecd5b18f4fafb1d55adb79072def"
-GLANCE_URL="http://glance-yyc.cloud.cybera.ca:9292"
-EC2_URL="https://nova-yyc.cloud.cybera.ca:8773/services/Cloud"
-SWIFT_URL="https://swift-yyc.cloud.cybera.ca:8080/v1/AUTH_2b86ecd5b18f4fafb1d55adb79072def"
-OS_PROJECT_NAME="SMACK"
-OS_ZONE="Nova"
-OS_REGION="Calgary"
-STORAGE_ACCT="AUTH_4b6be558d44e4dba8fb6e4aa49934c0b"
-STORAGE_TOKEN="7eefd48208754002a2e03bf0de11c3e4"
-STORAGE_URL="https://swift-yyc.cloud.cybera.ca:8080/v1/AUTH_4b6be558d44e4dba8fb6e4aa49934c0b"
-PATH=/bin:/usr/bin:/usr/local/smack/bin:/usr/local/smack/cron/bin:/usr/local/bin
-# Retrieve NWP Data (Every 6 Hours)
-5 */6 * * * /usr/local/smack/cron/bin/ret_nwp.sh
-# Check NWP Data (Every 6 Hours)
-25 */6 * * * /usr/local/smack/cron/bin/chk_nwp.sh
-# Store NWP Data (Every 6 Hours)
-45 */6 * * * /usr/local/smack/cron/bin/str_nwp.sh
-# Clear NWP Data (Daily)
-0 0 * * * /usr/local/smack/cron/bin/clr_nwp.sh
-EOF
-# Generate Related Cron Files
-cat << EOF > $CRON_PATH/bin/ret_nwp.sh
-#!/bin/bash
-#--------------------------------------------------------
-# 				SMACK ENERGY FORECASTING 
-#--------------------------------------------------------
-#			-  Data Retrieval Script - NWP -
-#--------------------------------------------------------
-# Declare Environment Definitions
-shopt -s expand_aliases
-source /usr/local/smack/smack-env.sh
-# Temporary Working Directory
-declare TMP_DIR="\${SMACK_DIR_TMP}/nwp-load"
-# Check for Existence
-if ! [ -e "\${TMP_DIR}" ]; then
-	mkdir "\${TMP_DIR}"
-fi 
-# Move into Tmp Directory
-cd "\${TMP_DIR}"
-# REMOTE SERVER INFORMATION
-# Server
-declare nwp_srv="http://dd.weather.gc.ca/model_hrdps/west/grib2"
-# Readout Times
-declare -a nwp_tz=( "00" "06" "12" "18" )
-# Sections
-declare -a nwp_sec=("000" "001" "002" "003" "004" "005" "006" \\
-					"007" "008" "009" "010" "011" "012" "013" \\
-					"014" "015" "016" "017" "018" "019" "020" \\
-					"021" "022" "023" "024" "025" "026" "027" \\
-					"028" "029" "030" "031" "032" "033" "034" \\
-					"035" "036" "037" "038" "039" "040" "041" \\
-					"042" "043" "044" "045" "046" "047" "048")
-# File Prefix
-declare nwp_pre="CMC_hrdps_west_"
-# File Suffix
-declare nwp_suf="-00.grib2"
-# Date Stamp
-declare nwp_ds="\$(date +%Y%m%d)"
-# Wind Variables
-declare -a nwp_var=("WIND_ISBL_0050_ps2.5km_" "WIND_ISBL_0100_ps2.5km_" \\
-					"WIND_ISBL_0150_ps2.5km_" "WIND_ISBL_0175_ps2.5km_" \\
-					"WIND_ISBL_0200_ps2.5km_" "WIND_ISBL_0225_ps2.5km_" \\
-					"WIND_ISBL_0250_ps2.5km_" "WIND_ISBL_0275_ps2.5km_" \\
-					"WIND_ISBL_0300_ps2.5km_" "WIND_ISBL_0350_ps2.5km_" \\
-					"WIND_ISBL_0400_ps2.5km_" "WIND_ISBL_0450_ps2.5km_" \\
-					"WIND_ISBL_0500_ps2.5km_" "WIND_ISBL_0550_ps2.5km_" \\
-					"WIND_ISBL_0600_ps2.5km_" "WIND_ISBL_0650_ps2.5km_" \\
-					"WIND_ISBL_0700_ps2.5km_" "WIND_ISBL_0750_ps2.5km_" \\
-					"WIND_ISBL_0800_ps2.5km_" "WIND_ISBL_0850_ps2.5km_" \\
-					"WIND_ISBL_0875_ps2.5km_" "WIND_ISBL_0900_ps2.5km_" \\
-					"WIND_ISBL_0925_ps2.5km_" "WIND_ISBL_0950_ps2.5km_" \\
-					"WIND_ISBL_0970_ps2.5km_" "WIND_ISBL_0985_ps2.5km_" \\
-					"WIND_ISBL_1000_ps2.5km_" "WIND_ISBL_1015_ps2.5km_" \\
-					"WIND_TGL_10_ps2.5km_" "WIND_TGL_40_ps2.5km_" \\
-					"WIND_TGL_80_ps2.5km_" "WIND_TGL_120_ps2.5km_")
-# File Counter
-declare -i fcnt=0
-# Loop through all file and Retrieve
-# Time Zones
-for a in \${nwp_tz[@]}; do
-	# sections
-	for b in \${nwp_sec[@]}; do
-		# variables
-		for c in \${nwp_var[@]}; do
-			# Generate Proper File Name
-			declare filename="\${nwp_pre}\${c}\${nwp_ds}\${a}_P\${b}\${nwp_suf}"
-			# Generate Directory
-			declare directory="/\${a}/\${b}/"
-			# Generate Full HTTP Path
-			declare http_path="\${nwp_srv}\${directory}\${filename}"
-			# Delare File downloading
-			#echo -e "Downloading: ${http_path}\n"
-			curl -s -O "\${http_path}" > /dev/null
-			# Count # of Uploads
-			((fcnt=\${fcnt}+1))
-		done
-	done
-done
-# Log Run into History
-T="\$(date)"
-touch "\${CRON_PATH}/log/nwp-load.log"
-echo -e "\nret_nwp.sh - run @ \${T}\n\tRetreived: \${fcnt} Files" >> "\$CRON_PATH/log/nwp-load.log"
-smack-logout > /dev/null
-EOF
-# Generate Related Cron Files
-cat << EOF > $CRON_PATH/bin/chk_nwp.sh
-#!/bin/bash
-#--------------------------------------------------------
-# 				SMACK ENERGY FORECASTING 
-#--------------------------------------------------------
-#			-  Data Checking Script - NWP -
-#--------------------------------------------------------
-# Declare Environment Definitions
-shopt -s expand_aliases
-source /usr/local/smack/smack-env.sh
-# Temporary Working Directory
-declare TMP_DIR="\${SMACK_DIR_TMP}/nwp-load"
-# Check for Existence
-if ! [ -e "\${TMP_DIR}" ]; then
-	mkdir "\${TMP_DIR}"
-fi 
-# Move into Tmp Directory
-cd "\${TMP_DIR}"
-# Begin Downloading Missed Files from NWP (For Recent Time)
-#
-# For all Variables that are missing download appropriate time
-#	* Check against known variables
-#	* Check off any missing
-#	* Download missing variables
-#
-T="\$(date)"
-echo -e "\chk_nwp.sh - run @ \${T}\n" >> "\${CRON_PATH}/log/nwp-load.log"
-smack-logout > /dev/null
-EOF
-# Generate Related Cron Files
-cat << EOF > $CRON_PATH/bin/str_nwp.sh
-#!/bin/bash
-#--------------------------------------------------------
-# 				SMACK ENERGY FORECASTING 
-#--------------------------------------------------------
-#			-  Data Storage Script - NWP -
-#--------------------------------------------------------
-# Declare Environment Definitions
-shopt -s expand_aliases
-source /usr/local/smack/smack-env.sh
-# Temporary Working Directory
-TMP_DIR="${SMACK_DIR_TMP}/nwp-load"
-# Check for Existence
-if ! [ -e "${TMP_DIR}" ]; then
-	mkdir "${TMP_DIR}"
-fi 
-# Move into Tmp Directory
-cd "${TMP_DIR}"
-# VARIABLE DECLARATIONS
-# Date Stamp
-declare -x nwp_ds="$(date -u +%Y%m%d)"
-# Container
-declare -x nwp_con="nwp"
-# Pseudo-container
-declare -x nwp_pse="grib2"
-# Create Container if Non-existent
-if ! [[ "$(smack-lsdb -l 2> /dev/null | grep ${nwp_con})" == "${nwp_con}" ]]; then
-	smack-mkdb -c "${nwp_con}" > /dev/null
-fi
-# Gather Current List of Objects
-#declare -i fcnt=0
-# Loop through each file and Upload:
-declare -a list=(*${nwp_ds}*.grib2);
-echo "Found: ${#list[@]}"
-for filename in ${list[@]}; do
-	smack-upload -c "${nwp_con}" -o "${nwp_pse}/${filename}" -f "${filename}"  -H "X-Delete-At: $(expr $(date +%s) + 62208000)" > /dev/null
-	# upload csv data and upload too
-	#wgrib2 -csv ${filename}.csv -g2clib 0 ${filename} > /dev/null
-	#smack-upload -c ${nwp_con} -o "csv/$(date -u +%Y)/$(date -u +%m)/$(date -u +%d)/$(echo ${filename} | sed 's/CMC\_hrdps\_west\_WIND\_//' | sed 's/.grib2//').csv" -H "X-Delete-At: $(expr $(date +%s) + 62208000)" -f ${filename}.csv 2> /dev/null
-	#rm -rf ${filename}.csv
-done
-# Log Recording
-T="$(date -u)"
-echo -e "\nstr_nwp.sh - run @ ${T}\n\tStored: ${#list[@]} Files\n" >> "${CRON_PATH}/log/nwp-load.log"
-smack-logout > /dev/null
-EOF
-# Generate Related Cron Files
-cat << EOF > $CRON_PATH/bin/clr_nwp.sh
-#!/bin/bash
-#--------------------------------------------------------
-# 				SMACK ENERGY FORECASTING 
-#--------------------------------------------------------
-#			-  Data Clearing Script - NWP -
-#--------------------------------------------------------
-# Declare Environment Definitions
-shopt -s expand_aliases
-source /usr/local/smack/smack-env.sh
-# Temporary Working Directory
-declare TMP_DIR="\${SMACK_DIR_TMP}/nwp-load"
-# Check for Existence
-if ! [ -e "\${TMP_DIR}" ]; then
-	mkdir "\${TMP_DIR}"
-fi 
-# Move into Tmp Directory
-cd "\${TMP_DIR}"
-# Date Stamp
-declare nwp_ds="\$(date +%Y%m%d)"
-# Remove all Today's Files
-declare -a files="(\$(ls *\${nwp_ds}*.grib2 2> /dev/null))"
-declare -i fcnt="\${#files[@]}";((fcnt=\${fcnt}-1))
-rm -f *\${nwp_ds}*.grib2
-# Logging
-T="\$(date)"
-echo -e "\nclr_nwp.sh - run @ \${T}\n\tRemoved: \${fcnt} Files\n" >> "\${CRON_PATH}/log/nwp-load.log"
-smack-logout > /dev/null
-EOF
-# Initialize all Schedules for Deployment
-crontab "${CRON_PATH}/nwp-load.cron"
 # Log Reporting
 echo -e "\nCRON SCHEDULING: COMPLETE" >> $SMACK_INSTALL_LOG
 # POPULATE ANY NEEDED FILES
@@ -515,10 +288,24 @@ export CRON_PATH=/usr/local/smack/cron
 # SHINY SERVER ROOT
 export SHINY_SRV=/srv/shiny-server
 # API SERVER ROOT
-export API_SRV=/srv/api-server
-# JAVA VARIABLES
-export JAVA_HOME=$JAVA_HOME
-export JRE_HOME=$JRE_HOME
+export API_SRV=/srv/api-server# Hadoop
+export HADOOP_VERSION="${HDP_VER}"
+export HADOOP_PREFIX="${HDP_DIR}"
+export HADOOP_HOME=\$HADOOP_PREFIX
+export HADOOP_COMMON_HOME=\$HADOOP_PREFIX
+export HADOOP_CONF_DIR=\$HADOOP_PREFIX/etc/hadoop
+export HADOOP_HDFS_HOME=\$HADOOP_PREFIX
+export HADOOP_MAPRED_HOME=\$HADOOP_PREFIX
+export YARN_HOME=\$HADOOP_PREFIX
+# Java
+export JAVA_HOME=/usr/java/jdk1.8.0_40
+export JRE_HOME=\$JAVA_HOME/jre
+# Spark
+export SPARK_HOME="${SPARK_DIR}"
+export SPARK_MASTER_IP="$(hostname -i)"
+# Path
+export PATH=\$PATH:\$HADOOP_HOME/bin
+export PATH=\$PATH:\$HADOOP_HOME/sbin:\$SMACK_DIR_BIN:/usr/bin
 # OPENSTACK ENVIRONMENT
 # URLs for API Access (may need to change)
 export KEYSTONE_URL="https://keystone-yyc.cloud.cybera.ca:5000/v2.0"
@@ -1288,39 +1075,273 @@ cat << EOF > $SMACK_DIR/skel/setup-node.sh
 #
 #-------------------------------------------------------
 EOF
-# ADD ADDITIONAL COMMANDS BELOW
-#-----------------------------------
-#
-#
-#
-#
-#
-# INSTALL ADDITIONAL SOFTWARE BELOW
-#-----------------------------------
-#
-#
-#
-#
-#
-# ENABLE ALL NECESSARY DAEMONS 
-#-----------------------------------
-#
-#
-#
-#
+
+# Install Hadoop 2.6.x
+#---------------------
+# Misc
+declare x1="ke"
+declare x2="00"
+declare x3="13"
+declare x4="ac"
+# Service User Creation
+export SMACK_DIR=/usr/local/smack
+# Hadoop Sub-Directory
+export HDP_VER="hadoop-2.6.4"
+#export HDP_VER="${SMACK_CLUSTER_HDP_VER}"
+export HDP_P=hdp
+export HDP_DIR=$SMACK_DIR/$HDP_P
+# Spark Sub-Directory
+export SPARK_VER="spark-1.6.0"
+#export SPARK_VER="${SMACK_CLUSTER_SPARK_VER}"
+export SPARK_P=spark
+export SPARK_DIR=$SMACK_DIR/$SPARK_P
+# Credentials and Storage Info
+export OS_PASSWORD="H${x4}${x1}r${x2}${x3}"
+#export OS_PASSWORD="${SMACK_CLUSTER_PASS}"
+export OS_USERNAME="confidential.inc@gmail.com"
+#export OS_USERNAME="${SMACK_CLUSTER_USER}"
+export OS_PROJECT_NAME="SMACK"
+#export OS_PROJECT_NAME="${SMACK_CLUSTER_PROJECT}"
+export OS_HDFS_MAIN="swift://hdfs.smack/"
+#export OS_HDFS_MAIN="${SMACK_CLUSTER_HDFS}"
+export OS_HDFS_PUB_BOOL="True"
+#export OS_HDFS_PUB_BOOL="${SMACK_CLUSTER_HDFS_PUB}"
+export OS_REGION="Calgary"
+#export OS_REGION="${SMACK_CLUSTER_REGION}"
+export OS_AUTH_URL="https://keystone-yyc.cloud.cybera.ca:5000/v2.0"
+#export OS_AUTH_URL="${SMACK_CLUSTER_KEY_URL}"
+
+# Hadoop Directory
+mkdir $SMACK_DIR
+cd $SMACK_DIR
+mkdir $HDP_DIR
+cd $HDP_DIR
+# Download Hadoop
+wget http://apache.sunsite.ualberta.ca/hadoop/common/$HDP_VER/$HDP_VER.tar.gz
+tar -xzvf $HDP_VER.tar.gz
+# Remove Tar
+rm -f $HDP_VER.tar.gz
+HDP_DIR=$HDP_DIR/$HDP_VER
+mkdir $HDP_DIR/namenode
+mkdir $HDP_DIR/datanode
+# Configure Hadoop
+cat << EOF > $HDP_DIR/etc/hadoop/core-site.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+	<property>
+		<name>fs.defaultFS</name>
+		<value>$OS_HDFS_MAIN</value>
+		<description>NameNode URI</description>
+	</property>
+	<property>
+  		<name>fs.swift.impl</name>
+  		<value>org.apache.hadoop.fs.swift.snative.SwiftNativeFileSystem</value>
+  		<description>File system implementation for Swift</description>
+	</property>
+	<property>
+  		<name>fs.swift.blocksize</name>
+  		<value>131072</value>
+  		<description>Split size in KB</description>
+	</property>
+	<property>
+  		<name>fs.swift.service.smack.auth.url</name>
+  			<value>$OS_AUTH_URL/tokens</value>
+  			<description>Keystone authenticaiton URL</description>
+	</property>
+	<property>
+  		<name>fs.swift.service.smack.region</name>
+  		<value>$OS_REGION</value>
+  		<description>Region name</description>
+	</property>
+	<property>
+  		<name>fs.swift.service.smack.tenant</name>
+  		<value>$OS_PROJECT_NAME</value>
+  		<description>Tenant name</description>
+	</property>
+	<property>
+  		<name>fs.swift.service.smack.username</name>
+  		<value>$OS_USERNAME</value>
+	</property>
+	<property>
+  		<name>fs.swift.service.smack.password</name>
+  		<value>$OS_PASSWORD</value>
+	</property>
+	<property>
+		<name>fs.swift.service.smack.public</name>
+		<value>$OS_HDFS_PUB_BOOL</value>
+	</property>
+	<property>
+  		<name>fs.swift.service.smack.location-aware</name>
+  		<value>true</value>
+  		<description>Flag to enable location-aware computing</description>
+	</property>
+	<property>
+		<name>fs.swift.partsize</name>
+		<value>512</value>
+		<description>upload every half MB</description>
+	</property>
+	<property>
+		<name>fs.swift.requestsize</name>
+		<value>128</value>
+	</property>
+	<property>
+		<name>fs.swift.connect.timeout</name>
+		<value>10000</value>
+	</property>
+	<property>
+		<name>fs.swift.socket.timeout</name>
+		<value>10000</value>
+	</property>
+	<property>
+		<name>fs.swift.connect.retry.count</name>
+		<value>4</value>
+	</property>
+	<property>
+		<name>fs.swift.connect.throttle.delay</name>
+		<value>0</value>
+	</property>
+</configuration>
+EOF
+# Hadoop FS
+cat << EOF > $HDP_DIR/etc/hdfs-site.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+<property>
+ <name>dfs.replication</name>
+ <value>1</value>
+</property>
+<property>
+  <name>dfs.name.dir</name>
+    <value>swift://hdfs.smack/namenode</value>
+</property>
+
+<property>
+  <name>dfs.data.dir</name>
+    <value>swift://hdfs.smack/datanode</value>
+</property>
+</configuration>
+EOF
+# Download and Unpack Spark
+mkdir $SPARK_DIR
+cd $SPARK_DIR
+wget http://apache.sunsite.ualberta.ca/spark/$SPARK_VER/$SPARK_VER-bin-hadoop2.6.tgz
+tar -xzvf $SPARK_VER-bin-hadoop2.6.tgz
+rm -f $SPARK_VER-bin-hadoop2.6.tgz
+cd $SPARK_VER-bin-hadoop2.6
+SPARK_DIR=$(pwd)
+# Configure Spark
+# Core Configuration for HDFS Access
+cp $HDP_DIR/etc/hadoop/core-site.xml $SPARK_DIR/conf/core-site.xml
+# JAR necessary for Swift Communication
+cp $HDP_DIR/share/hadoop/tools/lib/hadoop-openstack*.jar $SPARK_DIR/lib/hadoop-openstack.jar
+# Spark Environment Script
+cat << EOF > $SPARK_DIR/conf/spark-env.sh
+#!/bin/bash
+# This file is sourced when running various Spark programs.
+# Copy it as spark-env.sh and edit that to configure Spark for your site.
+# Options read when launching programs locally with
+# ./bin/run-example or ./bin/spark-submit
+# - HADOOP_CONF_DIR, to point Spark towards Hadoop configuration files
+# - SPARK_LOCAL_IP, to set the IP address Spark binds to on this node
+# - SPARK_PUBLIC_DNS, to set the public dns name of the driver program
+# - SPARK_CLASSPATH, default classpath entries to append
+SPARK_CLASSPATH=$SPARK_HOME/lib/hadoop-openstack.jar
+# Options read by executors and drivers running inside the cluster
+# - SPARK_LOCAL_IP, to set the IP address Spark binds to on this node
+# - SPARK_PUBLIC_DNS, to set the public DNS name of the driver program
+# - SPARK_CLASSPATH, default classpath entries to append
+# - SPARK_LOCAL_DIRS, storage directories to use on this node for shuffle and RDD data
+# - MESOS_NATIVE_JAVA_LIBRARY, to point to your libmesos.so if you use Mesos
+# Options for the daemons used in the standalone deploy mode
+# - SPARK_MASTER_IP, to bind the master to a different IP address or hostname
+SPARK_MASTER_IP=$(hostname -i)
+# - SPARK_MASTER_PORT / SPARK_MASTER_WEBUI_PORT, to use non-default ports for the master
+# - SPARK_MASTER_OPTS, to set config properties only for the master (e.g. "-Dx=y")
+# - SPARK_WORKER_CORES, to set the number of cores to use on this machine
+# - SPARK_WORKER_MEMORY, to set how much total memory workers have to give executors (e.g. 1000m, 2g)
+# - SPARK_WORKER_PORT / SPARK_WORKER_WEBUI_PORT, to use non-default ports for the worker
+# - SPARK_WORKER_INSTANCES, to set the number of worker processes per node
+# - SPARK_WORKER_DIR, to set the working directory of worker processes
+# - SPARK_WORKER_OPTS, to set config properties only for the worker (e.g. "-Dx=y")
+# - SPARK_DAEMON_MEMORY, to allocate to the master, worker and history server themselves (default: 1g).
+# - SPARK_HISTORY_OPTS, to set config properties only for the history server (e.g. "-Dx=y")
+# - SPARK_SHUFFLE_OPTS, to set config properties only for the external shuffle service (e.g. "-Dx=y")
+# - SPARK_DAEMON_JAVA_OPTS, to set config properties for all daemons (e.g. "-Dx=y")
+# - SPARK_PUBLIC_DNS, to set the public dns name of the master or workers
+# Generic options for the daemons used in the standalone deploy mode
+# - SPARK_CONF_DIR      Alternate conf dir. (Default: ${SPARK_HOME}/conf)
+# - SPARK_LOG_DIR       Where log files are stored.  (Default: ${SPARK_HOME}/logs)
+# - SPARK_PID_DIR       Where the pid file is stored. (Default: /tmp)
+# - SPARK_IDENT_STRING  A string representing this instance of spark. (Default: $USER)
+# - SPARK_NICENESS      The scheduling priority for daemons. (Default: 0)
+EOF
+
+# ADD SHH AUTHENTICATION
+#useradd -D /home/smack smack
+#mkdir /home/smack/.ssh
+
+# Setup Private Key
+cat << EOF > /home/centos/.ssh/id_rsa
+-----BEGIN RSA PRIVATE KEY-----
+MIIEpAIBAAKCAQEAsShJT2dm1n0Hg6N8wdXjEuDMiHyJlIBKBg/I56/+NszbcB55
+iDXpeBq/HXD82v5o5s+WH2c7aYvNRLQ8UZHa5XVSGno/amtF15qbgKq9HcNXIVS8
+cGd5hpPQsYqRgCecASlbBhptAqiJRMv+5rjgNZy1+WsnIBHnE5RzWYTPffJKco54
+5X7yZC2uH3gYh4slr534R9JYGKXIDDWbFnBQAJ9hMrUoerOQDHdYf+iPu68Ql4W1
+RsIS40wIpYO1GC0VS5f+wwhGwWJW67D5pl1mdI7nh2zLdvqDPAzyzWUfA+RJ21eb
+vHiUhVkwRogcGkTpeKmQtwxowwn2163v8Zsf1QIDAQABAoIBAQCi5e5zKxtuwsz0
+CJKhEfGY3Eh2gD1p5YUribws/rF85mYo9Hy/+QLTQ5TUl56KKEGBawQZoC0LYle/
+gxOr1bg4Ieb7HcnOKxGvrSSr7VO0WHh315jmqt8eFjFh747XDpTupH5kYEw4k4yV
+TBb5RKo14gGadSMm5A9c+7YNbIf2wBn2ppBwdf4I/BbhszBaAdiOubb0xfV09biO
+dtPIVrghVyMmr/7pCHQNf2ZoWYm3By9Xdm28SFpEm2Zuryf7pTxIeKDaTA/KsycM
+IiVYTM99mz7TeL4/0on3HjmutJ1xH30smeWYQPR27Zbry6YrslGl1X0oiz84W1DT
++A5w/2kJAoGBAOA1L1wrbfty5y1vDENZnCvRijheE3GizFcBupJAHtF6TxUCNNCN
+dQbin+TEk9x4N7wSNejPql7JgfWmoQZV0pobOorTzeXxwJZ9zE+TFeGwsl/ADBdu
+J6LMXAQI6DVWt48dh/T+Xn5T4BpGykXdGzr/i+ZguhDyxu1AKIqegTXvAoGBAMpH
+KC3vkt6y1ge2UTsWL4lZdVJeeuU5eFtvKeCgyAx2ZRPKzhgdm4fsVvbFLaA0PtzU
+4UHytmB33prtMIfisYRVBb2Z9LnFmi6/VUI3KIZ2akeaja76D/uGE/HDQ2JZfcpv
+AQfWPvC3hJCi4BOrYeMMEgV1iyiIno3Jrdg5Iyp7AoGAHWI7A7xZXKPxcj3kgIsk
+8YUztTF3IORyHVEHr5UhtNhvttQkMdToKm/W/rdYnYNP4qEMWaelr2h/VL9yyQ7E
+XBgHcxxRFrq5P7/a3+7p5jsvFWdo7kUsgqR/xrOYIy1rPyFiqRQRNEMv0qHGbqOM
+pw3IuvegSwpWUc+fwJMHYhcCgYActdjYHEcGYO/MDG6fKlj477+dP1fGLVAN+ktB
+XNDIJA3Yr1JtTdaDhmIZiIcfVAsQIQ8P4zlLm/f2mW/n+Z8kn0S/UpjPvWJS/ElH
+qriPzULsgt1VVpzqIG+4QvTPgtA96V+GEzy/weyI8vVHFW5BYbc1GyfzSuDmUxff
+tsxs/QKBgQDVzVZLc/81byrdX7znHuKK3aodXWHYbIFCei6n3MjBUnv0kjc3LE+Y
+gWIbR0LRqOc3kC0IPDgOow2HHu9p8jwKTkiHNBSyN7wYvmX08S8kHw2dIvufqm2D
+1a8cXxaK/s0tmZVG3Bf6JO6Dd20icABAXXG+y6hoX75mRKC3jlbrLA==
+-----END RSA PRIVATE KEY-----
+
+EOF
+chmod 700 /home/centos/.ssh/id_rsa
+chown centos /home/centos/.ssh/id_rsa
+# Setup Public Key
+cat << EOF > /home/centos/.ssh/rsa_id.pub
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCxKElPZ2bWfQeDo3zB1eMS4MyIfImUgEoGD8jnr/42zNtwHnmINel4Gr8dcPza/mjmz5YfZztpi81EtDxRkdrldVIaej9qa0XXmpuAqr0dw1chVLxwZ3mGk9CxipGAJ5wBKVsGGm0CqIlEy/7muOA1nLX5aycgEecTlHNZhM998kpyjnjlfvJkLa4feBiHiyWvnfhH0lgYpcgMNZsWcFAAn2EytSh6s5AMd1h/6I+7rxCXhbVGwhLjTAilg7UYLRVLl/7DCEbBYlbrsPmmXWZ0jueHbMt2+oM8DPLNZR8D5EnbV5u8eJSFWTBGiBwaROl4qZC3DGjDCfbXre/xmx/V Generated-by-Nova
+EOF
+# Add to Known Hosts
+cat << EOF >> /home/centos/.ssh/authorized_keys
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCxKElPZ2bWfQeDo3zB1eMS4MyIfImUgEoGD8jnr/42zNtwHnmINel4Gr8dcPza/mjmz5YfZztpi81EtDxRkdrldVIaej9qa0XXmpuAqr0dw1chVLxwZ3mGk9CxipGAJ5wBKVsGGm0CqIlEy/7muOA1nLX5aycgEecTlHNZhM998kpyjnjlfvJkLa4feBiHiyWvnfhH0lgYpcgMNZsWcFAAn2EytSh6s5AMd1h/6I+7rxCXhbVGwhLjTAilg7UYLRVLl/7DCEbBYlbrsPmmXWZ0jueHbMt2+oM8DPLNZR8D5EnbV5u8eJSFWTBGiBwaROl4qZC3DGjDCfbXre/xmx/V Generated-by-Nova
+EOF
+# START MASTER SERVICE
+#$HDP_DIR/bin/hdfs namenode -format
+$SPARK_DIR/sbin/start-master.sh
+
 # SET PERMISSIONS FOR COMMANDS
 #-----------------------------------
 # SMACK Directory
-chmod 777 ${SMACK_DIR_BIN}
-chmod 777 ${SMACK_DIR}/skel
-chmod 777 ${SMACK_DIR_LOG}
-chmod 777 ${SMACK_DIR_TMP}
+chmod 700 ${SMACK_DIR_BIN}
+chmod 700 ${SMACK_DIR}/skel
+chmod 700 ${SMACK_DIR_LOG}
+chmod 700 ${SMACK_DIR_TMP}
 chmod +x ${SMACK_DIR_BIN}/*
+chown -R centos ${SMACK_DIR}
 # CRON Directory
-chmod 777 ${CRON_PATH}
-chmod 777 ${CRON_PATH}/bin
-chmod 777 ${CRON_PATH}/log
+chmod 700 ${CRON_PATH}
+chmod 700 ${CRON_PATH}/bin
+chmod 700 ${CRON_PATH}/log
 chmod +x ${CRON_PATH}/bin/*
+chown -R centos ${CRON_PATH}
 # Log Reporting
 echo -e "\nPERMISSIONS: COMPLETE" >> ${SMACK_INSTALL_LOG}
 # SET FILE FOR COMPLETION

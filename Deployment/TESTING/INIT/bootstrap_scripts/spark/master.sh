@@ -1,6 +1,35 @@
 #!/bin/bash
 # SMACK ENERGY FORECASTING - ENVIRONMENT VARIABLES
 #-------------------------------------------------
+#
+
+# ***********************************
+#
+#		MUST BE SET UP FOR SCRIPT TO RUN - EXPECTED TO BE SET BY
+#		CLUSTER LAUNCHER SCRIPT
+#
+#		** Note these will be replaced by the launcher script
+#		prior to deployment. This script is not complete as-is
+
+# MASTER IP for Spark Cluster
+#%%SMACK_CLUSTER_MASTER_IP%%
+#
+# Number of Nodes in Cluster (including master)
+#%%SMACK_CLUSTER_NUMBER_AMOUNT%%
+#
+# Name for Cluster (Prefixes)
+#%%SMACK_CLUSTER_NAME%%
+#
+# Credentials for Cloud (Username)
+#%%SMACK_CLUSTER_USER%%
+#
+# Credentials for Cloud (Password)
+#%%SMACK_CLUSTER_PASS%%
+#
+#
+# ***********************************
+
+
 # OPENSTACK ENVIRONMENT
 # URLs for API Access (may need to change)
 export KEYSTONE_URL="https://keystone-yyc.cloud.cybera.ca:5000/v2.0"
@@ -56,28 +85,7 @@ mkdir ${API_SRV}
 # Log Reporting
 echo -e "\nDIRECTORIES: COMPLETE" >> $SMACK_INSTALL_LOG
 
-# Misc
-declare x1="ke"
-declare x2="00"
-declare x3="13"
-declare x4="ac"
-# Service User Creation
-export SMACK_DIR=/usr/local/smack
-export HDP_VER="hadoop-2.6.4"
-export SPARK_VER="spark-1.6.0"
-export HDP_P=hdp
-export HDP_DIR=$SMACK_DIR/$HDP_P
-export SPARK_P=spark
-export SPARK_DIR=$SMACK_DIR/$SPARK_P
 
-# Credentials and Storage Info
-export OS_AUTH_URL="https://keystone-yyc.cloud.cybera.ca:5000/v2.0"
-export OS_PROJECT_NAME="SMACK"
-export OS_REGION="Calgary"
-export OS_HDFS_MAIN="swift://hdfs.smack/"
-export OS_HDFS_PUB_BOOL="True"
-export OS_PASSWORD="H${x4}${x1}r${x2}${x3}"
-export OS_USERNAME="confidential.inc@gmail.com"
 
 # Basic Utilities
 yum -y install gcc-c++ wget curl curl-devel figlet python
@@ -127,8 +135,42 @@ JRE_HOME=$JAVA_HOME/jre
 cd /
 rm -rf /tmp/java8
 
+
 # Install Hadoop 2.6.x
 #---------------------
+# Misc
+declare x1="ke"
+declare x2="00"
+declare x3="13"
+declare x4="ac"
+# Service User Creation
+export SMACK_DIR=/usr/local/smack
+# Hadoop Sub-Directory
+export HDP_VER="hadoop-2.6.4"
+#export HDP_VER="${SMACK_CLUSTER_HDP_VER}"
+export HDP_P=hdp
+export HDP_DIR=$SMACK_DIR/$HDP_P
+# Spark Sub-Directory
+export SPARK_VER="spark-1.6.0"
+#export SPARK_VER="${SMACK_CLUSTER_SPARK_VER}"
+export SPARK_P=spark
+export SPARK_DIR=$SMACK_DIR/$SPARK_P
+# Credentials and Storage Info
+export OS_PASSWORD="H${x4}${x1}r${x2}${x3}"
+#export OS_PASSWORD="${SMACK_CLUSTER_PASS}"
+export OS_USERNAME="confidential.inc@gmail.com"
+#export OS_USERNAME="${SMACK_CLUSTER_USER}"
+export OS_PROJECT_NAME="SMACK"
+#export OS_PROJECT_NAME="${SMACK_CLUSTER_PROJECT}"
+export OS_HDFS_MAIN="swift://hdfs.smack/"
+#export OS_HDFS_MAIN="${SMACK_CLUSTER_HDFS}"
+export OS_HDFS_PUB_BOOL="True"
+#export OS_HDFS_PUB_BOOL="${SMACK_CLUSTER_HDFS_PUB}"
+export OS_REGION="Calgary"
+#export OS_REGION="${SMACK_CLUSTER_REGION}"
+export OS_AUTH_URL="https://keystone-yyc.cloud.cybera.ca:5000/v2.0"
+#export OS_AUTH_URL="${SMACK_CLUSTER_KEY_URL}"
+
 # Hadoop Directory
 mkdir $SMACK_DIR
 cd $SMACK_DIR
@@ -230,15 +272,14 @@ cat << EOF > $HDP_DIR/etc/hdfs-site.xml
  <name>dfs.replication</name>
  <value>1</value>
 </property>
-
 <property>
   <name>dfs.name.dir</name>
-    <value>file://$HDP_DIR/namenode</value>
+    <value>swift://hdfs.smack/namenode</value>
 </property>
 
 <property>
   <name>dfs.data.dir</name>
-    <value>file://$HDP_DIR/datanode</value>
+    <value>swift://hdfs.smack/datanode</value>
 </property>
 </configuration>
 EOF
@@ -250,12 +291,11 @@ tar -xzvf $SPARK_VER-bin-hadoop2.6.tgz
 rm -f $SPARK_VER-bin-hadoop2.6.tgz
 cd $SPARK_VER-bin-hadoop2.6
 SPARK_DIR=$(pwd)
-
 # Configure Spark
 # Core Configuration for HDFS Access
 cp $HDP_DIR/etc/hadoop/core-site.xml $SPARK_DIR/conf/core-site.xml
 # JAR necessary for Swift Communication
-cp $HDP_DIR/share/hadoop/tools/lib/hadoop-openstack-2.6.4.jar $SPARK_DIR/lib/hadoop-openstack-2.6.4.jar
+cp $HDP_DIR/share/hadoop/tools/lib/hadoop-openstack*.jar $SPARK_DIR/lib/hadoop-openstack.jar
 # Spark Environment Script
 cat << EOF > $SPARK_DIR/conf/spark-env.sh
 #!/bin/bash
@@ -267,7 +307,7 @@ cat << EOF > $SPARK_DIR/conf/spark-env.sh
 # - SPARK_LOCAL_IP, to set the IP address Spark binds to on this node
 # - SPARK_PUBLIC_DNS, to set the public dns name of the driver program
 # - SPARK_CLASSPATH, default classpath entries to append
-SPARK_CLASSPATH=$SPARK_HOME/lib/hadoop-openstack-2.6.4.jar
+SPARK_CLASSPATH=$SPARK_HOME/lib/hadoop-openstack.jar
 # Options read by executors and drivers running inside the cluster
 # - SPARK_LOCAL_IP, to set the IP address Spark binds to on this node
 # - SPARK_PUBLIC_DNS, to set the public DNS name of the driver program
@@ -276,7 +316,7 @@ SPARK_CLASSPATH=$SPARK_HOME/lib/hadoop-openstack-2.6.4.jar
 # - MESOS_NATIVE_JAVA_LIBRARY, to point to your libmesos.so if you use Mesos
 # Options for the daemons used in the standalone deploy mode
 # - SPARK_MASTER_IP, to bind the master to a different IP address or hostname
-SPARK_MASTER_IP=$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')
+SPARK_MASTER_IP=$(hostname -i)
 # - SPARK_MASTER_PORT / SPARK_MASTER_WEBUI_PORT, to use non-default ports for the master
 # - SPARK_MASTER_OPTS, to set config properties only for the master (e.g. "-Dx=y")
 # - SPARK_WORKER_CORES, to set the number of cores to use on this machine
@@ -299,48 +339,52 @@ SPARK_MASTER_IP=$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | 
 EOF
 
 # ADD SHH AUTHENTICATION
-useradd -D /home/smack smack
-mkdir ~/home/smack/.ssh
+#useradd -D /home/smack smack
+#mkdir /home/smack/.ssh
+
 # Setup Private Key
-cat << EOF > ~/.ssh/rsa_id
+cat << EOF > /home/centos/.ssh/id_rsa
 -----BEGIN RSA PRIVATE KEY-----
-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
+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
 -----END RSA PRIVATE KEY-----
+
 EOF
+chmod 700 /home/centos/.ssh/id_rsa
+chown centos /home/centos/.ssh/id_rsa
 # Setup Public Key
-cat << EOF > ~/.ssh/rsa_id.pub
-ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAux7gvj7eTMjzSsBDvr3eZcWfTlmDqvS+T9YGAlQb2lVPa8QyQPD7D1cTPXL5mkxXTyM2F+iO7aCS9JqhJFw78eDc8cgEs425oXfKJkX32+YcU50YJOHIC/0CMEZfGCu1sShpgfd/xhrjNFps9EQgOQCJFcKM2kTl+Atc/sDv/p99Q9Oy3wyiBCIRhu+P6WbR/FZivDPXORZC1dCtsQB9cfjMusrREkYhhgNPP5NLkDejqevldqdgEz7Opvhb390+Azs4c3hJznA+nq/wzPTIYon+lJ//ndh4HRzFXBqmY9PVwcMFenlZ0GzIvL3/6/YoOdhzpNRkL6syjoloQvFjww== smack@$(hostname)
+cat << EOF > /home/centos/.ssh/rsa_id.pub
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCxKElPZ2bWfQeDo3zB1eMS4MyIfImUgEoGD8jnr/42zNtwHnmINel4Gr8dcPza/mjmz5YfZztpi81EtDxRkdrldVIaej9qa0XXmpuAqr0dw1chVLxwZ3mGk9CxipGAJ5wBKVsGGm0CqIlEy/7muOA1nLX5aycgEecTlHNZhM998kpyjnjlfvJkLa4feBiHiyWvnfhH0lgYpcgMNZsWcFAAn2EytSh6s5AMd1h/6I+7rxCXhbVGwhLjTAilg7UYLRVLl/7DCEbBYlbrsPmmXWZ0jueHbMt2+oM8DPLNZR8D5EnbV5u8eJSFWTBGiBwaROl4qZC3DGjDCfbXre/xmx/V Generated-by-Nova
 EOF
 # Add to Known Hosts
-cat << EOF >> ~/.ssh/authorized_keys
-ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAux7gvj7eTMjzSsBDvr3eZcWfTlmDqvS+T9YGAlQb2lVPa8QyQPD7D1cTPXL5mkxXTyM2F+iO7aCS9JqhJFw78eDc8cgEs425oXfKJkX32+YcU50YJOHIC/0CMEZfGCu1sShpgfd/xhrjNFps9EQgOQCJFcKM2kTl+Atc/sDv/p99Q9Oy3wyiBCIRhu+P6WbR/FZivDPXORZC1dCtsQB9cfjMusrREkYhhgNPP5NLkDejqevldqdgEz7Opvhb390+Azs4c3hJznA+nq/wzPTIYon+lJ//ndh4HRzFXBqmY9PVwcMFenlZ0GzIvL3/6/YoOdhzpNRkL6syjoloQvFjww== smack@$(hostname)
+cat << EOF >> /home/centos/.ssh/authorized_keys
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCxKElPZ2bWfQeDo3zB1eMS4MyIfImUgEoGD8jnr/42zNtwHnmINel4Gr8dcPza/mjmz5YfZztpi81EtDxRkdrldVIaej9qa0XXmpuAqr0dw1chVLxwZ3mGk9CxipGAJ5wBKVsGGm0CqIlEy/7muOA1nLX5aycgEecTlHNZhM998kpyjnjlfvJkLa4feBiHiyWvnfhH0lgYpcgMNZsWcFAAn2EytSh6s5AMd1h/6I+7rxCXhbVGwhLjTAilg7UYLRVLl/7DCEbBYlbrsPmmXWZ0jueHbMt2+oM8DPLNZR8D5EnbV5u8eJSFWTBGiBwaROl4qZC3DGjDCfbXre/xmx/V Generated-by-Nova
 EOF
 # START MASTER SERVICE
-$HDP_DIR/bin/hdfs namenode -format
+#$HDP_DIR/bin/hdfs namenode -format
 $SPARK_DIR/sbin/start-master.sh
 
 # Create Bashrc File
