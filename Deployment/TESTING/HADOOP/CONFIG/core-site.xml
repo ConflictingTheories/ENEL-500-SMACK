@@ -2,6 +2,11 @@
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
 <configuration>
 	<property>
+		<name>fs.defaultFS</name>
+		<value>%%SMACK_CLUSTER_HDFS%%</value>
+		<description>NameNode URI</description>
+	</property>
+	<property>
   		<name>fs.swift.impl</name>
   		<value>org.apache.hadoop.fs.swift.snative.SwiftNativeFileSystem</value>
   		<description>File system implementation for Swift</description>
@@ -13,35 +18,30 @@
 	</property>
 	<property>
   		<name>fs.swift.service.smack.auth.url</name>
-  			<value>https://keystone-yyc.cloud.cybera.ca:5000/v2.0</value>
+  			<value>%%SMACK_AUTH_URL%%/tokens</value>
   			<description>Keystone authenticaiton URL</description>
 	</property>
 	<property>
-  		<name>fs.swift.service.smack.https.port</name>
-  		<value>8080</value>
-  		<description>HTTPS port</description>
-	</property>
-	<property>
   		<name>fs.swift.service.smack.region</name>
-  		<value>Calgary</value>
+  		<value>%%SMACK_CLUSTER_REGION%%</value>
   		<description>Region name</description>
 	</property>
 	<property>
   		<name>fs.swift.service.smack.tenant</name>
-  		<value>SMACK</value>
+  		<value>%%SMACK_CLUSTER_PROJECT%%</value>
   		<description>Tenant name</description>
 	</property>
 	<property>
   		<name>fs.swift.service.smack.username</name>
-  		<value>confidential.inc@gmail.com</value>
+  		<value>%%SMACK_CLUSTER_USER%%</value>
 	</property>
 	<property>
   		<name>fs.swift.service.smack.password</name>
-  		<value>Hacker0013</value>
+  		<value>%%SMACK_CLUSTER_PASS%%</value>
 	</property>
 	<property>
 		<name>fs.swift.service.smack.public</name>
-		<value>true</value>
+		<value>False</value>
 	</property>
 	<property>
   		<name>fs.swift.service.smack.location-aware</name>
@@ -59,11 +59,11 @@
 	</property>
 	<property>
 		<name>fs.swift.connect.timeout</name>
-		<value>15000</value>
+		<value>10000</value>
 	</property>
 	<property>
 		<name>fs.swift.socket.timeout</name>
-		<value>60000</value>
+		<value>10000</value>
 	</property>
 	<property>
 		<name>fs.swift.connect.retry.count</name>

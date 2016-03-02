@@ -102,7 +102,7 @@ echo -e "\nDIRECTORIES: COMPLETE" >> $SMACK_INSTALL_LOG
 # UPDATE PACKAGES AND TOOLCHAIN
 #-----------------------------------
 #yum -y update
-yum -y install gcc-c++ wget curl curl-devel figlet python
+yum -y install gcc-c++ wget curl curl-devel figlet python wgrib2
 yum -y install make binutils git nmap man maven libffi-devel
 yum -y install nano python-devel python-pip links nodejs npm
 yum -y groupinstall "Development Tools"
@@ -817,7 +817,7 @@ do
                 f) FILE="$OPTARG";;
 				h) HELP="TRUE";;
 				o) NAME="${OPTARG}";;
-				H) HEADER="${OPTARG}";;
+			H) HEADER="${OPTARG}";;
         esac
 done
 # -h 
