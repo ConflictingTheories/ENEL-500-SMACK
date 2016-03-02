@@ -1117,7 +1117,7 @@ cd $SMACK_DIR
 mkdir $HDP_DIR
 cd $HDP_DIR
 # Download Hadoop
-wget http://apache.sunsite.ualberta.ca/hadoop/common/$HDP_VER/$HDP_VER.tar.gz
+wget http://mirror.csclub.uwaterloo.ca/apache/hadoop/common/$HDP_VER/$HDP_VER.tar.gz
 tar -xzvf $HDP_VER.tar.gz
 # Remove Tar
 rm -f $HDP_VER.tar.gz
@@ -1226,7 +1226,7 @@ EOF
 # Download and Unpack Spark
 mkdir $SPARK_DIR
 cd $SPARK_DIR
-wget http://apache.sunsite.ualberta.ca/spark/$SPARK_VER/$SPARK_VER-bin-hadoop2.6.tgz
+wget http://mirror.csclub.uwaterloo.ca/apache/spark/$SPARK_VER/$SPARK_VER-bin-hadoop2.6.tgz
 tar -xzvf $SPARK_VER-bin-hadoop2.6.tgz
 rm -f $SPARK_VER-bin-hadoop2.6.tgz
 cd $SPARK_VER-bin-hadoop2.6
