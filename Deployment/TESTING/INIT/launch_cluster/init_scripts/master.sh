@@ -81,6 +81,10 @@ export API_SRV=/srv/api-server
 # EXECUTABLE PATH
 export PATH="${PATH}:${SMACK_DIR_BIN}"
 export PATH="${PATH}:/usr/local/bin"
+
+
+
+
 # Log Reporting
 echo -e "\n### INSTALL BEGINNING ###" >> $SMACK_INSTALL_LOG
 echo -e "\n### DECLARATIONS: COMPLETE" >> $SMACK_INSTALL_LOG
@@ -1325,18 +1329,15 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCxKElPZ2bWfQeDo3zB1eMS4MyIfImUgEoGD8jnr/42
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPYWeYBlZE1vyc7Vz2yQsI8yK4HsqGq7BB3FhFH+2nW8cjwaj81QfzbN2UhYxIhv7T3iffRQrZ3v2UjI2LEIgFrKYFw+mw0ocpNq9K8z3UwUP3f+e6g7rNkn1m124ZnI0IvFDCJmAdH275bEtowMI16LcrNVAOlXp/YHP3PTyK0apSeih9iJ3hGpcVRraL+MhT8bzaW22fCyDb1pdl60PxenQRUcUvlE1/yntTwiVtd188Vqiaqjo1ffldTlH0G0uhrGsHMkUW65Z8eDXYeebAcy9pp2SQ1LojSGw7zHYacnM872atcc0UNQFnq/FC+MyDE0rM6safIFi+8y0FtGTR Generated-by-Nova
 EOF
 
+source /usr/local/smack/smack-env.sh
 # START MASTER SERVICE - [OPTION 1 of 2]
 #---------------------------------------
 # If brand new project uncomment the following line - warning formats
 #$HDP_DIR/bin/hdfs namenode -format
-#$SPARK_DIR/sbin/start-master.sh
-
-# START SLAVE SERVICE - [OPTION 2 of 2]
-#--------------------------------------
-# Spark Master IP
-declare SPARK_MASTER_IP=10.1.1.180
-$SPARK_DIR/sbin/start-slave.sh spark://${SPARK_MASTER_IP}:7777
-
+$SPARK_DIR/sbin/start-master.sh
+hostname -i > master-ip
+smack-upload -c clusters -f master-ip -o "conf/master"
+rm -rf master-ip
 # SET PERMISSIONS FOR COMMANDS
 #-----------------------------------
 # SMACK Directory

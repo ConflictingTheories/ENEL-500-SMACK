@@ -81,6 +81,10 @@ export API_SRV=/srv/api-server
 # EXECUTABLE PATH
 export PATH="${PATH}:${SMACK_DIR_BIN}"
 export PATH="${PATH}:/usr/local/bin"
+
+
+
+
 # Log Reporting
 echo -e "\n### INSTALL BEGINNING ###" >> $SMACK_INSTALL_LOG
 echo -e "\n### DECLARATIONS: COMPLETE" >> $SMACK_INSTALL_LOG
@@ -1236,6 +1240,14 @@ SPARK_DIR=$(pwd)
 cp $HDP_DIR/etc/hadoop/core-site.xml $SPARK_DIR/conf/core-site.xml
 # JAR necessary for Swift Communication
 cp $HDP_DIR/share/hadoop/tools/lib/hadoop-openstack*.jar $SPARK_DIR/lib/hadoop-openstack.jar
+
+source /usr/local/smack/smack-env.sh
+# START SLAVE SERVICE - [OPTION 2 of 2]
+#--------------------------------------
+# Spark Master IP
+smack-download -c clusters -f master-ip -o "conf/master"
+declare SPARK_MASTER_IP=$(cat master-ip)
+rm -rf master-ip
 # Spark Environment Script
 cat << EOF > $SPARK_DIR/conf/spark-env.sh
 #!/bin/bash
@@ -1256,7 +1268,7 @@ SPARK_CLASSPATH=$SPARK_HOME/lib/hadoop-openstack.jar
 # - MESOS_NATIVE_JAVA_LIBRARY, to point to your libmesos.so if you use Mesos
 # Options for the daemons used in the standalone deploy mode
 # - SPARK_MASTER_IP, to bind the master to a different IP address or hostname
-SPARK_MASTER_IP=$(hostname -i)
+SPARK_MASTER_IP=${SPARK_MASTER_IP}
 # - SPARK_MASTER_PORT / SPARK_MASTER_WEBUI_PORT, to use non-default ports for the master
 # - SPARK_MASTER_OPTS, to set config properties only for the master (e.g. "-Dx=y")
 # - SPARK_WORKER_CORES, to set the number of cores to use on this machine
@@ -1277,11 +1289,6 @@ SPARK_MASTER_IP=$(hostname -i)
 # - SPARK_IDENT_STRING  A string representing this instance of spark. (Default: $USER)
 # - SPARK_NICENESS      The scheduling priority for daemons. (Default: 0)
 EOF
-
-# ADD SHH AUTHENTICATION
-#useradd -D /home/smack smack
-#mkdir /home/smack/.ssh
-
 # Setup Private Key
 cat << EOF > /home/centos/.ssh/id_rsa
 -----BEGIN RSA PRIVATE KEY-----
@@ -1324,19 +1331,8 @@ cat << EOF >> /home/centos/.ssh/authorized_keys
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCxKElPZ2bWfQeDo3zB1eMS4MyIfImUgEoGD8jnr/42zNtwHnmINel4Gr8dcPza/mjmz5YfZztpi81EtDxRkdrldVIaej9qa0XXmpuAqr0dw1chVLxwZ3mGk9CxipGAJ5wBKVsGGm0CqIlEy/7muOA1nLX5aycgEecTlHNZhM998kpyjnjlfvJkLa4feBiHiyWvnfhH0lgYpcgMNZsWcFAAn2EytSh6s5AMd1h/6I+7rxCXhbVGwhLjTAilg7UYLRVLl/7DCEbBYlbrsPmmXWZ0jueHbMt2+oM8DPLNZR8D5EnbV5u8eJSFWTBGiBwaROl4qZC3DGjDCfbXre/xmx/V Generated-by-Nova
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPYWeYBlZE1vyc7Vz2yQsI8yK4HsqGq7BB3FhFH+2nW8cjwaj81QfzbN2UhYxIhv7T3iffRQrZ3v2UjI2LEIgFrKYFw+mw0ocpNq9K8z3UwUP3f+e6g7rNkn1m124ZnI0IvFDCJmAdH275bEtowMI16LcrNVAOlXp/YHP3PTyK0apSeih9iJ3hGpcVRraL+MhT8bzaW22fCyDb1pdl60PxenQRUcUvlE1/yntTwiVtd188Vqiaqjo1ffldTlH0G0uhrGsHMkUW65Z8eDXYeebAcy9pp2SQ1LojSGw7zHYacnM872atcc0UNQFnq/FC+MyDE0rM6safIFi+8y0FtGTR Generated-by-Nova
 EOF
-
-# START MASTER SERVICE - [OPTION 1 of 2]
-#---------------------------------------
-# If brand new project uncomment the following line - warning formats
-#$HDP_DIR/bin/hdfs namenode -format
-#$SPARK_DIR/sbin/start-master.sh
-
-# START SLAVE SERVICE - [OPTION 2 of 2]
-#--------------------------------------
-# Spark Master IP
-declare SPARK_MASTER_IP=10.1.1.180
-$SPARK_DIR/sbin/start-slave.sh spark://${SPARK_MASTER_IP}:7777
-
+# Start
+$SPARK_DIR/sbin/start-slave.sh spark://${SPARK_MASTER_IP}:7077
 # SET PERMISSIONS FOR COMMANDS
 #-----------------------------------
 # SMACK Directory
