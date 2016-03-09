@@ -1,15 +1,16 @@
 #!/bin/bash
 # Display Message
+clear
 figlet -c SMACK Energy Forecasting
 figlet -cf digital Object Storage Download Wizard
 # Download from Swift Here
 # Check for Login
-if [ -z "\${OS_USERNAME}" ] || [ -z "\${OS_PASSWORD}" ]; then
+if [[ -z "\${OS_USERNAME}" || -z "\${OS_PASSWORD}" ]]; then
 	echo -e "\nPlease Login First. Use 'smack-login' and follow the prompts.\n"
-	return
+	exit
 fi
 # Manual Usage
-while getopts ac:f:ho: option
+while getopts ac:f:ho:x: option
 do
         case "\${option}"
         in
@@ -18,35 +19,36 @@ do
                 f) FILE="\${OPTARG}";;
 				h) HELP="TRUE";;
 				o) OBJECT="\${OPTARG}";;
+				x) CMD="\${OPTAGR}";;
         esac
 done
 
 # -h 
-if [ "\${HELP}" == "TRUE" ]; then
+if [[ "\${HELP}" == "TRUE" ]]; then
 	echo -e "SMACK Download\n\nUsage:\n\t\t-a\tDownload All Files in Container\n\t\t-f\tDownload file Name\n\t\t-o\tObject Name to be Downloaded\n\t\t-h\tDisplay this Help Message\n"
 	exit
 fi
-
-# -a Set
-if [ "\${ALL}" == "TRUE" ]; then
-	# Loop Through all files in Container and Download
-	exit
-fi
-
 # PROMPTING WIZARD
-if [ -z "\${CONTAINER}" ]; then
+if [[ -z "\${CONTAINER}" ]]; then
 	echo -e "\nCONTAINERS:"
 	swift list
 	read -p "Which Container would you like to list: " CONTAINER
 fi
-
-if [ -z "\${OBJECT}" ]; then
+if [[ -z "\${OBJECT}" ]]; then
 	echo -e "\nCONTAINER: \${CONTAINER}"
 	swift list "\${CONTAINER}" | more
 	read -p "What Object would you like to download: " OBJECT
 fi
-
 echo -e "Downloading \${OBJECT} from \${CONTAINER}..."
 # TYPE I
-swift download "\${CONTAINER}" "\${OBJECT}"
+# -a Set
+if [[ "\${ALL}" == "TRUE" ]]; then
+	swift download ${CMD} "\${CONTAINER}" 
+	exit
+fi
+if [[ -z "\${FILE" ]]; then
+	swift download ${CMD} "\${CONTAINER}" "\${OBJECT}"
+else
+	swift download ${CMD} --output="${FILE}" "\${CONTAINER}" "\${OBJECT}"
+fi
 echo -e "Downloading \${OBJECT} Complete."

@@ -1,5 +1,6 @@
 #!/bin/bash
 # Display Message
+clear
 figlet -c SMACK Energy Forecasting
 figlet -cf digital Logging Out...
 # Unset Login Details

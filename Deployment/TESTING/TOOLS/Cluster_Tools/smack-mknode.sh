@@ -1,9 +1,10 @@
 #!/bin/bash
 # Output Welcome Screen
-if [ -z "\${OS_USERNAME}" ] || [ -z "\${OS_PASSWORD}" ]; then
+if [[ -z "\${OS_USERNAME}" || -z "\${OS_PASSWORD}" ]]; then
 	echo -e "Error: You are not logged in. \n\tPlease run 'smack-login' and then try again."
 	exit 1
 else
+	clear
 	figlet -c SMACK Energy Forecasting
 fi
 
@@ -30,45 +31,45 @@ declare INT_KEY="DevAccess"
 declare INT_SECURITY="Default"
 declare INT_SCRIPT=""
 
-if ! [ "\${HELP}" == "TRUE" ]; then
+if ! [[ "\${HELP}" == "TRUE" ]]; then
 	echo -e "\nSMACK LOGIN UTILTIY\n\tUsage:\n\t\t-n\tInstance Name\n\t\t-f\t\Flavour\n\t\t-k\tAccess Key\n\t\t-x\tDeployment Script\n\t\t-d\t\Use Default Values\n\t\t-h\tHelp Message\n"
 fi
 
 # use Wizard or Defaults
-if ! [ "\${DEFAULT}" == "TRUE"]; then
+if ! [[ "\${DEFAULT}" == "TRUE" ]]; then
 	echo "For Defaults Just Press Enter at Prompt."
-	if [ -z "\${NAME}" ]; then
+	if [[ -z "\${NAME}" ]]; then
 		echo -e "\tName (*default):"
 		read NAME
 	fi
-	if [ -z "\${FLAVOUR}" ]; then
+	if [[ -z "\${FLAVOUR}" ]]; then
 		echo -e "\tFlavour (*m1.tiny):"
 		read FLAVOUR
 	fi
-	if [ -z "\${KEY}" ]; then
+	if [[ -z "\${KEY}" ]]; then
 		echo -e "\tKey (*DevAccess):"
 		read KEY
 	fi
-	if [ -z "\${SCRIPT}" ]; then
+	if [[ -z "\${SCRIPT}" ]]; then
 		echo -e "\tSetup Script (*setup-node.sh):"
 		read SCRIPT
 	fi
 fi
 
 #  Check for new name and change if necessary
-if ! [ -z "\${NAME}" ]; then
+if ! [[ -z "\${NAME}" ]]; then
 	INT_NAME="\${NAME}"
 fi
-if ! [ -z "\${FLAVOUR}" ]; then
+if ! [[ -z "\${FLAVOUR}" ]]; then
 	INT_FLAVOR="\${FLAVOUR}"
 fi
-if ! [ -z "\${KEY}" ]; then
+if ! [[ -z "\${KEY}" ]]; then
 	INT_KEY="\${KEY}"
 fi
-if ! [ -z "\${IMAGE}" ]; then
+if ! [[ -z "\${IMAGE}" ]]; then
 	INT_IMAGE="\${IMAGE}"
 fi
-if ! [ -z "\${SCRIPT}" ]; then
+if ! [[ -z "\${SCRIPT}" ]]; then
 	INT_SCRIPT="\${SCRIPT}"
 fi
 # Display instance information
@@ -97,3 +98,5 @@ nova --os-user-name "\${OS_USERNAME}" \\
 	--user-data "\${INT_SCRIPT}" \\
 	--security-group "\${INT_SECURITY}" \\
 	"\${INT_NAME}"
+# Finish Message
+echo -e "\nVM Node Creation Finished. \n\n\t**PLEASE NOTE: Installation of script may take upto a couple hours to \n\t\tcomplete before node is fully deployed.\n"

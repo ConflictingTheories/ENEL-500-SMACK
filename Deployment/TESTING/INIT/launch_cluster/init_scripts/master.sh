@@ -185,7 +185,6 @@ echo -e "\nOPENSTACK CLIENTS: COMPLETE" >> $SMACK_INSTALL_LOG
 # install R + Packages
 yum -y install R
 R -e "install.packages('shiny', repos='http://cran.stat.sfu.ca/')"
-R -e "install.packages('shiny', repos='http://cran.stat.sfu.ca/')"
 R -e "install.packages('shinydashboard', repos='http://cran.stat.sfu.ca/')"
 R -e "install.packages('devtools', repos='http://cran.stat.sfu.ca/')"
 R -e "install.packages('ggplot2', repos='http://cran.stat.sfu.ca/')"
@@ -199,7 +198,7 @@ yum -y install --nogpgcheck shiny-server-1.4.1.759-rh5-x86_64.rpm
 mv /etc/shiny-server/shiny-server.conf /etc/shiny-server/shiny-server.conf.bak
 cat /etc/shiny-server/shiny-server.conf.bak | sed 's/3838/80/g' > /etc/shiny-server/shiny-server.conf
 # Web Server Index Page
-cat << EOF > /srv/shiny-server/index.html
+cat <<EOF > /srv/shiny-server/index.html
 <!DOCTYPE html>
 <html>
 <head>
@@ -269,7 +268,7 @@ echo -e "\nCRON SCHEDULING: COMPLETE" >> $SMACK_INSTALL_LOG
 # POPULATE ANY NEEDED FILES
 #-----------------------------------
 # Generate Environment Script for SMACK Project
-cat << EOF >> $SMACK_DIR/smack-env.sh
+cat <<EOF >> $SMACK_DIR/smack-env.sh
 #!/bin/bash
 # SMACK ENERGY FORECASTING - ENVIRONMENT VARIABLES
 #-------------------------------------------------
@@ -360,7 +359,7 @@ echo -e "\nSMACK ENVIRONMENT SCRIPT: COMPLETE" >> $SMACK_INSTALL_LOG
 # Make directory for Shiny App
 mkdir $SHINY_SRV/demo
 # Write Server File (app.R)
-cat << EOF > $SHINY_SRV/demo/app.R
+cat <<EOF > $SHINY_SRV/demo/app.R
 library(shiny)
 library(shinydashboard)
 ui <- dashboardPage(
@@ -409,7 +408,7 @@ npm install express --save
 npm install request --save
 # Generate API Backend
 # Populate Node.Js App
-cat << EOF > $API_SRV/api_demo/app.js
+cat <<EOF > $API_SRV/api_demo/app.js
 // Use for HTTP requests (Outgoing)
 var request = require('request');
 // Use for API calls (Incoming)
@@ -446,7 +445,7 @@ app.listen(3000, function(){
 });
 EOF
 # Launch API Server
-cat << EOF > $API_SRV/api_demo/api.js
+cat <<EOF > $API_SRV/api_demo/api.js
 // # SMACK API - Demonstration
 //
 //      # Designed for Task #5
@@ -522,7 +521,7 @@ node "${API_SRV}/api_demo/api.js" &
 echo -e "\nAPI DEMO: COMPLETE" >> $SMACK_INSTALL_LOG
 # ADD WELCOME MESSAGE TO INSTANCE (** Move to Cron @reboot)
 #-----------------------------------
-cat << EOT >> /etc/bashrc
+cat <<EOT >> /etc/bashrc
 ## ADDED BY SMACK------------>
 # Configure SMACK Environment
 shopt -s expand_aliases
@@ -537,13 +536,14 @@ EOT
 echo -e "\nWELCOME: COMPLETE" >> $SMACK_INSTALL_LOG
 # LIST NODES COMMAND (smack-lsnode)
 #-----------------------------------
-cat << EOF >> $SMACK_DIR_BIN/smack-lsnode
+cat <<EOF >> $SMACK_DIR_BIN/smack-lsnode
 #!/bin/bash
 # Output Welcome Screen
-if [ -z "\${OS_USERNAME}" ] || [ -z "\${OS_PASSWORD}" ]; then
+if [[ -z "\${OS_USERNAME}" || -z "\${OS_PASSWORD}" ]]; then
 	echo -e "Error: You are not logged in.\n\tPlease run 'smack-login' and then try again."
 	exit 1
 else
+	clear
 	figlet -c SMACK Energy Forecasting
 fi
 # List Nodes in Cloud
@@ -554,6 +554,7 @@ nova --os-user-name "\${OS_USERNAME}" \\
       	--os-region-name "\${OS_REGION}" \\
       	--os-auth-url "\${OS_AUTH_URL}" \\
       	list
+echo -e "\n\n"
 EOF
 # Log Reporting
 if [ -e "$SMACK_DIR_BIN/smack-lsnode" ]; then
@@ -563,15 +564,17 @@ else
 fi
 # CREATE NODE IN CLOUD COMMAND (smack-mknode)
 #--------------------------------------------
-cat << EOF > $SMACK_DIR_BIN/smack-mknode
+cat <<EOF > $SMACK_DIR_BIN/smack-mknode
 #!/bin/bash
 # Output Welcome Screen
-if [ -z "\${OS_USERNAME}" ] || [ -z "\${OS_PASSWORD}" ]; then
+if [[ -z "\${OS_USERNAME}" || -z "\${OS_PASSWORD}" ]]; then
 	echo -e "Error: You are not logged in. \n\tPlease run 'smack-login' and then try again."
 	exit 1
 else
+	clear
 	figlet -c SMACK Energy Forecasting
 fi
+
 while getopts n:f:k:x:i:dh option
 do
         case "\${option}"
@@ -585,6 +588,7 @@ do
 				h) HELP="TRUE";;
         esac
 done
+
 # Default Instance Information
 declare INT_NAME="default"
 declare INT_FLAVOR="m1.tiny"
@@ -593,44 +597,46 @@ declare INT_OS="linux"
 declare INT_KEY="DevAccess"
 declare INT_SECURITY="Default"
 declare INT_SCRIPT=""
-# Help
-if ! [ "\${HELP}" == "TRUE" ]; then
+
+if ! [[ "\${HELP}" == "TRUE" ]]; then
 	echo -e "\nSMACK LOGIN UTILTIY\n\tUsage:\n\t\t-n\tInstance Name\n\t\t-f\t\Flavour\n\t\t-k\tAccess Key\n\t\t-x\tDeployment Script\n\t\t-d\t\Use Default Values\n\t\t-h\tHelp Message\n"
 fi
+
 # use Wizard or Defaults
-if ! [ "\${DEFAULT}" == "TRUE"]; then
+if ! [[ "\${DEFAULT}" == "TRUE" ]]; then
 	echo "For Defaults Just Press Enter at Prompt."
-	if [ -z "\${NAME}" ]; then
+	if [[ -z "\${NAME}" ]]; then
 		echo -e "\tName (*default):"
 		read NAME
 	fi
-	if [ -z "\${FLAVOUR}" ]; then
+	if [[ -z "\${FLAVOUR}" ]]; then
 		echo -e "\tFlavour (*m1.tiny):"
 		read FLAVOUR
 	fi
-	if [ -z "\${KEY}" ]; then
+	if [[ -z "\${KEY}" ]]; then
 		echo -e "\tKey (*DevAccess):"
 		read KEY
 	fi
-	if [ -z "\${SCRIPT}" ]; then
+	if [[ -z "\${SCRIPT}" ]]; then
 		echo -e "\tSetup Script (*setup-node.sh):"
 		read SCRIPT
 	fi
 fi
+
 #  Check for new name and change if necessary
-if ! [ -z "\${NAME}" ]; then
+if ! [[ -z "\${NAME}" ]]; then
 	INT_NAME="\${NAME}"
 fi
-if ! [ -z "\${FLAVOUR}" ]; then
+if ! [[ -z "\${FLAVOUR}" ]]; then
 	INT_FLAVOR="\${FLAVOUR}"
 fi
-if ! [ -z "\${KEY}" ]; then
+if ! [[ -z "\${KEY}" ]]; then
 	INT_KEY="\${KEY}"
 fi
-if ! [ -z "\${IMAGE}" ]; then
+if ! [[ -z "\${IMAGE}" ]]; then
 	INT_IMAGE="\${IMAGE}"
 fi
-if ! [ -z "\${SCRIPT}" ]; then
+if ! [[ -z "\${SCRIPT}" ]]; then
 	INT_SCRIPT="\${SCRIPT}"
 fi
 # Display instance information
@@ -659,6 +665,8 @@ nova --os-user-name "\${OS_USERNAME}" \\
 	--user-data "\${INT_SCRIPT}" \\
 	--security-group "\${INT_SECURITY}" \\
 	"\${INT_NAME}"
+# Finish Message
+echo -e "\nVM Node Creation Finished. \n\n\t**PLEASE NOTE: Installation of script may take upto a couple hours to \n\t\tcomplete before node is fully deployed.\n"
 EOF
 # Log Reporting
 if [ -e "$SMACK_DIR_BIN/smack-mknode" ]; then
@@ -668,11 +676,17 @@ else
 fi
 # LOGIN COMMAND (smack-login)
 #-----------------------------------
-cat << EOF > $SMACK_DIR_BIN/smack-login
+cat <<EOF > $SMACK_DIR_BIN/smack-login
 #!/bin/bash
 # Output Welcome Screen
+clear
 figlet -c SMACK Energy Forecasting
 figlet -cf digital Cloud Login
+# Clear Varieables
+unset UNAME
+unset PASSWD
+unset PROJECT
+unset HELP
 # Manual Usage
 while getopts u:x:p:h option
 do
@@ -685,21 +699,25 @@ do
         esac
 done
 # Help Message
-if [ "\${HELP}" == "TRUE" ]; then
+if [[ "\${HELP}" == "TRUE" ]]; then
 	echo -e "SMACK Login:\n\n\tUsage:\n\t\t-u\t:\tUsername\n\t\t-x\t:\tPassword\n\t\t-p\t:\tProject Name\n\t\t-h\t:\tHelp Message\n"
+	exit
 fi
 # Login and Set Variables
-if [ -z "\${UNAME}" ]; then
+if [[ -z "\${UNAME}" ]]; then
 	read -p "Please enter your SMACK Openstack username: " UNAME
 fi
-if [ -z "\${PASSWD}" ]; then
+if [[ -z "\${PASSWD}" ]]; then
 	stty -echo
 	read -p "Please enter your SMACK Openstack password: " PASSWD
 	stty echo
 	echo -e "\n"
 fi
-if [ -z "\${PROJECT}" ]; then
+if [[ -z "\${PROJECT}" ]]; then
 	read -p "Please enter your Project (ie. blank for personal or enter 'SMACK'): " PROJECT
+	export OS_PROJECT_NAME="\${UNAME}"
+else
+	export OS_PROJECT_NAME="\${PROJECT}"
 fi
 # URLs for API Access (may need to change)
 export KEYSTONE_URL="https://keystone-yyc.cloud.cybera.ca:5000/v2.0"
@@ -715,11 +733,8 @@ export OS_USERNAME="\${UNAME}"
 export OS_PASSWORD="\${PASSWD}"
 export OS_REGION="Calgary"
 export OS_ZONE="Nova"
-if [ -z "\${PROJECT}" ]; then
-	export OS_PROJECT_NAME="\${UNAME}"
-else
-	export OS_PROJECT_NAME="\${PROJECT}"
-fi
+# Message
+echo -e "\nLogin Complete: You may begin using the toolchain\n"
 EOF
 # Log Reporting
 if [ -e "$SMACK_DIR_BIN/smack-login" ]; then
@@ -729,9 +744,10 @@ else
 fi
 # LOGOUT COMMAND (smack-logout)
 #-----------------------------------
-cat << EOF > $SMACK_DIR_BIN/smack-logout
+cat <<EOF > $SMACK_DIR_BIN/smack-logout
 #!/bin/bash
 # Display Message
+clear
 figlet -c SMACK Energy Forecasting
 figlet -cf digital Logging Out...
 # Unset Login Details
@@ -758,9 +774,10 @@ else
 fi
 # SUSPEND INSTANCE COMMAND
 #-----------------------------------
-cat << EOF > $SMACK_DIR_BIN/smack-suspend
+cat <<EOF > $SMACK_DIR_BIN/smack-suspend
 #!/bin/bash
 # Display Message
+clear
 figlet -c SMACK Energy Forecasting
 figlet -cf digital Suspending...
 # Suspend Instance Here
@@ -776,9 +793,10 @@ else
 fi
 # TERMINATE INSTANCE COMMAND
 #-----------------------------------
-cat << EOF > $SMACK_DIR_BIN/smack-terminate
+cat <<EOF > $SMACK_DIR_BIN/smack-terminate
 #!/bin/bash
 # Display Message
+clear
 figlet -c SMACK Energy Forecasting
 figlet -cf digital Terminating...
 # Terminate Instance Here
@@ -794,15 +812,27 @@ else
 fi
 # ASSOCIATE FLOATING IP COMMAND 
 #-----------------------------------
-cat << EOF > $SMACK_DIR_BIN/smack-setip
+cat <<EOF > $SMACK_DIR_BIN/smack-setip
 #!/bin/bash
+shopt -s expand_alias
 # Display Message
-figlet -c SMACK Energy Forecasting
-figlet -cf digital IP Config
+if [[ -z "\${OS_USERNAME}" || -z "\${OS_PASSWORD}" ]]; then
+	echo -e "Error: You are not logged in. \n\tPlease run 'smack-login' and then try again."
+	exit 1
+else
+	clear
+	figlet -c SMACK Energy Forecasting
+	figlet -cf digital IP Config
+fi
 # Configure IP Here
-#
-#	......
-#
+echo -e "Downloading and Reading Data\n"
+smack-download -c clusters -o "conf/master-ip" -x "--output=$SMACK_DIR/tmp/master-ip" 1> /dev/null
+declare new_ip="$(cat $SMACK_DIR/tmp/master-ip)"
+echo -e "Master IP Found: ${new_ip}"
+cat "${SMACK_DIR}/spark/spark-latest/conf/spark-env.sh" |  sed -r "s/SPARK_MASTER_IP=[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/SPARK_MASTER_IP=${new_ip}/g" > ${SMACK_DIR}/spark/spark-latest/conf/spark-env.sh
+echo -e "\nWriting Master IP Data"
+rm "$SMACK_DIR/tmp/master-ip"
+echo -e "\nIP Change Complete\n"
 EOF
 # Log Reporting
 if [ -e "${SMACK_DIR_BIN}/smack-setip" ]; then
@@ -812,20 +842,21 @@ else
 fi
 # UPLOAD FILE TO CONTAINER COMMAND
 #-----------------------------------
-cat << EOF > $SMACK_DIR_BIN/smack-upload
+cat <<EOF > $SMACK_DIR_BIN/smack-upload
 #!/bin/bash
 # SMACK -  Make Upload Utility
 # Display Message
+clear
 figlet -c SMACK Energy Forecasting
 figlet -cf digital Object Storage Upload Wizard
 # Upload Files
 # Check for Login
-if [ -z "\${OS_USERNAME}" ] || [ -z "\${OS_PASSWORD}" ]; then
+if [[ -z "\${OS_USERNAME}" || -z "\${OS_PASSWORD}" ]]; then
 	echo -e "\nPlease Login First. Use 'smack-login' and follow the prompts.\n"
 	exit
 fi
 # Manual Usage
-while getopts ac:e:f:ho: option
+while getopts ac:e:f:ho:H: option
 do
         case "\${option}"
         in
@@ -835,41 +866,48 @@ do
                 f) FILE="\$OPTARG";;
 				h) HELP="TRUE";;
 				o) NAME="\${OPTARG}";;
+				H) HEADERS="\${OPTARG}";;
         esac
 done
+# -H
+if ! [[ -z "\${HEADERS}" ]]; then
+	declare HEADERS="-H \${HEADERS}"
+fi
 # -h 
-if [ "\${HELP}" == "TRUE" ]; then
+if [[ "\${HELP}" == "TRUE" ]]; then
 	echo -e "SMACK Upload\n\nUsage:\n\t\t-a\tUpload All Files in Directory\n\t\t-e\tUpload all Files with extension\n\t\t-f\tUpload file\n\t\t-o\tObject Name to be saved as\n\t\t-h\tDisplay this Help Message\n"
 	exit
 fi
-# -a Set
-if [ "\${ALL}" == "TRUE" ]; then
-	# Loop Through all files in directory and upload
-	echo -e "Function Not Implemented Yet"
-	exit
-fi
 # -e Set
-if ! [ -z "\${EXT}" ]; then
+if ! [[ -z "\${EXT}" ]]; then
 	# Upload all files of extension passed
 	echo -e "Function Not Implemented Yet"
 	exit
 fi
 # PROMPTING WIZARD
-if [ -z "\${CONTAINER}" ]; then
+if [[ -z "\${CONTAINER}" ]]; then
 	echo -e "\nCONTAINERS:"
 	swift list
 	read -p "Please Enter Container: " CONTAINER
 fi
-if [ -z "\${FILE}" ]; then
+# -a Set
+if [[ "\${ALL}" == "TRUE" ]]; then
+	for files in \$(ls); do
+		echo -e "\nUploading \${files} into container \${CONTAINER}...\n"
+		swift upload "\${HEADERS}" --object-name "\${files}" "\${CONTAINER}" "\${files}"  2> /dev/null
+	done
+	exit
+fi
+if [[ -z "\${FILE}" ]]; then
 	read -p "Please Enter the File you wish to Upload: " FILE
 fi
-if [ -z "\${NAME}" ]; then
+if [[ -z "\${NAME}" ]]; then
 	read -p "Please Enter a name for the object: " NAME
 fi
-echo -e "\nUploading \${FILE} into container \${CONTAINER}...\n"
 # TYPE I
-swift upload --object-name "\${NAME}" "\${CONTAINER}" "\${FILE}" 2> /dev/null
-echo -e "\nUploading Object \${NAME} Complete.\n" 
+echo -e "\nUploading \${FILE} into container \${CONTAINER}...\n"
+swift upload "\${HEADERS}" --object-name "\${NAME}" "\${CONTAINER}" "\${FILE}" 2> /dev/null
+echo -e "\nUploading Object \${NAME} Complete.\n"
 EOF
 # Log Reporting
 if [ -e "${SMACK_DIR_BIN}/smack-upload" ]; then
@@ -879,19 +917,20 @@ else
 fi
 # DOWNLOAD FILE FROM CONTAINER COMMAND
 #-----------------------------------
-cat << EOF > $SMACK_DIR_BIN/smack-download
+cat <<EOF > $SMACK_DIR_BIN/smack-download
 #!/bin/bash
 # Display Message
+clear
 figlet -c SMACK Energy Forecasting
 figlet -cf digital Object Storage Download Wizard
 # Download from Swift Here
 # Check for Login
-if [ -z "\${OS_USERNAME}" ] || [ -z "\${OS_PASSWORD}" ]; then
+if [[ -z "\${OS_USERNAME}" || -z "\${OS_PASSWORD}" ]]; then
 	echo -e "\nPlease Login First. Use 'smack-login' and follow the prompts.\n"
-	return
+	exit
 fi
 # Manual Usage
-while getopts ac:f:ho: option
+while getopts ac:f:ho:x: option
 do
         case "\${option}"
         in
@@ -900,32 +939,38 @@ do
                 f) FILE="\${OPTARG}";;
 				h) HELP="TRUE";;
 				o) OBJECT="\${OPTARG}";;
+				x) CMD="\${OPTAGR}";;
         esac
 done
+
 # -h 
-if [ "\${HELP}" == "TRUE" ]; then
+if [[ "\${HELP}" == "TRUE" ]]; then
 	echo -e "SMACK Download\n\nUsage:\n\t\t-a\tDownload All Files in Container\n\t\t-f\tDownload file Name\n\t\t-o\tObject Name to be Downloaded\n\t\t-h\tDisplay this Help Message\n"
 	exit
 fi
-# -a Set
-if [ "\${ALL}" == "TRUE" ]; then
-	# Loop Through all files in Container and Download
-	exit
-fi
 # PROMPTING WIZARD
-if [ -z "\${CONTAINER}" ]; then
+if [[ -z "\${CONTAINER}" ]]; then
 	echo -e "\nCONTAINERS:"
 	swift list
 	read -p "Which Container would you like to list: " CONTAINER
 fi
-if [ -z "\${OBJECT}" ]; then
+if [[ -z "\${OBJECT}" ]]; then
 	echo -e "\nCONTAINER: \${CONTAINER}"
 	swift list "\${CONTAINER}" | more
 	read -p "What Object would you like to download: " OBJECT
 fi
 echo -e "Downloading \${OBJECT} from \${CONTAINER}..."
 # TYPE I
-swift download "\${CONTAINER}" "\${OBJECT}"
+# -a Set
+if [[ "\${ALL}" == "TRUE" ]]; then
+	swift download ${CMD} "\${CONTAINER}" 
+	exit
+fi
+if [[ -z "\${FILE" ]]; then
+	swift download ${CMD} "\${CONTAINER}" "\${OBJECT}"
+else
+	swift download ${CMD} --output="${FILE}" "\${CONTAINER}" "\${OBJECT}"
+fi
 echo -e "Downloading \${OBJECT} Complete."
 EOF
 # Log Reporting
@@ -936,14 +981,15 @@ else
 fi
 # LIST CONTAINERS FROM OBJECT STORAGE COMMAND
 #-----------------------------------
-cat << EOF > ${SMACK_DIR_BIN}/smack-lsdb
+cat <<EOF > ${SMACK_DIR_BIN}/smack-lsdb
 #!/bin/bash
 # Display Message
+clear
 figlet -c SMACK Energy Forecasting
 figlet -cf digital Object Storage Listing Wizard
 # Download from Swift Here
 # Check for Login
-if [ -z "\${OS_USERNAME}" ] || [ -z "\${OS_PASSWORD}" ]; then
+if [[ -z "\${OS_USERNAME}" || -z "\${OS_PASSWORD}" ]]; then
 	echo -e "\nPlease Login First. Use 'smack-login' and follow the prompts.\n"
 	exit
 fi
@@ -960,17 +1006,18 @@ do
         esac
 done
 # -h
-if [ "\${HELP}" == "TRUE" ]; then
+if [[ "\${HELP}" == "TRUE" ]]; then
 	echo -e "\nSMACK Object Storage Listing\n\nUsage\n\t\t-l\tList Root Container\n\t\t-h\tList This Help Message\n\t\t-s\tList Container Statistics\n\t\t-c\tContainer to List\n\t\t-o\tObject to List Statistics\n"
 	exit
 fi
+
 # -l 
-if [ "\${ROOT}" == "TRUE" ]; then
+if [[ "\${ROOT}" == "TRUE" ]]; then
 	swift list
 	exit
 fi
 # Prompting Wizard
-if [ -z "\${CONTAINER}" ]; then
+if [[ -z "\${CONTAINER}" ]]; then
 	echo -e "\nCONTAINERS:"
 	swift list
 	read -p "Which Container (type quit to exit): " CONTAINER
@@ -979,19 +1026,20 @@ else
 	exit
 fi
 # -s
-if [ "\${STAT}" == "TRUE" ]; then
+if [[ "\${STAT}" == "TRUE" ]]; then
 	swift stat "\${CONTAINER}"
 	exit
 fi
 # -o
-if [ -n "\${OBJECT}" ]; then
+if [[ -n "\${OBJECT}" ]]; then
 	swift stat "\${CONTAINER}" "\${OBJECT}"
 	exit
 fi
+
 # Prompting Loop
-while [ "\${CONTAINER}" != "quit" ]; do
+while [[ "\${CONTAINER}" != "quit" ]]; do
 	swift list "\${CONTAINER}"
-	read -p "Which Container (Leave empty to quit): " CONTAINER
+	read -p "Which Container (type 'quit' to leave): " CONTAINER
 done
 EOF
 # Log Reporting
@@ -1002,17 +1050,19 @@ else
 fi
 # MAKE CONTAINERS FROM OBJECT STORAGE COMMAND
 #-----------------------------------
-cat << EOF > $SMACK_DIR_BIN/smack-mkdb
+cat <<EOF > $SMACK_DIR_BIN/smack-mkdb
 #!/bin/bash
 # Display Message
+clear
 figlet -c SMACK Energy Forecasting
 figlet -cf digital Container Creation Wizard
 # Download from Swift Here
 # Check for Login
-if [ -z "\${OS_USERNAME}" ] || [ -z "\${OS_PASSWORD}" ]; then
+if [[ -z "\${OS_USERNAME}" || -z "\${OS_PASSWORD}" ]]; then
 	echo -e "\nPlease Login First. Use 'smack-login' and follow the prompts.\n"
 	exit
 fi
+
 # Manual Usage
 while getopts c:h option
 do
@@ -1022,13 +1072,15 @@ do
                 h) HELP="TRUE";;
         esac
 done
+
 # -h
-if [ "\${HELP}" == "TRUE" ]; then
+if [[ "\${HELP}" == "TRUE" ]]; then
         echo -e "\nSMACK Object Storage Container Creation\n\nUsage\n\t\t-h\tList This Help Message\n\t\t-c\tContainer to List\n"
         exit
 fi
+
 # -c
-if [ -z "\${CONTAINER}" ]; then
+if [[ -z "\${CONTAINER}" ]]; then
         echo -e "\nWelcome to the Container Creation Wizard.\n\tTo create a container please follow the instructions.\n\nCurrent Containers:\n"
         swift list 2> /dev/null
         read -p "Enter name of container you wish to create: " CONTAINER
@@ -1045,7 +1097,7 @@ else
 fi
 # ADD SKELETON SETUP FILE ONTO SERVER
 #-----------------------------------
-cat << EOF > $SMACK_DIR/skel/setup-node.sh
+cat <<EOF > $SMACK_DIR/skel/setup-node.sh
 #!/bin/bash
 #--------------------------------------------------------
 # 				SMACK ENERGY FORECASTING 
@@ -1129,7 +1181,7 @@ HDP_DIR=$HDP_DIR/$HDP_VER
 mkdir $HDP_DIR/namenode
 mkdir $HDP_DIR/datanode
 # Configure Hadoop
-cat << EOF > $HDP_DIR/etc/hadoop/core-site.xml
+cat <<EOF > $HDP_DIR/etc/hadoop/core-site.xml
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
 <configuration>
@@ -1208,7 +1260,7 @@ cat << EOF > $HDP_DIR/etc/hadoop/core-site.xml
 </configuration>
 EOF
 # Hadoop FS
-cat << EOF > $HDP_DIR/etc/hdfs-site.xml
+cat <<EOF > $HDP_DIR/etc/hdfs-site.xml
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
 <configuration>
@@ -1233,7 +1285,8 @@ cd $SPARK_DIR
 wget http://mirror.csclub.uwaterloo.ca/apache/spark/$SPARK_VER/$SPARK_VER-bin-hadoop2.6.tgz
 tar -xzvf $SPARK_VER-bin-hadoop2.6.tgz
 rm -f $SPARK_VER-bin-hadoop2.6.tgz
-cd $SPARK_VER-bin-hadoop2.6
+ln -s $SPARK_VER-bin-hadoop2.6 spark-latest
+cd spark-latest
 SPARK_DIR=$(pwd)
 # Configure Spark
 # Core Configuration for HDFS Access
@@ -1241,7 +1294,7 @@ cp $HDP_DIR/etc/hadoop/core-site.xml $SPARK_DIR/conf/core-site.xml
 # JAR necessary for Swift Communication
 cp $HDP_DIR/share/hadoop/tools/lib/hadoop-openstack*.jar $SPARK_DIR/lib/hadoop-openstack.jar
 # Spark Environment Script
-cat << EOF > $SPARK_DIR/conf/spark-env.sh
+cat <<EOF > $SPARK_DIR/conf/spark-env.sh
 #!/bin/bash
 # This file is sourced when running various Spark programs.
 # Copy it as spark-env.sh and edit that to configure Spark for your site.
@@ -1287,7 +1340,7 @@ EOF
 #mkdir /home/smack/.ssh
 
 # Setup Private Key
-cat << EOF > /home/centos/.ssh/id_rsa
+cat <<EOF > /home/centos/.ssh/id_rsa
 -----BEGIN RSA PRIVATE KEY-----
 MIIEowIBAAKCAQEAz2FnmAZWRNb8nO1c9skLCPMiuB7KhquwQdxYRR/tp1vHI8Go
 /NUH82zdlIWMSIb+094n30UK2d79lIyNixCIBaymBcPpsNKHKTavSvM91MFD93/n
@@ -1320,24 +1373,15 @@ EOF
 chmod 700 /home/centos/.ssh/id_rsa
 chown centos /home/centos/.ssh/id_rsa
 # Setup Public Key
-cat << EOF > /home/centos/.ssh/rsa_id.pub
+cat <<EOF > /home/centos/.ssh/rsa_id.pub
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPYWeYBlZE1vyc7Vz2yQsI8yK4HsqGq7BB3FhFH+2nW8cjwaj81QfzbN2UhYxIhv7T3iffRQrZ3v2UjI2LEIgFrKYFw+mw0ocpNq9K8z3UwUP3f+e6g7rNkn1m124ZnI0IvFDCJmAdH275bEtowMI16LcrNVAOlXp/YHP3PTyK0apSeih9iJ3hGpcVRraL+MhT8bzaW22fCyDb1pdl60PxenQRUcUvlE1/yntTwiVtd188Vqiaqjo1ffldTlH0G0uhrGsHMkUW65Z8eDXYeebAcy9pp2SQ1LojSGw7zHYacnM872atcc0UNQFnq/FC+MyDE0rM6safIFi+8y0FtGTR Generated-by-Nova
 EOF
 # Add to Known Hosts
-cat << EOF >> /home/centos/.ssh/authorized_keys
+cat <<EOF >> /home/centos/.ssh/authorized_keys
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCxKElPZ2bWfQeDo3zB1eMS4MyIfImUgEoGD8jnr/42zNtwHnmINel4Gr8dcPza/mjmz5YfZztpi81EtDxRkdrldVIaej9qa0XXmpuAqr0dw1chVLxwZ3mGk9CxipGAJ5wBKVsGGm0CqIlEy/7muOA1nLX5aycgEecTlHNZhM998kpyjnjlfvJkLa4feBiHiyWvnfhH0lgYpcgMNZsWcFAAn2EytSh6s5AMd1h/6I+7rxCXhbVGwhLjTAilg7UYLRVLl/7DCEbBYlbrsPmmXWZ0jueHbMt2+oM8DPLNZR8D5EnbV5u8eJSFWTBGiBwaROl4qZC3DGjDCfbXre/xmx/V Generated-by-Nova
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPYWeYBlZE1vyc7Vz2yQsI8yK4HsqGq7BB3FhFH+2nW8cjwaj81QfzbN2UhYxIhv7T3iffRQrZ3v2UjI2LEIgFrKYFw+mw0ocpNq9K8z3UwUP3f+e6g7rNkn1m124ZnI0IvFDCJmAdH275bEtowMI16LcrNVAOlXp/YHP3PTyK0apSeih9iJ3hGpcVRraL+MhT8bzaW22fCyDb1pdl60PxenQRUcUvlE1/yntTwiVtd188Vqiaqjo1ffldTlH0G0uhrGsHMkUW65Z8eDXYeebAcy9pp2SQ1LojSGw7zHYacnM872atcc0UNQFnq/FC+MyDE0rM6safIFi+8y0FtGTR Generated-by-Nova
 EOF
 
-source /usr/local/smack/smack-env.sh
-# START MASTER SERVICE - [OPTION 1 of 2]
-#---------------------------------------
-# If brand new project uncomment the following line - warning formats
-#$HDP_DIR/bin/hdfs namenode -format
-$SPARK_DIR/sbin/start-master.sh
-hostname -i > master-ip
-smack-upload -c clusters -f master-ip -o "conf/master"
-rm -rf master-ip
 # SET PERMISSIONS FOR COMMANDS
 #-----------------------------------
 # SMACK Directory
@@ -1355,6 +1399,16 @@ chmod +x ${CRON_PATH}/bin/*
 chown -R centos ${CRON_PATH}
 # Log Reporting
 echo -e "\nPERMISSIONS: COMPLETE" >> ${SMACK_INSTALL_LOG}
+
+source /usr/local/smack/smack-env.sh
+# START MASTER SERVICE - [OPTION 1 of 2]
+#---------------------------------------
+# If brand new project uncomment the following line - warning formats
+#$HDP_DIR/bin/hdfs namenode -format
+$SPARK_DIR/sbin/start-master.sh
+hostname -i > master-ip
+smack-upload -c clusters -f master-ip -o "conf/master"
+rm -rf master-ip
 # SET FILE FOR COMPLETION
 #-----------------------------------
 touch $SMACK_LOAD

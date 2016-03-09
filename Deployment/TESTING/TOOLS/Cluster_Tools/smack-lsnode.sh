@@ -1,9 +1,10 @@
 #!/bin/bash
 # Output Welcome Screen
-if [ -z "\${OS_USERNAME}" ] || [ -z "\${OS_PASSWORD}" ]; then
+if [[ -z "\${OS_USERNAME}" || -z "\${OS_PASSWORD}" ]]; then
 	echo -e "Error: You are not logged in.\n\tPlease run 'smack-login' and then try again."
 	exit 1
 else
+	clear
 	figlet -c SMACK Energy Forecasting
 fi
 # List Nodes in Cloud
@@ -14,3 +15,4 @@ nova --os-user-name "\${OS_USERNAME}" \\
       	--os-region-name "\${OS_REGION}" \\
       	--os-auth-url "\${OS_AUTH_URL}" \\
       	list
+echo -e "\n\n"

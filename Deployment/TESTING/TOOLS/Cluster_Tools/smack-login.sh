@@ -1,7 +1,13 @@
 #!/bin/bash
 # Output Welcome Screen
+clear
 figlet -c SMACK Energy Forecasting
 figlet -cf digital Cloud Login
+# Clear Varieables
+unset UNAME
+unset PASSWD
+unset PROJECT
+unset HELP
 # Manual Usage
 while getopts u:x:p:h option
 do
@@ -14,22 +20,25 @@ do
         esac
 done
 # Help Message
-if [ "\${HELP}" == "TRUE" ]; then
+if [[ "\${HELP}" == "TRUE" ]]; then
 	echo -e "SMACK Login:\n\n\tUsage:\n\t\t-u\t:\tUsername\n\t\t-x\t:\tPassword\n\t\t-p\t:\tProject Name\n\t\t-h\t:\tHelp Message\n"
 	exit
 fi
 # Login and Set Variables
-if [ -z "\${UNAME}" ]; then
+if [[ -z "\${UNAME}" ]]; then
 	read -p "Please enter your SMACK Openstack username: " UNAME
 fi
-if [ -z "\${PASSWD}" ]; then
+if [[ -z "\${PASSWD}" ]]; then
 	stty -echo
 	read -p "Please enter your SMACK Openstack password: " PASSWD
 	stty echo
 	echo -e "\n"
 fi
-if [ -z "\${PROJECT}" ]; then
+if [[ -z "\${PROJECT}" ]]; then
 	read -p "Please enter your Project (ie. blank for personal or enter 'SMACK'): " PROJECT
+	export OS_PROJECT_NAME="\${UNAME}"
+else
+	export OS_PROJECT_NAME="\${PROJECT}"
 fi
 # URLs for API Access (may need to change)
 export KEYSTONE_URL="https://keystone-yyc.cloud.cybera.ca:5000/v2.0"
@@ -45,8 +54,5 @@ export OS_USERNAME="\${UNAME}"
 export OS_PASSWORD="\${PASSWD}"
 export OS_REGION="Calgary"
 export OS_ZONE="Nova"
-if [ -z "\${PROJECT}" ]; then
-	export OS_PROJECT_NAME="\${UNAME}"
-else
-	export OS_PROJECT_NAME="\${PROJECT}"
-fi
+# Message
+echo -e "\nLogin Complete: You may begin using the toolchain\n"
