@@ -21,8 +21,11 @@ while getopts dhf: option
 do
 	case "${option}"
 		in
+			# Defaults
 			d) DEFAULT="TRUE";;
+			# help Message
 			h) HELP="TRUE";;
+			# Config Fle
 			f) FILE="${OPTARG}";;
 	esac
 done
@@ -60,8 +63,6 @@ if [[ -z "${FILE}" ]]; then
 	read -p "Please enter your cloud project: " PROJECT; echo -e "\n"
 	read -p "Please enter your Security Profile: " SECURITY; echo -e "\n"
 	read -p "General Cloud Key-Pair: " KEY; echo -e "\n"
-	figlet -cf digital SSH Key Generation
-	read -p "Name of Cluster-Specific SSH Key -- Note will have access to all nodes of cluster: " SSH_NAME; echo -e "\n"
 else
 	# IF FILE IS PROVIDED OR DEFAULT FILE IS SELECTED
 	source "${FILE}"

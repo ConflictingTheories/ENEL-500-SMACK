@@ -114,7 +114,7 @@ class MyHTMLParser(HTMLParser):
                                 for i in self.col_tit:
                                         well_d[i] = self.hist[n]
                                         n = n + 1
-                                self.well.append({"farm" : well_d})
+                                self.well.append(well_d)
                                 self.w_cnt = self.w_cnt + 1
                                 self.td_cnt = 0
                                 self.hist = []
