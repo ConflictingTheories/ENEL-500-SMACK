@@ -1,10 +1,19 @@
 #!/usr/local/bin/python3.5
-#
-#
-#       SMACK Parser - Historical Data
-#
-#
+#---------------------------------------------------------------#
+#                                                               #
+#       SMACK Parser - AESO Historical Data Scraper             #
+#                                                               #
+#---------------------------------------------------------------#
+#       Scrapes data from the Web Servlet page                  #
+#       provided by AESO and then logs the information          #
+#       in JSON format into a local file (historical.json)      #
+#                                                               #
+#       This file will storage the most recent data (min basis) #
+#       and this file will be uploaded via another process      #
+#                                                               #
+#---------------------------------------------------------------#
 
+# Import Necessary Libraries
 import json
 import urllib.request
 from html.parser import HTMLParser
@@ -17,7 +26,8 @@ Table_Title = "WIND"
 #       BIOMASS AND OTHER
 # ------NO GAS-----------
 
-class MyHTMLParser(HTMLParser):
+# Generate Parser for Data Scraping
+class HistScraper(HTMLParser):
         # Header Flag - for WIND
         tf_th = False
         # Necessary Evil
@@ -94,7 +104,6 @@ class MyHTMLParser(HTMLParser):
                         self.hist = []
                         self.tf_w = True
 
-
         # When it finds data between start and end tags it calls function
         def handle_data(self, data):
                 # If WIND section found begin scraping
@@ -119,13 +128,13 @@ class MyHTMLParser(HTMLParser):
                                 self.td_cnt = 0
                                 self.hist = []
 
-# Generate Parser
-parser = MyHTMLParser()
+# Generate Scraper
+scraper = HistScraper()
 # New File
 newData = open("historical.json", "w")
 # Retrieve Data
 htmlfile = urllib.request.urlopen("http://ets.aeso.ca/ets_web/ip/Market/Reports/CSDReportServlet").read()
-# Parse and Extract
-parser.feed(str(htmlfile))
-# Dump to File
-json.dump(parser.well, newData)
+# Parse and Extract Data
+scraper.feed(str(htmlfile))
+# Dump to File in JSON
+json.dump(scraper.well, newData)

@@ -98,7 +98,7 @@ app.get('/hist', function(req, res) {
 		});
 	}
 	else {
-		res.send("Please Use the following format: /hist/?date=YYYYMMDD");
+		res.send("Please Use the following format: /hist?date=YYYYMMDD&hour=HH&min=MM");
 	}
 });
 // Setup API Listener on port 3000 and wait for requests
