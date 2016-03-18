@@ -48,7 +48,7 @@ app.get('/hist', function(req, res) {
 		var yyyy = date.substring(0,4);
 		var mm = date.substring(4,6);
 		var dd = date.substring(6,8);
-		if (req.query.hour != null){ if (req.query.min != null){ var rt = req.query.hour+""+req.query.min; console.log("RT: "+rt); }else{ var rt = req.query.hour; }} else { res.send("Error: Please format requests like: /hist?date=YYYYMMDD?hour=HH?min=MM"); return; }
+		if (req.query.hour != null && req.query.hour != ""){ if (req.query.min != null){ var rt = req.query.hour+""+req.query.min; }else{ var rt = req.query.hour; }} else { if(req.query.hour == "" && req.query.min != null) {res.send("Error: Please format requests like: /hist?date=YYYYMMDD?hour=HH?min=MM"); return;} else {var rt = req.query.hour;} }
 		var dt = yyyy+"/"+mm+"/"+dd;
 		// Request Files
 		request({'url':swift_url+'/hist?limit=1440&prefix='+dt}, function (err, resp, bdy)
