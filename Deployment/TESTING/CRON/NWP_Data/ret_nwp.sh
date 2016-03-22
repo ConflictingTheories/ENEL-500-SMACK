@@ -26,7 +26,7 @@ declare c1=06
 declare c2=12
 declare c3=18
 # Determine Runtime
-if [[ ${curHr} -lt c1 || $(curHr) == "00" ]]; then
+if [[ ${curHr} -lt c1 || ${curHr} == "00" ]]; then
         declare nwp_tz="00"
 else
         if [[ ${curHr} -lt c2 ]]; then
@@ -41,12 +41,12 @@ else
 fi
 
 # Sections
-declare -a nwp_sec=("000" "001" "002" "003" "004" "005" "006" \\
-					"007" "008" "009" "010" "011" "012" "013" \\
-					"014" "015" "016" "017" "018" "019" "020" \\
-					"021" "022" "023" "024" "025" "026" "027" \\
-					"028" "029" "030" "031" "032" "033" "034" \\
-					"035" "036" "037" "038" "039" "040" "041" \\
+declare -a nwp_sec=("000" "001" "002" "003" "004" "005" "006" 
+					"007" "008" "009" "010" "011" "012" "013" 
+					"014" "015" "016" "017" "018" "019" "020" 
+					"021" "022" "023" "024" "025" "026" "027" 
+					"028" "029" "030" "031" "032" "033" "034" 
+					"035" "036" "037" "038" "039" "040" "041" 
 					"042" "043" "044" "045" "046" "047" "048")
 # File Prefix
 declare nwp_pre="CMC_hrdps_west_"
@@ -55,19 +55,19 @@ declare nwp_suf="-00.grib2"
 # Date Stamp
 declare nwp_ds="\$(date +%Y%m%d)"
 # Wind Variables
-declare -a nwp_var=("WIND_TGL_10_ps2.5km_" "WIND_TGL_40_ps2.5km_"\\
-					"WIND_TGL_80_ps2.5km_" "WIND_TGL_120_ps2.5km_" \\
-					"WDIR_TGL_10_ps2.5km_" "WDIR_TGL_40_ps2.5km_" \\
-					"WDIR_TGL_80_ps2.5km_" "WDIR_TGL_120_ps2.5km_" \\
-					"UGRD_TGL_10_ps2.5km_" "UGRD_TGL_40_ps2.5km_" \\
-					"UGRD_TGL_80_ps2.5km_" "UGRD_TGL_120_ps2.5km_" \\
-					"VGRD_TGL_10_ps2.5km_" "VGRD_TGL_40_ps2.5km_" \\
-					"VGRD_TGL_80_ps2.5km_" "VGRD_TGL_120_ps2.5km_" \\
-					"RH_TGL_2_ps2.5km_" "RH_TGL_40_ps2.5km_" \\
-					"RH_TGL_120_ps2.5km_" "TMP_TGL_2_ps2.5km_" \\
-					"TMP_TGL_40_ps2.5km_" "TMP_TGL_80_ps2.5km_" \\
-					"TMP_TGL_120_ps2.5km_" "PRES_SFC_0_ps2.5km_" \\
-					"TCDC_SFC_0_ps2.5km_" "DSWRF_NTAT_0_ps2.5km_" \\
+declare -a nwp_var=("WIND_TGL_10_ps2.5km_" "WIND_TGL_40_ps2.5km_"
+					"WIND_TGL_80_ps2.5km_" "WIND_TGL_120_ps2.5km_" 
+					"WDIR_TGL_10_ps2.5km_" "WDIR_TGL_40_ps2.5km_" 
+					"WDIR_TGL_80_ps2.5km_" "WDIR_TGL_120_ps2.5km_" 
+					"UGRD_TGL_10_ps2.5km_" "UGRD_TGL_40_ps2.5km_" 
+					"UGRD_TGL_80_ps2.5km_" "UGRD_TGL_120_ps2.5km_" 
+					"VGRD_TGL_10_ps2.5km_" "VGRD_TGL_40_ps2.5km_" 
+					"VGRD_TGL_80_ps2.5km_" "VGRD_TGL_120_ps2.5km_" 
+					"RH_TGL_2_ps2.5km_" "RH_TGL_40_ps2.5km_" 
+					"RH_TGL_120_ps2.5km_" "TMP_TGL_2_ps2.5km_" 
+					"TMP_TGL_40_ps2.5km_" "TMP_TGL_80_ps2.5km_" 
+					"TMP_TGL_120_ps2.5km_" "PRES_SFC_0_ps2.5km_" 
+					"TCDC_SFC_0_ps2.5km_" "DSWRF_NTAT_0_ps2.5km_"
 					"DSWRF_SFC_0_ps2.5km_" "DEN_TGL_80_ps2.5km_")
 # File Counter
 declare -i fcnt=0
