@@ -1,0 +1,55 @@
+## SMACK PROJECT DEFINITIONS FILE
+# -- SMACK DEFINITIONS
+#		Main Directory
+export SMACK_MAIN="/usr/local/smack"
+#		Documentation
+export SMACK_DOC="${SMACK_MAIN}/doc"
+#		Toolchain Binaries
+export SMACK_BIN="${SMACK_MAIN}/bin"
+#		Configuration Files
+export SMACK_CONF="${SMACK_MAIN}/conf"
+#		Initilization Files
+export SMACK_INIT="${SMACK_MAIN}/init"
+#		Scheduling Files
+export SMACK_SCHD="${SMACK_MAIN}/schd"
+#		Skeleton Files
+export SMACK_SKEL="${SMACK_MAIN}/skel"
+#		Temporary Storage
+export SMACK_TMP="${SMACK_MAIN}/tmp"
+#		Log Files
+export SMACK_LOG="${SMACK_MAIN}/log"
+# 		External Tools
+export SMACK_EXT="${SMACK_MAIN}/ext"
+#		Smack Monitoring Files
+export SMACK_MON="${SMACK_MAIN}/mon"
+#		SMACK User Custom Files
+export SMACK_HOME="/home/centos/smack"
+#		Completion Flag
+export SMACK_LOAD="${SMACK_LOG}/loaded"
+
+# -- OPENSTACK DEFINITIONS
+#		Username
+export OS_USERNAME="confidential.inc@gmail.com"
+#		Password
+export OS_PASSWORD="Hacker0013"
+#		Project name
+export OS_PROJECT_NAME="SMACK"
+#		Tenant Name
+export OS_TENANT_NAME="SMACK"
+#		Keystone URL
+export OS_AUTH_URL="https://keystone-yyc.cloud.cybera.ca:5000/v2.0"
+#		Zone
+export OS_ZONE="Nova"
+#		Region
+export OS_REGION="Calgary"
+#		Swift URl
+export OS_SWIFT_URL="https://swift-yyc.cloud.cybera.ca:8080/v1"
+#		Account ID
+export OS_ACCT_ID="AUTH_4b6be558d44e4dba8fb6e4aa49934c0b"
+
+# -- API SPECIFIC DEFINITIONS
+#		Node JS Server Root
+export API_SRV="${SMACK_EXT}/api/srv"
+# -- GENERAL DEFINITIONS
+#		Temporary Log File
+export TMP_LOG="/tmp/tmp_log"

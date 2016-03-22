@@ -21,7 +21,25 @@ cd "\${TMP_DIR}"
 # Server
 declare nwp_srv="http://dd.weather.gc.ca/model_hrdps/west/grib2"
 # Readout Times
-declare -a nwp_tz=( "00" "06" "12" "18" )
+declare curHr=$(date -u +%H)
+declare c1=06
+declare c2=12
+declare c3=18
+# Determine Runtime
+if [[ ${curHr} -lt c1 || $(curHr) == "00" ]]; then
+        declare nwp_tz="00"
+else
+        if [[ ${curHr} -lt c2 ]]; then
+                declare nwp_tz="06"
+        else
+                if [[ ${curHr} -lt c3 ]]; then
+                        declare nwp_tz="12"
+                else
+                        declare nwp_tz="18"
+                fi
+        fi
+fi
+
 # Sections
 declare -a nwp_sec=("000" "001" "002" "003" "004" "005" "006" \\
 					"007" "008" "009" "010" "011" "012" "013" \\
@@ -37,27 +55,26 @@ declare nwp_suf="-00.grib2"
 # Date Stamp
 declare nwp_ds="\$(date +%Y%m%d)"
 # Wind Variables
-declare -a nwp_var=("WIND_ISBL_0050_ps2.5km_" "WIND_ISBL_0100_ps2.5km_" \\
-					"WIND_ISBL_0150_ps2.5km_" "WIND_ISBL_0175_ps2.5km_" \\
-					"WIND_ISBL_0200_ps2.5km_" "WIND_ISBL_0225_ps2.5km_" \\
-					"WIND_ISBL_0250_ps2.5km_" "WIND_ISBL_0275_ps2.5km_" \\
-					"WIND_ISBL_0300_ps2.5km_" "WIND_ISBL_0350_ps2.5km_" \\
-					"WIND_ISBL_0400_ps2.5km_" "WIND_ISBL_0450_ps2.5km_" \\
-					"WIND_ISBL_0500_ps2.5km_" "WIND_ISBL_0550_ps2.5km_" \\
-					"WIND_ISBL_0600_ps2.5km_" "WIND_ISBL_0650_ps2.5km_" \\
-					"WIND_ISBL_0700_ps2.5km_" "WIND_ISBL_0750_ps2.5km_" \\
-					"WIND_ISBL_0800_ps2.5km_" "WIND_ISBL_0850_ps2.5km_" \\
-					"WIND_ISBL_0875_ps2.5km_" "WIND_ISBL_0900_ps2.5km_" \\
-					"WIND_ISBL_0925_ps2.5km_" "WIND_ISBL_0950_ps2.5km_" \\
-					"WIND_ISBL_0970_ps2.5km_" "WIND_ISBL_0985_ps2.5km_" \\
-					"WIND_ISBL_1000_ps2.5km_" "WIND_ISBL_1015_ps2.5km_" \\
-					"WIND_TGL_10_ps2.5km_" "WIND_TGL_40_ps2.5km_" \\
-					"WIND_TGL_80_ps2.5km_" "WIND_TGL_120_ps2.5km_")
+declare -a nwp_var=("WIND_TGL_10_ps2.5km_" "WIND_TGL_40_ps2.5km_"\\
+					"WIND_TGL_80_ps2.5km_" "WIND_TGL_120_ps2.5km_" \\
+					"WDIR_TGL_10_ps2.5km_" "WDIR_TGL_40_ps2.5km_" \\
+					"WDIR_TGL_80_ps2.5km_" "WDIR_TGL_120_ps2.5km_" \\
+					"UGRD_TGL_10_ps2.5km_" "UGRD_TGL_40_ps2.5km_" \\
+					"UGRD_TGL_80_ps2.5km_" "UGRD_TGL_120_ps2.5km_" \\
+					"VGRD_TGL_10_ps2.5km_" "VGRD_TGL_40_ps2.5km_" \\
+					"VGRD_TGL_80_ps2.5km_" "VGRD_TGL_120_ps2.5km_" \\
+					"RH_TGL_2_ps2.5km_" "RH_TGL_40_ps2.5km_" \\
+					"RH_TGL_120_ps2.5km_" "TMP_TGL_2_ps2.5km_" \\
+					"TMP_TGL_40_ps2.5km_" "TMP_TGL_80_ps2.5km_" \\
+					"TMP_TGL_120_ps2.5km_" "PRES_SFC_0_ps2.5km_" \\
+					"TCDC_SFC_0_ps2.5km_" "DSWRF_NTAT_0_ps2.5km_" \\
+					"DSWRF_SFC_0_ps2.5km_" "DEN_TGL_80_ps2.5km_")
 # File Counter
 declare -i fcnt=0
 # Loop through all file and Retrieve
 # Time Zones
-for a in \${nwp_tz[@]}; do
+#for a in \${nwp_tz[@]}; do
+declare a=$nwp_tz
 	# sections
 	for b in \${nwp_sec[@]}; do
 		# variables
@@ -75,7 +92,7 @@ for a in \${nwp_tz[@]}; do
 			((fcnt=\${fcnt}+1))
 		done
 	done
-done
+#done
 # Log Run into History
 T="\$(date)"
 touch "\${CRON_PATH}/log/nwp-load.log"

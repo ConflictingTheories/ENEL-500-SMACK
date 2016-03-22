@@ -83,8 +83,6 @@ export PATH="${PATH}:${SMACK_DIR_BIN}"
 export PATH="${PATH}:/usr/local/bin"
 
 
-
-
 # Log Reporting
 echo -e "\n### INSTALL BEGINNING ###" >> $SMACK_INSTALL_LOG
 echo -e "\n### DECLARATIONS: COMPLETE" >> $SMACK_INSTALL_LOG
@@ -117,7 +115,7 @@ yum -y install tk-devel gdbm-devel db4-devel libpcap-devel xz-devel
 echo -e "\nTOOLCHAIN: COMPLETE" >> $SMACK_INSTALL_LOG
 # ENSURE ONLY RUNS ONCE
 #-----------------------------------
-if ! [ -e $SMACK_LOAD ]; then
+if ! [[ -e $SMACK_LOAD ]]; then
 # INSTALL PYTHON 2.7 (python2.7)
 #-----------------------------------
 mkdir /tmp/python27
