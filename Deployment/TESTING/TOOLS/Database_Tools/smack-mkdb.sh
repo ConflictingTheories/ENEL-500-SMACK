@@ -30,8 +30,13 @@ fi
 if [[ -z "\${CONTAINER}" ]]; then
         echo -e "\nWelcome to the Container Creation Wizard.\n\tTo create a container please follow the instructions.\n\nCurrent Containers:\n"
         swift list 2> /dev/null
-        read -p "Enter name of container you wish to create: " CONTAINER
+        read -p "Enter name of container you wish to create: (leave blank to do nothing)" CONTAINER
 fi
-# TYPE I    
-swift post "\${CONTAINER}" 2> /dev/null
-echo -e "\nContainer Successfully Created"
+# Check for empty
+if [[ -z "\${CONTAINER}" ]]; then 
+        exit
+else
+        # TYPE I    
+        swift post "\${CONTAINER}" 2> /dev/null
+        echo -e "\nContainer Successfully Created"
+fi

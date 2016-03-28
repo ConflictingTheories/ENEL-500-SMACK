@@ -247,18 +247,100 @@ var express = require('express');
 // Frontend Controller Object
 var app = express();
 // URL
-var swift_url = "${OS_SWIFT_URL}/${OS_ACCT_ID}";
+var swift_url = "https://swift-yyc.cloud.cybera.ca:8080/v1/AUTH_4b6be558d44e4dba8fb6e4aa49934c0b";
 // GET Request API Call - Homepage
 app.get('/', function (req, res) 
 {
 	// Send Response to Clients Browser
-	res.send('<html><body><h1>SMACK Energy Forecasting</h1><br /><br />SMACK Energy Forecasting API Portal<br/><br/>Please Read below for options<br/><br/><h2>API Endpoints:</h2><br/><p><b>/nwp</b>:<br/><ul><li>/nwp/list?date=YYYYMMDD</li><li>/nwp/listall</li><li>MORE COMING SOON</li><ul><p></body></html>');
+	res.send('<html><body><h1>SMACK Energy Forecasting</h1><br /><br />SMACK Energy Forecasting API Portal<br/><br/>Please Read below for options<br/><br/><h2>API Endpoints:</h2><br/><p><b>/nwp</b>:<br/><ul><li>/nwp?date=YYYYMMDD&rt=HH&fh=XX&var=VARNAME</li></ul><br/><b>Historical Power Data:</b><br/><ul><li><li>/hist?date=YYYYMMDD&hour=HH&min=&&</li><li>MORE COMING SOON</li><ul><p></body></html>');
 });
 // GET Request API Call - /nwp – basic returns message
 app.get('/nwp', function(req, res) 
 {
-	// Send Response to Client’s Browser
-	res.send('Please Use one of the Available API Calls - For more help try /nwp/help');
+	    var rq = req.query;
+        if ( rq.date != null && rq.rt != null && rq.fh != null && rq.var != null )
+        {
+                // Perform Query Analysis and Data Fetch
+                if (rq.date == "" || rq.rt == "")
+                {
+                        res.send('Data transfer is limited. Please make appropriate calls.');
+                }
+                else
+                {
+                	// Extract Date
+					var date = rq.date;
+					var yyyy = date.substring(0,4);
+					var mm = date.substring(4,6);
+					var dd = date.substring(6,8);
+					var dt = yyyy+'/'+mm+'/'+dd+'/'+rq.rt
+
+					request({'url':swift_url+'/nwptxt?prefix='+dt}, function (err, resp, bdy)
+					{
+						var rt_objs = bdy.split("\n").map(function(obj)
+						{
+							// Single Variable Single Forecast
+							if (rq.var != "" && rq.fh != "")
+							{
+								if( obj.search(dt+'/'+rq.fh+'/'+rq.var) != -1)
+									return obj;
+							}
+							// Single Variable All Forecasts
+							else if (rq.var != "" && rq.fh == "")
+							{
+								if( obj.search(rq.var) != -1)
+									return obj;
+							}
+							// All Variables Single Forecast
+							else if (rq.var == "" && rq.fh != "")
+							{
+								if (obj.search(dt+'/'+rq.fh) != -1)
+									return obj;
+							} 
+						});
+
+						rt_objs = rt_objs.filter(function(e){return e;});
+
+						if( rt_objs.length > 0)
+						{
+							var cnt = 0;
+							var accumulator = [];
+							// Loop through and download files from swift
+							for(fl in rt_objs)
+							{	
+								if ( rt_objs[fl] != undefined )
+								{
+									request({'url':swift_url+'/nwptxt/'+rt_objs[fl]}, function (err, rsp, bdy) 
+									{
+										if (bdy != undefined) {
+											n_bdy = bdy.split("\n");
+											dim = n_bdy[0].split(" ");
+											new_bdy = n_bdy.slice(1);
+											// FOR EDITING THE STRUCTURE OF THE OBJECT LISTING (FARMS)
+											//for(f in new_bdy) 
+											//{	
+											//	Perform Changes Here
+											//}
+											data = { 'date': dt, 'var': rt_objs[fl].substring(14), 'size_i': dim[0], 'size_j': dim[1], 'data': new_bdy };
+											accumulator.push(data);
+											if(cnt == rt_objs.length-1) { res.send(accumulator); }
+												cnt++;
+										}
+									});
+								}
+							}
+						}
+						else
+						{
+							res.send('{"error":"bad date"}');
+						}
+					});
+                }
+        }
+        else
+        {
+                // Send Response to Client’s Browser
+                res.send('Please Use one of the Available API Calls - For more help try /nwp/help');
+        }
 });
 // Historical Data Range
 app.get('/hist', function(req, res) {
@@ -323,7 +405,7 @@ app.get('/hist', function(req, res) {
 });
 // Setup API Listener on port 3000 and wait for requests
 app.listen(3000, function(){
-	console.log('Example app listening on port 3000!');
+	console.log('SMACK API is up on port 3000!');
 });
 EOF
 node "${API_SRV}/server.js" &

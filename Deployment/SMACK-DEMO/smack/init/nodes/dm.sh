@@ -243,32 +243,7 @@ echo -e "\nJDK/JRE 7+8: COMPLETE" >> $SMACK_INSTALL_LOG
 # INSTALL RELATED CRON JOBS
 #-----------------------------------
 # NWP CRON JOB
-cat << EOF > $SMACK_DIR/cron/nwp-load.cron
-# Defintions environment for cron
-SMACK_DIR=/usr/local/smack
-SMACK_DIR_BIN=/usr/local/smack/bin
-SMACK_DIR_LOG=/usr/local/smack/log
-SMACK_DIR_SKEL=/usr/local/smack/skel
-SMACK_DIR_TMP=/usr/local/smack/tmp
-SMACK_LOAD=/usr/local/smack/log/smack_loaded
-SMACK_INSTALL_LOG=/usr/local/smack/log/install_log
-CRON_PATH=/usr/local/smack/cron
-SHINY_SRV=/srv/shiny-server
-API_SRV=/srv/api-server
-KEYSTONE_URL="https://keystone-yyc.cloud.cybera.ca:5000/v2.0"
-NOVA_URL="https://nova-yyc.cloud.cybera.ca:8774/v2/2b86ecd5b18f4fafb1d55adb79072def"
-CINDER_URL="https://cinder-yyc.cloud.cybera.ca:8776/v1/2b86ecd5b18f4fafb1d55adb79072def"
-CINDER2_URL="https://cinder-yyc.cloud.cybera.ca:8776/v2/2b86ecd5b18f4fafb1d55adb79072def"
-GLANCE_URL="http://glance-yyc.cloud.cybera.ca:9292"
-EC2_URL="https://nova-yyc.cloud.cybera.ca:8773/services/Cloud"
-SWIFT_URL="https://swift-yyc.cloud.cybera.ca:8080/v1/AUTH_2b86ecd5b18f4fafb1d55adb79072def"
-OS_PROJECT_NAME="SMACK"
-OS_ZONE="Nova"
-OS_REGION="Calgary"
-STORAGE_ACCT="AUTH_4b6be558d44e4dba8fb6e4aa49934c0b"
-STORAGE_TOKEN="7eefd48208754002a2e03bf0de11c3e4"
-STORAGE_URL="https://swift-yyc.cloud.cybera.ca:8080/v1/AUTH_4b6be558d44e4dba8fb6e4aa49934c0b"
-PATH=/bin:/usr/bin:/usr/local/smack/bin:/usr/local/smack/cron/bin:/usr/local/bin
+cat <<EOF > $SMACK_DIR/cron/nwp-load.cron
 # Retrieve NWP Data (Every 6 Hours)
 5 */6 * * * /usr/local/smack/cron/bin/ret_nwp.sh
 # Check NWP Data (Every 6 Hours)
@@ -460,9 +435,9 @@ EOF
 cat <<EOF > $CRON_PATH/bin/ret_nwp.sh
 #!/bin/bash
 #--------------------------------------------------------
-# 				SMACK ENERGY FORECASTING 
+#                               SMACK ENERGY FORECASTING
 #--------------------------------------------------------
-#			-  Data Retrieval Script - NWP -
+#                       -  Data Retrieval Script - NWP -
 #--------------------------------------------------------
 
 # Declare Environment Definitions
@@ -472,8 +447,8 @@ source /usr/local/smack/smack-env.sh
 declare TMP_DIR="\${SMACK_DIR_TMP}/nwp-load"
 # Check for Existence
 if ! [ -e "\${TMP_DIR}" ]; then
-	mkdir "\${TMP_DIR}"
-fi 
+        mkdir "\${TMP_DIR}"
+fi
 # Move into Tmp Directory
 cd "\${TMP_DIR}"
 
@@ -481,18 +456,18 @@ cd "\${TMP_DIR}"
 # Server
 declare nwp_srv="http://dd.weather.gc.ca/model_hrdps/west/grib2"
 # Readout Times
-declare curHr=$(date -u +%H)
+declare curHr=\$(date -u +%H)
 declare c1=06
 declare c2=12
 declare c3=18
 # Determine Runtime
-if [[ ${curHr} -lt c1 || ${curHr} == "00" ]]; then
+if [[ \${curHr} -lt c1 || \${curHr} == "00" ]]; then
         declare nwp_tz="00"
 else
-        if [[ ${curHr} -lt c2 ]]; then
+        if [[ \${curHr} -lt c2 ]]; then
                 declare nwp_tz="06"
         else
-                if [[ ${curHr} -lt c3 ]]; then
+                if [[ \${curHr} -lt c3 ]]; then
                         declare nwp_tz="12"
                 else
                         declare nwp_tz="18"
@@ -501,57 +476,57 @@ else
 fi
 
 # Sections
-declare -a nwp_sec=("000" "001" "002" "003" "004" "005" "006" 
-					"007" "008" "009" "010" "011" "012" "013" 
-					"014" "015" "016" "017" "018" "019" "020" 
-					"021" "022" "023" "024" "025" "026" "027" 
-					"028" "029" "030" "031" "032" "033" "034" 
-					"035" "036" "037" "038" "039" "040" "041" 
-					"042" "043" "044" "045" "046" "047" "048")
+declare -a nwp_sec=("000" "001" "002" "003" "004" "005" "006"
+                "007" "008" "009" "010" "011" "012" "013"
+                "014" "015" "016" "017" "018" "019" "020"
+                "021" "022" "023" "024" "025" "026" "027"
+                "028" "029" "030" "031" "032" "033" "034"
+                "035" "036" "037" "038" "039" "040" "041"
+                "042" "043" "044" "045" "046" "047" "048")
 # File Prefix
 declare nwp_pre="CMC_hrdps_west_"
 # File Suffix
 declare nwp_suf="-00.grib2"
 # Date Stamp
-declare nwp_ds="\$(date +%Y%m%d)"
+declare nwp_ds="\$(date -d "yesterday" +%Y%m%d)"
 # Wind Variables
 declare -a nwp_var=("WIND_TGL_10_ps2.5km_" "WIND_TGL_40_ps2.5km_"
-					"WIND_TGL_80_ps2.5km_" "WIND_TGL_120_ps2.5km_" 
-					"WDIR_TGL_10_ps2.5km_" "WDIR_TGL_40_ps2.5km_" 
-					"WDIR_TGL_80_ps2.5km_" "WDIR_TGL_120_ps2.5km_" 
-					"UGRD_TGL_10_ps2.5km_" "UGRD_TGL_40_ps2.5km_" 
-					"UGRD_TGL_80_ps2.5km_" "UGRD_TGL_120_ps2.5km_" 
-					"VGRD_TGL_10_ps2.5km_" "VGRD_TGL_40_ps2.5km_" 
-					"VGRD_TGL_80_ps2.5km_" "VGRD_TGL_120_ps2.5km_" 
-					"RH_TGL_2_ps2.5km_" "RH_TGL_40_ps2.5km_" 
-					"RH_TGL_120_ps2.5km_" "TMP_TGL_2_ps2.5km_" 
-					"TMP_TGL_40_ps2.5km_" "TMP_TGL_80_ps2.5km_" 
-					"TMP_TGL_120_ps2.5km_" "PRES_SFC_0_ps2.5km_" 
-					"TCDC_SFC_0_ps2.5km_" "DSWRF_NTAT_0_ps2.5km_"
-					"DSWRF_SFC_0_ps2.5km_" "DEN_TGL_80_ps2.5km_")
+                "WIND_TGL_80_ps2.5km_" "WIND_TGL_120_ps2.5km_"
+                "WDIR_TGL_10_ps2.5km_" "WDIR_TGL_40_ps2.5km_"
+                "WDIR_TGL_80_ps2.5km_" "WDIR_TGL_120_ps2.5km_"
+                "UGRD_TGL_10_ps2.5km_" "UGRD_TGL_40_ps2.5km_"
+                "UGRD_TGL_80_ps2.5km_" "UGRD_TGL_120_ps2.5km_"
+                "VGRD_TGL_10_ps2.5km_" "VGRD_TGL_40_ps2.5km_"
+                "VGRD_TGL_80_ps2.5km_" "VGRD_TGL_120_ps2.5km_"
+                "RH_TGL_2_ps2.5km_" "RH_TGL_40_ps2.5km_"
+                "RH_TGL_120_ps2.5km_" "TMP_TGL_2_ps2.5km_"
+                "TMP_TGL_40_ps2.5km_" "TMP_TGL_80_ps2.5km_"
+                "TMP_TGL_120_ps2.5km_" "PRES_SFC_0_ps2.5km_"
+                "TCDC_SFC_0_ps2.5km_" "DSWRF_NTAT_0_ps2.5km_"
+                "DSWRF_SFC_0_ps2.5km_" "DEN_TGL_80_ps2.5km_")
 # File Counter
 declare -i fcnt=0
 # Loop through all file and Retrieve
 # Time Zones
 #for a in \${nwp_tz[@]}; do
-declare a=$nwp_tz
-	# sections
-	for b in \${nwp_sec[@]}; do
-		# variables
-		for c in \${nwp_var[@]}; do
-			# Generate Proper File Name
-			declare filename="\${nwp_pre}\${c}\${nwp_ds}\${a}_P\${b}\${nwp_suf}"
-			# Generate Directory
-			declare directory="/\${a}/\${b}/"
-			# Generate Full HTTP Path
-			declare http_path="\${nwp_srv}\${directory}\${filename}"
-			# Delare File downloading
-			#echo -e "Downloading: ${http_path}\n"
-			curl -s -O "\${http_path}" > /dev/null
-			# Count # of Uploads
-			((fcnt=\${fcnt}+1))
-		done
-	done
+declare a=\$nwp_tz
+        # sections
+        for b in \${nwp_sec[@]}; do
+                # variables
+                for c in \${nwp_var[@]}; do
+                        # Generate Proper File Name
+                        declare filename="\${nwp_pre}\${c}\${nwp_ds}\${a}_P\${b}\${nwp_suf}"
+                        # Generate Directory
+                        declare directory="/\${a}/\${b}/"
+                        # Generate Full HTTP Path
+                        declare http_path="\${nwp_srv}\${directory}\${filename}"
+                        # Delare File downloading
+                        #echo -e "Downloading: \${http_path}\n"
+                        curl -s -O "\${http_path}" > /dev/null
+                        # Count # of Uploads
+                        ((fcnt=\${fcnt}+1))
+                done
+        done
 #done
 # Log Run into History
 T="\$(date)"
@@ -584,6 +559,9 @@ cd "\${TMP_DIR}"
 #	* Check against known variables
 #	* Check off any missing
 #	* Download missing variables
+#
+#
+#       ** NOT IMPLEMENTED YET
 #
 T="\$(date)"
 echo -e "\chk_nwp.sh - run @ \${T}\n" >> "\${CRON_PATH}/log/nwp-load.log"
@@ -636,7 +614,7 @@ echo -e "\nstr_nwp.sh - run @ \${T}\n\tStored: \${#list[@]} Files\n" >> "\${CRON
 smack-logout > /dev/null
 EOF
 # Generate Related Cron Files
-cat << EOF > $CRON_PATH/bin/clr_nwp.sh
+cat <<EOF > $CRON_PATH/bin/clr_nwp.sh
 #!/bin/bash
 #--------------------------------------------------------
 # 				SMACK ENERGY FORECASTING 
@@ -655,7 +633,7 @@ fi
 # Move into Tmp Directory
 cd "\${TMP_DIR}"
 # Date Stamp
-declare nwp_ds="\$(date +%Y%m%d)"
+declare nwp_ds="\$(date -d yesterday +%Y%m%d)"
 # Remove all Today's Files
 declare -a files="(\$(ls *\${nwp_ds}*.grib2 2> /dev/null))"
 declare -i fcnt="\${#files[@]}";((fcnt=\${fcnt}-1))
@@ -672,7 +650,7 @@ echo -e "\nCRON SCHEDULING: COMPLETE" >> $SMACK_INSTALL_LOG
 # POPULATE ANY NEEDED FILES
 #-----------------------------------
 # Generate Environment Script for SMACK Project
-cat << EOF >> $SMACK_DIR/smack-env.sh
+cat <<EOF >> $SMACK_DIR/smack-env.sh
 #!/bin/bash
 # SMACK ENERGY FORECASTING - ENVIRONMENT VARIABLES
 #-------------------------------------------------
@@ -746,7 +724,7 @@ EOF
 echo -e "\nSMACK ENVIRONMENT SCRIPT: COMPLETE" >> $SMACK_INSTALL_LOG
 # ADD WELCOME MESSAGE TO INSTANCE (** Move to Cron @reboot)
 #-----------------------------------
-cat << EOT >> /etc/bashrc
+cat <<EOT >> /etc/bashrc
 ## ADDED BY SMACK------------>
 # Configure SMACK Environment
 shopt -s expand_aliases
@@ -1049,21 +1027,81 @@ else
 	figlet -c SMACK Energy Forecasting
 	figlet -cf digital IP Config
 fi
+while getopts u:x:p:h option
+do
+        case "\${option}"
+        in
+                n) NAME="\${OPTARG}";;
+                m) MASTER="TRUE";;
+                h) HELP="TRUE";;
+        esac
+done
+if [[ ${HELP} == "TRUE" ]]; then
+        echo -e "\nUsage:\n\t-m :\tConfigure Localhost to communicate with Spark Master\n\t-n :\tDisplay the IP of requested node."
+fi
 # Configure IP Here
 echo -e "Downloading and Reading Data\n"
-smack-download -c clusters -o "conf/master-ip" -x "--output=$SMACK_DIR/tmp/master-ip" 1> /dev/null
-declare new_ip="$(cat $SMACK_DIR/tmp/master-ip)"
-echo -e "Master IP Found: ${new_ip}"
-cat "${SMACK_DIR}/spark/spark-latest/conf/spark-env.sh" |  sed -r "s/SPARK_MASTER_IP=[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/SPARK_MASTER_IP=${new_ip}/g" > ${SMACK_DIR}/spark/spark-latest/conf/spark-env.sh
-echo -e "\nWriting Master IP Data"
-rm "$SMACK_DIR/tmp/master-ip"
-echo -e "\nIP Change Complete\n"
+smack-download -c clusters -o "conf/\${NAME}-ip" -x "--output=$SMACK_DIR/tmp/\${NAME}-ip" 1> /dev/null
+declare new_ip="$(cat $SMACK_DIR/tmp/\${NAME}-ip)"
+echo -e "\${NAME} IP Found: ${new_ip}"
+if [[ "$MASTER" == "TRUE" ]]; then
+        cat "${SMACK_DIR}/spark/spark-latest/conf/spark-env.sh" |  sed -r "s/SPARK_MASTER_IP=[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/SPARK_MASTER_IP=${new_ip}/g" > ${SMACK_DIR}/spark/spark-latest/conf/spark-env.sh
+        echo -e "\nWriting Master IP Data"
+fi
+rm "$SMACK_DIR/tmp/\${NAME}-ip"
 EOF
 # Log Reporting
 if [ -e "${SMACK_DIR_BIN}/smack-setip" ]; then
 	echo -e "\nIP CONFIG: COMPLETE" >> $SMACK_INSTALL_LOG
 else
 	echo -e "\nIP CONFIG: ERROR" >> $SMACK_INSTALL_LOG
+fi
+# ASSOCIATE FLOATING IP COMMAND 
+#-----------------------------------
+cat <<EOF > $SMACK_DIR_BIN/smack-setip
+#!/bin/bash
+shopt -s expand_alias
+# Display Message
+if [[ -z "\${OS_USERNAME}" || -z "\${OS_PASSWORD}" ]]; then
+        echo -e "Error: You are not logged in. \n\tPlease run 'smack-login' and then try again."
+        exit 1
+else
+        clear
+        figlet -c SMACK Energy Forecasting
+        figlet -cf digital IP Config
+fi
+while getopts u:x:p:h option
+do
+        case "\${option}"
+        in
+                n) NAME="\${OPTARG}";;
+                m) MASTER="TRUE";;
+                h) HELP="TRUE";;
+        esac
+done
+if [[ ${HELP} == "TRUE" ]]; then
+        echo -e "\nUsage:\n\t-m :\t Set Localhost as Spark Master\n\t-n :\tDisplay the IP of requested node."
+fi
+if [[ ${MASTER} == "TRUE" ]]; then
+        NAME="master"
+fi
+# Configure IP Here
+echo -e "Downloading and Reading Data\n"
+echo $(hostname -i) > ${NAME}-ip
+smack-upload -c clusters -o "conf/\${NAME}-ip" -f "${NAME}-ip" 1> /dev/null
+declare new_ip="$(cat $SMACK_DIR/tmp/\${NAME}-ip)"
+echo -e "\${NAME} IP Set: ${new_ip}"
+if [[ "$MASTER" == "TRUE" ]]; then
+        cat "${SMACK_DIR}/spark/spark-latest/conf/spark-env.sh" |  sed -r "s/SPARK_MASTER_IP=[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/SPARK_MASTER_IP=${new_ip}/g" > ${SMACK_DIR}/spark/spark-latest/conf/spark-env.sh
+        echo -e "\nWriting Master IP Data"
+fi
+rm "$SMACK_DIR/tmp/\${NAME}-ip"
+EOF
+# Log Reporting
+if [ -e "${SMACK_DIR_BIN}/smack-setip" ]; then
+        echo -e "\nIP CONFIG: COMPLETE" >> $SMACK_INSTALL_LOG
+else
+        echo -e "\nIP CONFIG: ERROR" >> $SMACK_INSTALL_LOG
 fi
 # UPLOAD FILE TO CONTAINER COMMAND
 #-----------------------------------
@@ -1089,9 +1127,9 @@ do
                 c) CONTAINER="\${OPTARG}";;
                 e) EXT="\${OPTARG}";;
                 f) FILE="\$OPTARG";;
-				h) HELP="TRUE";;
-				o) NAME="\${OPTARG}";;
-				H) HEADERS="\${OPTARG}";;
+		h) HELP="TRUE";;
+		o) NAME="\${OPTARG}";;
+		H) HEADERS="\${OPTARG}";;
         esac
 done
 # -H
@@ -1162,9 +1200,9 @@ do
                 a) ALL="TRUE";;
                 c) CONTAINER="\${OPTARG}";;
                 f) FILE="\${OPTARG}";;
-				h) HELP="TRUE";;
-				o) OBJECT="\${OPTARG}";;
-				x) CMD="\${OPTAGR}";;
+		h) HELP="TRUE";;
+		o) OBJECT="\${OPTARG}";;
+		x) CMD="\${OPTAGR}";;
         esac
 done
 
@@ -1359,15 +1397,15 @@ EOF
 # SET PERMISSIONS FOR COMMANDS
 #-----------------------------------
 # SMACK Directory
-chmod 777 ${SMACK_DIR_BIN}
-chmod 777 ${SMACK_DIR}/skel
-chmod 777 ${SMACK_DIR_LOG}
-chmod 777 ${SMACK_DIR_TMP}
+chmod 700 ${SMACK_DIR_BIN}
+chmod 700 ${SMACK_DIR}/skel
+chmod 700 ${SMACK_DIR_LOG}
+chmod 700 ${SMACK_DIR_TMP}
 chmod +x ${SMACK_DIR_BIN}/*
 # CRON Directory
-chmod 777 ${CRON_PATH}
-chmod 777 ${CRON_PATH}/bin
-chmod 777 ${CRON_PATH}/log
+chmod 700 ${CRON_PATH}
+chmod 700 ${CRON_PATH}/bin
+chmod 700 ${CRON_PATH}/log
 chmod +x ${CRON_PATH}/bin/*
 chown -R centos ${SMACK_DIR}
 # Log Reporting
