@@ -607,6 +607,7 @@ for filename in \${list[@]}; do
         wgrib2 -text \${filename}.txt -g2clib 0 \${filename} > /dev/null
         smack-upload -c \${nwp_con} -o "$(date -u +%Y)/$(date -u +%m)/$(date -u +%d)/$(echo ${filename} | sed 's/.grib2//').txt" -H "X-Delete-At: $(expr $(date +%s) + 6$
         rm -rf \${filename}.txt
+        rm -rf \${filename}
 done
 # Log Recording
 T="\$(date -u)"

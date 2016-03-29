@@ -26,7 +26,15 @@ var swift_url = "https://swift-yyc.cloud.cybera.ca:8080/v1/AUTH_4b6be558d44e4dba
 app.get('/', function (req, res) 
 {
 // Send Response to Clients Browser
-res.send('<html><body><h1>SMACK Energy Forecasting</h1><br /><br />SMACK Energy Forecasting API Portal<br/><br/>Please Read below for options<br/><br/><h2>API Endpoints:</h2><br/><p><b>/nwp</b>:<br/><ul><li>/nwp?date=YYYYMMDD&rt=HH&fh=XX&var=VARNAME</li></ul><br/><b>Historical Power Data:</b><br/><ul><li><li>/hist?date=YYYYMMDD&hour=HH&min=&&</li><li>MORE COMING SOON</li><ul><p></body></html>');
+res.send('<html><body><h1>SMACK Energy Forecasting</h1><br/><br/>SMACK Energy Forecasting API Portal<br/>\
+	<br/>Please Read below for options<br/><br/><h2>API Endpoints:</h2><br/><p><b>Weather Prediction Data (NWP):</b>\
+	<br/><ul><li>/nwp?date=YYYYMMDD&rt=XX&fh=XX&var=VARNAME</li><br/><li>Variables:<br/><ul><li>DEN_TGL_80, WIND_TGL_10, WIND_TGL_40, WIND_TGL_80</li></ul>\
+	</li></ul><br/><b>Historical Power Data:</b>\
+	<br/><ul><li>/hist?date=YYYYMMDD&hour=XX&min=XX</li></ul>\
+	<br/><b>Predicted Power Data:</b><br/>\
+	<ul><li>/pred?date=YYYYMMDD&rt=XX&site=XXXX</li><li>Available Wind Farms(sites):<br/>\
+	<ul><li>ARD1, AKE1, BUL1, BUL2, BSR1, BTR1, CR1, CRR1, CRW1, SCR2, SCR3, SCR4, TAB1, KHW1, NEP1, OWF1, IEW1, IEW2, HAL1, GWW1</li></ul>\
+	</li></ul><ul><li>MORE COMING SOON</li></ul><p></body></html>');
 });
 
 // GET Request API Call - /nwp – basic returns message
@@ -164,7 +172,7 @@ app.get('/hist', function(req, res) {
 							}
 							catch(e)
 							{
-								new_bdy = JSON.parse{'{"error":"bad json"}'};
+								new_bdy = JSON.parse('{"error":"bad json"}');
 							}
 							data = { 'date': dt, 'rt': rsp.req.path.substring(rsp.req.path.length-4,rsp.req.path.length), 'sites': new_bdy};
 							accumulator.push(data);
@@ -246,6 +254,7 @@ app.get('/pred', function(req, res)
                         					{
                         						try
                         						{
+                        							//console.log(bdy);
                         							new_bdy = JSON.parse(bdy);
                         						}
                         						catch(e)
@@ -260,11 +269,13 @@ app.get('/pred', function(req, res)
                                             //      Perform Changes Here
                                             //}
                                             container = 'PwrPred/';
+                                            file_end = '/part-00000';
                                             pUrl = rsp.req.path;
-                                            index = pUrl.indexOf(container);
-                                            sitename = pUrl.substring(index+19, index+23);
-                                            runtime = pUrl.substring(index+24, index+26);
-                                            data = { 'date': dt, 'rt': runtime, 'site': sitename, 'data': new_bdy };
+                                            indexStart = pUrl.indexOf(container);
+                                            indexEnd = pUrl.indexOf(file_end);
+                                            sitename = pUrl.substring(indexStart+19, indexStart+21);
+                                            runtime = pUrl.substring(indexStart+22, indexEnd);
+                                            data = { 'date': yyyy+'/'+mm+'/'+dd, 'rt': runtime, 'site': sitename, 'data': new_bdy };
                                             accumulator.push(data);
                                             if(cnt == rt_objs.length-1) { res.send(accumulator); }
                                             cnt++;
