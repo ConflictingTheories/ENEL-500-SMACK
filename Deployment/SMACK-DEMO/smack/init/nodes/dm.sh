@@ -24,120 +24,100 @@
 ## 		 NOTE: THIS SCRIPT REQUIRES THE USE OF A COMPILER PRIOR TO USE 		##
 ##																			##
 ##############################################################################
-#!/bin/bash
-#--------------------------------------------------------
-# 				SMACK ENERGY FORECASTING 
-#--------------------------------------------------------
-#		- Development Host Init Script for Nodes -
-#--------------------------------------------------------
-#	Draft Cloud-Init Script for Setting up a Development
-#   Host. This is the host that will be used to interact 
-#	with the development and handle the deployment of 
-#	node clusters via CLI.
-#
-#	Think of this computer as the point of interaction 
-#	for development - not production
-#
-#
-# ********************************************************
-# 	As of January 17, 2016: This file will be updated from
-# 	a different approach - individual files and addendums
-# 	will be conducted via an incremental process and a
-# 	stable vs. testing will be done. This file will serve
-# 	as the stable version.
-#
-#	* THIS IS A TESTING VERSION - SOME THINGS MAY NOT
-#	WORK QUITE AS INTENDED. IF YOU WANT STABILITY, PLEASE
-#	LOOK AT THE STABLE VERSION. THIS VERSION WILL BE THE
-#	MOST RECENT STABLE VERSION PLUS ANY CHANGES THAT ARE
-#	CURRENTLY IN THE PROCESS OF BEING DONE.
-#
-#
-# ------------------------------------------------------
-# ------------------------------------------------------
-# TESTING RELEASE NOTES (As of January 23, 2016):
-#	
-#--------------------------------------------------------
-#
-#	This Node Has the Most Up-to-date Pakages in all areas
-#
-#		CRON Schedule - NWP DATA LOADING 		[x]
-#		SWIFT Utilities for CLI and CRON 		[x]
-#		Guide and now MANUAL Utilties for
-#		the clusters  							[x]
-#
-#		NEW Environment Script for Continuity	[x]
-#
-#		Authentication Token Access for Daemons	[x]
-#
-# SMACK ENERGY FORECASTING - ENVIRONMENT VARIABLES
-#-------------------------------------------------
-# OPENSTACK ENVIRONMENT
-# URLs for API Access (may need to change)
-export KEYSTONE_URL="https://keystone-yyc.cloud.cybera.ca:5000/v2.0"
-export NOVA_URL="https://nova-yyc.cloud.cybera.ca:8774/v2/2b86ecd5b18f4fafb1d55adb79072def"
-export CINDER_URL="https://cinder-yyc.cloud.cybera.ca:8776/v1/2b86ecd5b18f4fafb1d55adb79072def"
-export CINDER2_URL="https://cinder-yyc.cloud.cybera.ca:8776/v2/2b86ecd5b18f4fafb1d55adb79072def"
-export GLANCE_URL="http://glance-yyc.cloud.cybera.ca:9292"
-export EC2_URL="https://nova-yyc.cloud.cybera.ca:8773/services/Cloud"
-export SWIFT_URL="https://swift-yyc.cloud.cybera.ca:8080/v1/AUTH_2b86ecd5b18f4fafb1d55adb79072def"
-# SERVICE AUTHENTICATION CREDENTIALS
-# Cron Authentication Using Token and URL with curl requests
+
+## SMACK PROJECT DEFINITIONS FILE
+# -- SMACK DEFINITIONS
+#		Main Directory
+export SMACK_MAIN="/usr/local/smack"
+#		Documentation
+export SMACK_DOC="${SMACK_MAIN}/doc"
+#		Toolchain Binaries
+export SMACK_BIN="${SMACK_MAIN}/bin"
+#		Configuration Files
+export SMACK_CONF="${SMACK_MAIN}/conf"
+#		Initilization Files
+export SMACK_INIT="${SMACK_MAIN}/init"
+#		Scheduling Files
+export SMACK_SCHD="${SMACK_MAIN}/schd"
+#		Skeleton Files
+export SMACK_SKEL="${SMACK_MAIN}/skel"
+#		Temporary Storage
+export SMACK_TMP="${SMACK_MAIN}/tmp"
+#		Log Files
+export SMACK_LOG="${SMACK_MAIN}/log"
+# 		External Tools
+export SMACK_EXT="${SMACK_MAIN}/ext"
+#		Smack Monitoring Files
+export SMACK_MON="${SMACK_MAIN}/mon"
+#		SMACK User Custom Files
+export SMACK_HOME="/home/centos/smack"
+#		Completion Flag
+export SMACK_LOAD="${SMACK_LOG}/loaded"
+
+# -- OPENSTACK DEFINITIONS
+#		Username
+export OS_USERNAME="confidential.inc@gmail.com"
+#		Password
+export OS_PASSWORD="Hacker0013"
+#		Project name
 export OS_PROJECT_NAME="SMACK"
+#		Tenant Name
+export OS_TENANT_NAME="SMACK"
+#		Keystone URL
+export OS_AUTH_URL="https://keystone-yyc.cloud.cybera.ca:5000/v2.0"
+#		Zone
 export OS_ZONE="Nova"
+#		Region
 export OS_REGION="Calgary"
-export STORAGE_ACCT="AUTH_4b6be558d44e4dba8fb6e4aa49934c0b"
-export STORAGE_TOKEN="7eefd48208754002a2e03bf0de11c3e4"
-export STORAGE_URL="https://swift-yyc.cloud.cybera.ca:8080/v1/AUTH_4b6be558d44e4dba8fb6e4aa49934c0b"
-# SMACK ENVIRONMENT
-export SMACK_DIR=/usr/local/smack
-export SMACK_DIR_BIN=/usr/local/smack/bin
-export SMACK_DIR_LOG=/usr/local/smack/log
-export SMACK_DIR_SKEL=/usr/local/smack/skel
-export SMACK_DIR_TMP=/usr/local/smack/tmp
-export SMACK_LOAD=/usr/local/smack/log/smack_loaded
-export SMACK_INSTALL_LOG=/usr/local/smack/log/install_log
-# CRON JOB ROOT
-export CRON_PATH=/usr/local/smack/cron
-# SHINY SERVER ROOT
-export SHINY_SRV=/srv/shiny-server
-# API SERVER ROOT
-export API_SRV=/srv/api-server
-# EXECUTABLE PATH
-export PATH="${PATH}:${SMACK_DIR_BIN}"
-export PATH="${PATH}:/usr/local/bin"
-# Log Reporting
-echo -e "\n### INSTALL BEGINNING ###" >> $SMACK_INSTALL_LOG
-echo -e "\n### DECLARATIONS: COMPLETE" >> $SMACK_INSTALL_LOG
-# GENERATE DIRECTORY STORAGE
-#-----------------------------------
-mkdir ${SMACK_DIR}
-mkdir ${SMACK_DIR_BIN}
-mkdir ${SMACK_DIR_LOG}
-mkdir ${SMACK_DIR_SKEL}
-mkdir ${SMACK_DIR_TMP}
-mkdir ${CRON_PATH}
-mkdir ${CRON_PATH}/bin
-mkdir ${CRON_PATH}/log
-mkdir ${SHINY_SRV}
+#		Swift URl
+export OS_SWIFT_URL="https://swift-yyc.cloud.cybera.ca:8080/v1"
+#		Account ID
+export OS_ACCT_ID="AUTH_4b6be558d44e4dba8fb6e4aa49934c0b"
+
+# -- API SPECIFIC DEFINITIONS
+#		Node JS Server Root
+export API_SRV_ROOT="${SMACK_EXT}/api"
+export API_SRV="${API_SRV_ROOT}/srv"
+# -- GENERAL DEFINITIONS
+#		Temporary Log File
+export TMP_LOG="/tmp/tmp_log"
+#		Log Report
+echo -e "\n----- INSTALLATION BEGINNING -----" >> ${TMP_LOG}
+echo -e "\n### DEFINITIONS: GENERATED @ $(date -u)" >> ${TMP_LOG}
+
+### GENERATE DIRECTORIES STRUCTURE
+# -- SMACK Directories
+mkdir ${SMACK_MAIN}
+mkdir ${SMACK_BIN}
+mkdir ${SMACK_DOC}
+mkdir ${SMACK_EXT}
+mkdir ${SMACK_TMP}
+mkdir ${SMACK_LOG}
+mkdir ${SMACK_SCHD}
+mkdir ${SMACK_SKEL}
+mkdir ${SMACK_MON}
+mkdir ${SMACK_HOME}
+# -- Speficic Directories
+mkdir ${API_SRV_ROOT}
 mkdir ${API_SRV}
-# Log Reporting
-echo -e "\nDIRECTORIES: COMPLETE" >> $SMACK_INSTALL_LOG
-# UPDATE PACKAGES AND TOOLCHAIN
-#-----------------------------------
-#yum -y update
-yum -y install gcc-c++ wget curl curl-devel figlet python
-yum -y install make binutils git nmap man maven libffi-devel
-yum -y install nano python-devel python-pip links nodejs npm at
+#		Log Report
+echo -e "\n### FILE STRUCTURE: GENERATED @ $(date -u)" >> ${TMP_LOG}
+
+
+### PACKAGES AND DEPENDENCIES
+# -- GENERAL PACKAGES AND UPDATES
+yum -y install gcc-c++ wget curl curl-devel figlet python wgrib2
+yum -y install make binutils git nmap man maven libffi-devel at
+yum -y install nano python-devel python-pip links nodejs npm
 yum -y groupinstall "Development Tools"
 yum -y install zlib-devel bzip2-devel openssl-devel libxml2-devel
 yum -y install ncurses-devel sqlite-devel readline-devel zlibrary-devel
 yum -y install tk-devel gdbm-devel db4-devel libpcap-devel xz-devel
-# Log Reporting
-echo -e "\nTOOLCHAIN: COMPLETE" >> $SMACK_INSTALL_LOG
-# ENSURE ONLY RUNS ONCE
-#-----------------------------------
-if ! [ -e $SMACK_LOAD ]; then
+#		Log Report
+echo -e "\n### DEPENDENCIES AND PACKAGES: GENERATED @ $(date -u)" >> ${TMP_LOG}
+
+# -- LIBRARIES AND TOOLS
+if ! [[ -e $SMACK_LOAD ]]; then
 # INSTALL PYTHON 2.7 (python2.7)
 #-----------------------------------
 mkdir /tmp/python27
@@ -150,8 +130,6 @@ make && make altinstall
 # clean up directories
 cd /
 rm -rf /tmp/python27
-# Log Reporting
-echo -e "\nPYTHON 2.7: COMPLETE" >> $SMACK_INSTALL_LOG
 # INSTALL PYTHON 3.5 (python3.5)
 #-----------------------------------
 mkdir /tmp/python3
@@ -164,8 +142,6 @@ make && make altinstall
 # clean up directories
 cd /
 rm -rf /tmp/python3
-# Log Reporting
-echo -e "\nPYTHON 3.5: COMPLETE" >> $SMACK_INSTALL_LOG
 # INSTALL PIP FOR PYTHON 2.7 + 3.5 (pip2.7/pip3.5)
 #---------------------------------------
 mkdir /tmp/pipinstall
@@ -180,26 +156,21 @@ wget "https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py"
 # clean up directories
 cd /
 rm -rf /tmp/pipinstall
-# Log Reporting
-echo -e "\nPIP 2.7/3.5: COMPLETE" >> $SMACK_INSTALL_LOG
 # INSTALL OPENSTACK CLIENT SOFTWARE
 #-----------------------------------
 /usr/local/bin/pip2.7 install requests['security']
 /usr/local/bin/pip2.7 install python-openstackclient
 /usr/local/bin/pip2.7 install python-swiftclient
 /usr/local/bin/pip2.7 install --upgrade setuptools
-/usr/local/bin/pip2.7 install numpy
-/usr/local/bin/pip2.7 install scipy
 # OPENSTACK TOOLS FOR PYTHON 3.5
 #-------------------------------------
 /usr/local/bin/pip3.5 install requests['security']
 /usr/local/bin/pip3.5 install python-openstackclient
 /usr/local/bin/pip3.5 install python-swiftclient
 /usr/local/bin/pip3.5 install --upgrade setuptools
-/usr/local/bin/pip3.5 install scipy
-/usr/local/bin/pip3.5 install numpy
-# Log Reporting
-echo -e "\nOPENSTACK CLIENTS: COMPLETE" >> $SMACK_INSTALL_LOG
+#		Log Report
+echo -e "\n### OPENSTACK TOOLS: GENERATED @ $(date -u)" >> ${TMP_LOG}
+
 # INSTALL JAVA RUNTIME VERSION (7/8)
 #------------------------------------
 # JRE 7
@@ -214,9 +185,6 @@ alternatives --install /usr/bin/javac javac /usr/java/jdk1.7.0_79/bin/javac 2
 # Set Version to 1.7
 alternatives --set java /usr/java/jdk1.7.0_79/bin/java
 alternatives --set javac /usr/java/jdk1.7.0_79/bin/javac
-# set Variables
-JAVA_HOME=/usr/java/jdk1.7.0_79
-JRE_HOME=$JAVA_HOME/jre
 # cleanup
 cd /
 rm -rf /tmp/java7
@@ -232,18 +200,21 @@ alternatives --install /usr/bin/javac javac /usr/java/jdk1.8.0_40/bin/javac 2
 # Set Version to 1.8
 alternatives --set java /usr/java/jdk1.8.0_40/bin/java
 alternatives --set javac /usr/java/jdk1.8.0_40/bin/javac
-# set Variables
-JAVA_HOME=/usr/java/jdk1.8.0_40
-JRE_HOME=$JAVA_HOME/jre
 # cleanup
 cd /
 rm -rf /tmp/java8
-# Log Reporting
-echo -e "\nJDK/JRE 7+8: COMPLETE" >> $SMACK_INSTALL_LOG
+# set Variables
+ln -S /usr/java/jdk1.8.0_40 /usr/java/latest
+# Setup Variables
+export JAVA_HOME=/usr/java/latest
+export JRE_HOME=$JAVA_HOME/jre
+#		Log Report
+echo -e "\n### JAVA: GENERATED @ $(date -u)" >> ${TMP_LOG}
+
 # INSTALL RELATED CRON JOBS
 #-----------------------------------
 # NWP CRON JOB
-cat <<EOF > $SMACK_DIR/cron/nwp-load.cron
+cat <<EOF > $SMACK_MAIN/cron/nwp-load.cron
 # Retrieve NWP Data (Every 6 Hours)
 5 */6 * * * /usr/local/smack/cron/bin/ret_nwp.sh
 # Check NWP Data (Every 6 Hours)
@@ -255,7 +226,7 @@ cat <<EOF > $SMACK_DIR/cron/nwp-load.cron
 # Get Historical AESO data (min-min)
 * * * * * /usr/local/smack/cron/bin/hist.sh
 EOF
-cat <<EOF > $CRON_PATH/bin/get_hist.py
+cat <<EOF > $SMACK_SCHD/bin/get_hist.py
 #!/usr/local/bin/python3.5
 #---------------------------------------------------------------#
 #                                                               #
@@ -398,7 +369,7 @@ scraper.feed(str(htmlfile))
 json.dump(scraper.well, newData)
 EOF
 
-cat <<EOF > /$CRON_PATH/bin/hist.sh
+cat <<EOF > /$SMACK_SCHD/bin/hist.sh
 #!/bin/bash
 #
 # SMACK Energy Forecasting
@@ -432,7 +403,7 @@ else
 fi
 EOF
 # Generate Related Cron Files
-cat <<EOF > $CRON_PATH/bin/ret_nwp.sh
+cat <<EOF > $SMACK_SCHD/bin/ret_nwp.sh
 #!/bin/bash
 #--------------------------------------------------------
 #                               SMACK ENERGY FORECASTING
@@ -444,7 +415,7 @@ cat <<EOF > $CRON_PATH/bin/ret_nwp.sh
 shopt -s expand_aliases
 source /usr/local/smack/smack-env.sh
 # Temporary Working Directory
-declare TMP_DIR="\${SMACK_DIR_TMP}/nwp-load"
+declare TMP_DIR="\${SMACK_TMP}/nwp-load"
 # Check for Existence
 if ! [ -e "\${TMP_DIR}" ]; then
         mkdir "\${TMP_DIR}"
@@ -530,12 +501,12 @@ declare a=\$nwp_tz
 #done
 # Log Run into History
 T="\$(date)"
-touch "\${CRON_PATH}/log/nwp-load.log"
-echo -e "\nret_nwp.sh - run @ \${T}\n\tRetreived: \${fcnt} Files" >> "\$CRON_PATH/log/nwp-load.log"
+touch "\${SMACK_SCHD}/log/nwp-load.log"
+echo -e "\nret_nwp.sh - run @ \${T}\n\tRetreived: \${fcnt} Files" >> "\$SMACK_SCHD/log/nwp-load.log"
 smack-logout > /dev/null
 EOF
 # Generate Related Cron Files
-cat <<EOF > $CRON_PATH/bin/chk_nwp.sh
+cat <<EOF > $SMACK_SCHD/bin/chk_nwp.sh
 #!/bin/bash
 #--------------------------------------------------------
 # 				SMACK ENERGY FORECASTING 
@@ -546,7 +517,7 @@ cat <<EOF > $CRON_PATH/bin/chk_nwp.sh
 shopt -s expand_aliases
 source /usr/local/smack/smack-env.sh
 # Temporary Working Directory
-declare TMP_DIR="\${SMACK_DIR_TMP}/nwp-load"
+declare TMP_DIR="\${SMACK_TMP}/nwp-load"
 # Check for Existence
 if ! [ -e "\${TMP_DIR}" ]; then
 	mkdir "\${TMP_DIR}"
@@ -564,11 +535,11 @@ cd "\${TMP_DIR}"
 #       ** NOT IMPLEMENTED YET
 #
 T="\$(date)"
-echo -e "\chk_nwp.sh - run @ \${T}\n" >> "\${CRON_PATH}/log/nwp-load.log"
+echo -e "\chk_nwp.sh - run @ \${T}\n" >> "\${SMACK_SCHD}/log/nwp-load.log"
 smack-logout > /dev/null
 EOF
 # Generate Related Cron Files
-cat <<EOF > $CRON_PATH/bin/str_nwp.sh
+cat <<EOF > $SMACK_SCHD/bin/str_nwp.sh
 #!/bin/bash
 #--------------------------------------------------------
 # 				SMACK ENERGY FORECASTING 
@@ -579,7 +550,7 @@ cat <<EOF > $CRON_PATH/bin/str_nwp.sh
 shopt -s expand_aliases
 source /usr/local/smack/smack-env.sh
 # Temporary Working Directory
-TMP_DIR="\${SMACK_DIR_TMP}/nwp-load"
+TMP_DIR="\${SMACK_TMP}/nwp-load"
 # Check for Existence
 if ! [ -e "\${TMP_DIR}" ]; then
 	mkdir "\${TMP_DIR}"
@@ -611,11 +582,11 @@ for filename in \${list[@]}; do
 done
 # Log Recording
 T="\$(date -u)"
-echo -e "\nstr_nwp.sh - run @ \${T}\n\tStored: \${#list[@]} Files\n" >> "\${CRON_PATH}/log/nwp-load.log"
+echo -e "\nstr_nwp.sh - run @ \${T}\n\tStored: \${#list[@]} Files\n" >> "\${SMACK_SCHD}/log/nwp-load.log"
 smack-logout > /dev/null
 EOF
 # Generate Related Cron Files
-cat <<EOF > $CRON_PATH/bin/clr_nwp.sh
+cat <<EOF > $SMACK_SCHD/bin/clr_nwp.sh
 #!/bin/bash
 #--------------------------------------------------------
 # 				SMACK ENERGY FORECASTING 
@@ -626,7 +597,7 @@ cat <<EOF > $CRON_PATH/bin/clr_nwp.sh
 shopt -s expand_aliases
 source /usr/local/smack/smack-env.sh
 # Temporary Working Directory
-declare TMP_DIR="\${SMACK_DIR_TMP}/nwp-load"
+declare TMP_DIR="\${SMACK_TMP}/nwp-load"
 # Check for Existence
 if ! [ -e "\${TMP_DIR}" ]; then
 	mkdir "\${TMP_DIR}"
@@ -641,17 +612,129 @@ declare -i fcnt="\${#files[@]}";((fcnt=\${fcnt}-1))
 rm -f *\${nwp_ds}*.grib2
 # Logging
 T="\$(date)"
-echo -e "\nclr_nwp.sh - run @ \${T}\n\tRemoved: \${fcnt} Files\n" >> "\${CRON_PATH}/log/nwp-load.log"
+echo -e "\nclr_nwp.sh - run @ \${T}\n\tRemoved: \${fcnt} Files\n" >> "\${SMACK_SCHD}/log/nwp-load.log"
 smack-logout > /dev/null
 EOF
 # Initialize all Schedules for Deployment
-crontab "${CRON_PATH}/nwp-load.cron"
+crontab "${SMACK_SCHD}/nwp-load.cron"
 # Log Reporting
 echo -e "\nCRON SCHEDULING: COMPLETE" >> $SMACK_INSTALL_LOG
+
+### FILE GENERATION
+# -- GENERATE SSH AUTHENTICATION 
+#		DEVELOPER  ACCESS
+cat <<EOF >> /home/centos/.ssh/authorized_keys
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCxKElPZ2bWfQeDo3zB1eMS4MyIfImUgEoGD8jnr/42zNtwHnmINel4Gr8dcPza/mjmz5YfZztpi81EtDxRkdrldVIaej9qa0XXmpuAqr0dw1chVLxwZ3mGk9CxipGAJ5wBKVsGGm0CqIlEy/7muOA1nLX5aycgEecTlHNZhM998kpyjnjlfvJkLa4feBiHiyWvnfhH0lgYpcgMNZsWcFAAn2EytSh6s5AMd1h/6I+7rxCXhbVGwhLjTAilg7UYLRVLl/7DCEbBYlbrsPmmXWZ0jueHbMt2+oM8DPLNZR8D5EnbV5u8eJSFWTBGiBwaROl4qZC3DGjDCfbXre/xmx/V Generated-by-Nova
+EOF
+#		MONITOR ACCESS
+cat<<EOF >> /home/centos/.ssh/authorized_keys
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPYWeYBlZE1vyc7Vz2yQsI8yK4HsqGq7BB3FhFH+2nW8cjwaj81QfzbN2UhYxIhv7T3iffRQrZ3v2UjI2LEIgFrKYFw+mw0ocpNq9K8z3UwUP3f+e6g7rNkn1m124ZnI0IvFDCJmAdH275bEtowMI16LcrNVAOlXp/YHP3PTyK0apSeih9iJ3hGpcVRraL+MhT8bzaW22fCyDb1pdl60PxenQRUcUvlE1/yntTwiVtd188Vqiaqjo1ffldTlH0G0uhrGsHMkUW65Z8eDXYeebAcy9pp2SQ1LojSGw7zHYacnM872atcc0UNQFnq/FC+MyDE0rM6safIFi+8y0FtGTR Generated-by-Nova
+EOF
+#		LOCAL PVT KEY
+ssh-keygen -q -N "" -t rsa -b 2048 -f /home/centos/.ssh/id_rsa
+chmod 700 /home/centos/.ssh/id_rsa
+chown centos /home/centos/.ssh/id_rsa
+#		Log Report
+echo -e "\n### AUTHENTICATION: GENERATED @ $(date -u)" >> ${TMP_LOG}
+
+
+# -- GENERATE ENVIRONMENT FILES
+mkdir ${SMACK_CONF}/env
+#		SMACK ENV File
+cat<<EOF > ${SMACK_CONF}/env/smack-env.sh
+#!/bin/bash
+# SMACK ENERGY FORECASTING - ENVIRONMENT VARIABLES
+#-------------------------------------------------
+export SMACK_MAIN=${SMACK_MAIN}
+export SMACK_BIN=${SMACK_BIN}
+export SMACK_DOC=${SMACK_DOC}
+export SMACK_TMP=${SMACK_TMP}
+export SMACK_EXT=${SMACK_EXT}
+export SMACK_LOG=${SMACK_LOG}
+export SMACK_CONF=${SMACK_CONF}
+export SMACK_INIT=${SMACK_INIT}
+export SMACK_SKEL=${SMACK_SKEL}
+export SMACK_SCHD=${SMACK_SCHD}
+export SMACK_MON=${SMACK_MON}
+export SMACK_LOAD=${SMACK_LOAD}
+# API SERVER ROOT
+export API_SRV=${API_SRV}
+# JAVA
+export JAVA_HOME=${JAVA_HOME}
+export JRE_HOME=${JRE_HOME}
+# OPENSTACK ENVIRONMENT
+export OS_USERNAME=${OS_USERNAME}
+export OS_PASSWORD=${OS_PASSWORD}
+export OS_PROJECT_NAME=${OS_PROJECT_NAME}
+export OS_TENANT_NAME=${OS_TENANT_NAME}
+export OS_AUTH_URL=${OS_AUTH_URL}
+export OS_ZONE=${OS_ZONE}
+export OS_REGION=${OS_REGION}
+export OS_SWIFT_URL=${OS_SWIFT_URL}
+export OS_ACCT_ID=${OS_ACCT_ID}
+# EXECUTABLE PATH
+export PATH=\$PATH:\${SMACK_BIN}\${JAVA_HOME}/bin:/usr/local/bin:/usr/bin
+EOF
+#		Log Report
+echo -e "\n### ENVIRONMENT SCRIPT :  GENERATED @ $(date -u)" >> ${TMP_LOG}
+
+
+# -- GENERATE STARTUP SCRIPT
+mkdir ${SMACK_EXT}/api
+#		Start-API Script
+cat<<EOF > ${SMACK_EXT}/api/start-api.sh
+#!/bin/bash
+# Stop Node Servers
+declare id=$(pgrep node)
+if ! [[ -z ${id} ]]; then
+	kill ${id};
+fi
+# Start API Server
+node ${API_SRV}/server.js & > /dev/null
+EOF
+chmod +x ${SMACK_EXT}/api/start-api.sh
+#		UP.SH
+cat<<EOF > ${SMACK_MON}/up.sh
+#!/bin/bash
+at -f ${SMACK_EXT}/api/start-api.sh now
+EOF
+chmod +x ${SMACK_MON}/up.sh
+#		Log Report
+echo -e "\n### STARTUP SCRIPT :  GENERATED @ $(date -u)" >> ${TMP_LOG}
+
+# -- GENERATE BASH PROFILE
+#		Profile.D/SMACK
+cat<<EOF > /etc/profile.d/smack.sh
+# Configure SMACK Environment
+shopt -s expand_aliases
+source ${SMACK_CONF}/env/smack-env.sh
+# SMACK Command Aliases
+figlet -c SMACK Energy Forecasting
+echo -e "\t\tSMACK Energy Forecasting - Making an Impact\n"
+echo -e "\n#TIP---For a list of commands type smack and press tab.\n"
+EOF
+#		Log Report
+echo -e "\n### BASHRC :  GENERATED @ $(date -u)" >> ${TMP_LOG}
+
+## -- GENERATE CRONTAB SCHEDULING
+#		API Startup Script
+cat<<EOF > ${SMACK_SCHD}/api.cron 
+@reboot ${SMACK_MON}/up.sh
+EOF
+# Generate Main Crontab
+for files in ${SMACK_SCHD}; do 
+	cat files >> ${SMACK_TMP}/tmp.cron
+done
+# Setup Crontab
+crontab -u root ${SMACK_TMP}/tmp.cron
+
+# SET FILE AS LOADED
+touch ${SMACK_LOAD}
+fi
 # POPULATE ANY NEEDED FILES
 #-----------------------------------
 # Generate Environment Script for SMACK Project
-cat <<EOF >> $SMACK_DIR/smack-env.sh
+cat <<EOF >> $SMACK_MAIN/smack-env.sh
 #!/bin/bash
 # SMACK ENERGY FORECASTING - ENVIRONMENT VARIABLES
 #-------------------------------------------------
@@ -662,85 +745,45 @@ cat <<EOF >> $SMACK_DIR/smack-env.sh
 #
 #-------------------------------------------------
 # SMACK ENVIRONMENT
-export SMACK_DIR=/usr/local/smack
-export SMACK_DIR_BIN=/usr/local/smack/bin
-export SMACK_DIR_LOG=/usr/local/smack/log
-export SMACK_DIR_SKEL=/usr/local/smack/skel
-export SMACK_DIR_TMP=/usr/local/smack/tmp
-export SMACK_LOAD=/usr/local/smack/log/smack_loaded
-export SMACK_INSTALL_LOG=/usr/local/smack/log/install_log
-# CRON JOB ROOT
-export CRON_PATH=/usr/local/smack/cron
-# SHINY SERVER ROOT
-export SHINY_SRV=/srv/shiny-server
+
+#!/bin/bash
+# SMACK ENERGY FORECASTING - ENVIRONMENT VARIABLES
+#-------------------------------------------------
+export SMACK_MAIN=${SMACK_MAIN}
+export SMACK_BIN=${SMACK_BIN}
+export SMACK_DOC=${SMACK_DOC}
+export SMACK_TMP=${SMACK_TMP}
+export SMACK_EXT=${SMACK_EXT}
+export SMACK_LOG=${SMACK_LOG}
+export SMACK_CONF=${SMACK_CONF}
+export SMACK_INIT=${SMACK_INIT}
+export SMACK_SKEL=${SMACK_SKEL}
+export SMACK_SCHD=${SMACK_SCHD}
+export SMACK_MON=${SMACK_MON}
+export SMACK_LOAD=${SMACK_LOAD}
 # API SERVER ROOT
-export API_SRV=/srv/api-server
-# JAVA VARIABLES
-export JAVA_HOME=$JAVA_HOME
-export JRE_HOME=$JRE_HOME
+export API_SRV=${API_SRV}
+# JAVA
+export JAVA_HOME=${JAVA_HOME}
+export JRE_HOME=${JRE_HOME}
 # OPENSTACK ENVIRONMENT
-# URLs for API Access (may need to change)
-export KEYSTONE_URL="https://keystone-yyc.cloud.cybera.ca:5000/v2.0"
-export NOVA_URL="https://nova-yyc.cloud.cybera.ca:8774/v2/2b86ecd5b18f4fafb1d55adb79072def"
-export CINDER_URL="https://cinder-yyc.cloud.cybera.ca:8776/v1/2b86ecd5b18f4fafb1d55adb79072def"
-export CINDER2_URL="https://cinder-yyc.cloud.cybera.ca:8776/v2/2b86ecd5b18f4fafb1d55adb79072def"
-export GLANCE_URL="http://glance-yyc.cloud.cybera.ca:9292"
-export EC2_URL="https://nova-yyc.cloud.cybera.ca:8773/services/Cloud"
-export SWIFT_URL="https://swift-yyc.cloud.cybera.ca:8080/v1/AUTH_2b86ecd5b18f4fafb1d55adb79072def"
-# SERVICE AUTHENTICATION CREDENTIALS
-# Cron Authentication Using Token and URL with curl requests
-declare x1="ke"
-export OS_PROJECT_NAME="SMACK"
-declare x2="00"
-export OS_ZONE="Nova"
-declare x3="13"
-export OS_REGION="Calgary"
-declare x4="ac"
-export STORAGE_ACCT="AUTH_4b6be558d44e4dba8fb6e4aa49934c0b"
-export STORAGE_TOKEN="7eefd48208754002a2e03bf0de11c3e4"
-export STORAGE_URL="https://swift-yyc.cloud.cybera.ca:8080/v1/AUTH_4b6be558d44e4dba8fb6e4aa49934c0b"
-# Auth Info
-declare uname="confidential.inc@gmail.com"
-declare xname="H\${x4}\${x1}r\${x2}\${x3}"
-declare pname="SMACK"
-# Authenticated API Calls
-alias smack-get='curl -s -H "X-Auth-Token: \${STORAGE_TOKEN}" -X GET'
-alias smack-put='curl -s -H "X-Auth-Token: \${STORAGE_TOKEN}" -X PUT'
-alias smack-post='curl -s -H "X-Auth-Token: \${STORAGE_TOKEN}" -X POST'
-alias smack-delete='curl -s -H "X-Auth-Token: \${STORAGE_TOKEN}" -X DELETE'
-# Login Authenication overwrite
-alias smack-login="source \${SMACK_DIR_BIN}/smack-login"
-alias smack-logout="source \${SMACK_DIR_BIN}/smack-logout"
-# Python Aliases
-alias pip27=/usr/local/bin/pip2.7
-alias python27=/usr/local/bin/python2.7
+export OS_USERNAME=${OS_USERNAME}
+export OS_PASSWORD=${OS_PASSWORD}
+export OS_PROJECT_NAME=${OS_PROJECT_NAME}
+export OS_TENANT_NAME=${OS_TENANT_NAME}
+export OS_AUTH_URL=${OS_AUTH_URL}
+export OS_ZONE=${OS_ZONE}
+export OS_REGION=${OS_REGION}
+export OS_SWIFT_URL=${OS_SWIFT_URL}
+export OS_ACCT_ID=${OS_ACCT_ID}
 # EXECUTABLE PATH
-export PATH="\${PATH}:\${SMACK_DIR_BIN}"
-export PATH="\${PATH}:\${JAVA_HOME}/bin"
-export PATH="\${PATH}:/usr/local/bin"
-# AUTHENTICATION
-smack-login -u "\${uname}" -x "\${xname}" -p "\${pname}" > /dev/null
+export PATH=\$PATH:\${SMACK_BIN}\${JAVA_HOME}/bin:/usr/local/bin:/usr/bin
 EOF
 # Log Reporting
 echo -e "\nSMACK ENVIRONMENT SCRIPT: COMPLETE" >> $SMACK_INSTALL_LOG
-# ADD WELCOME MESSAGE TO INSTANCE (** Move to Cron @reboot)
-#-----------------------------------
-cat <<EOT >> /etc/bashrc
-## ADDED BY SMACK------------>
-# Configure SMACK Environment
-shopt -s expand_aliases
-source /usr/local/smack/smack-env.sh
-smack-logout > /dev/null
-# SMACK Command Aliases
-figlet -c SMACK Energy Forecasting
-echo -e "\t\tSMACK Energy Forecasting - Making an Impact\n"
-echo -e "\n#TIP---For a list of commands type smack and press tab.\n"
-EOT
-# Log Reporting
-echo -e "\nWELCOME: COMPLETE" >> $SMACK_INSTALL_LOG
 # LIST NODES COMMAND (smack-lsnode)
 #-----------------------------------
-cat <<EOF >> $SMACK_DIR_BIN/smack-lsnode
+cat <<EOF >> $SMACK_BIN/smack-lsnode
 #!/bin/bash
 # Output Welcome Screen
 if [[ -z "\${OS_USERNAME}" || -z "\${OS_PASSWORD}" ]]; then
@@ -761,14 +804,14 @@ nova --os-user-name "\${OS_USERNAME}" \\
 echo -e "\n\n"
 EOF
 # Log Reporting
-if [ -e "$SMACK_DIR_BIN/smack-lsnode" ]; then
+if [ -e "$SMACK_BIN/smack-lsnode" ]; then
 	echo -e "\nLIST NODES: COMPLETE" >> $SMACK_INSTALL_LOG
 else
 	echo -e "\nLIST NODES: ERROR" >> $SMACK_INSTALL_LOG
 fi
 # CREATE NODE IN CLOUD COMMAND (smack-mknode)
 #--------------------------------------------
-cat <<EOF > $SMACK_DIR_BIN/smack-mknode
+cat <<EOF > $SMACK_BIN/smack-mknode
 #!/bin/bash
 # Output Welcome Screen
 if [[ -z "\${OS_USERNAME}" || -z "\${OS_PASSWORD}" ]]; then
@@ -873,14 +916,14 @@ nova --os-user-name "\${OS_USERNAME}" \\
 echo -e "\nVM Node Creation Finished. \n\n\t**PLEASE NOTE: Installation of script may take upto a couple hours to \n\t\tcomplete before node is fully deployed.\n"
 EOF
 # Log Reporting
-if [ -e "$SMACK_DIR_BIN/smack-mknode" ]; then
+if [ -e "$SMACK_BIN/smack-mknode" ]; then
 	echo -e "\nMAKE NODE: COMPLETE" >> $SMACK_INSTALL_LOG
 else
 	echo -e "\nMAKE NODE: ERROR" >> $SMACK_INSTALL_LOG
 fi
 # LOGIN COMMAND (smack-login)
 #-----------------------------------
-cat <<EOF > $SMACK_DIR_BIN/smack-login
+cat <<EOF > $SMACK_BIN/smack-login
 #!/bin/bash
 # Output Welcome Screen
 clear
@@ -941,14 +984,14 @@ export OS_ZONE="Nova"
 echo -e "\nLogin Complete: You may begin using the toolchain\n"
 EOF
 # Log Reporting
-if [ -e "$SMACK_DIR_BIN/smack-login" ]; then
+if [ -e "$SMACK_BIN/smack-login" ]; then
 	echo -e "\nLOGIN: COMPLETE" >> $SMACK_INSTALL_LOG
 else
 	echo -e "\nLOGIN: ERROR" >> $SMACK_INSTALL_LOG
 fi
 # LOGOUT COMMAND (smack-logout)
 #-----------------------------------
-cat <<EOF > $SMACK_DIR_BIN/smack-logout
+cat <<EOF > $SMACK_BIN/smack-logout
 #!/bin/bash
 # Display Message
 clear
@@ -971,14 +1014,14 @@ unset NOVA_URL
 unset EC2_URL
 EOF
 # Log Reporting
-if [ -e "${SMACK_DIR_BIN}/smack-logout" ]; then
+if [ -e "${SMACK_BIN}/smack-logout" ]; then
 	echo -e "\nLOGOUT: COMPLETE" >> $SMACK_INSTALL_LOG
 else
 	echo -e "\nLOGOUT: ERROR" >> $SMACK_INSTALL_LOG
 fi
 # SUSPEND INSTANCE COMMAND
 #-----------------------------------
-cat <<EOF > $SMACK_DIR_BIN/smack-suspend
+cat <<EOF > $SMACK_BIN/smack-suspend
 #!/bin/bash
 # Display Message
 clear
@@ -990,14 +1033,14 @@ figlet -cf digital Suspending...
 #
 EOF
 # Log Reporting
-if [ -e "${SMACK_DIR_BIN}/smack-suspend" ]; then
+if [ -e "${SMACK_BIN}/smack-suspend" ]; then
 	echo -e "\nSUSPEND: COMPLETE" >> $SMACK_INSTALL_LOG
 else
 	echo -e "\nSUSPEND: ERROR" >> $SMACK_INSTALL_LOG
 fi
 # TERMINATE INSTANCE COMMAND
 #-----------------------------------
-cat <<EOF > $SMACK_DIR_BIN/smack-terminate
+cat <<EOF > $SMACK_BIN/smack-terminate
 #!/bin/bash
 # Display Message
 clear
@@ -1009,14 +1052,14 @@ figlet -cf digital Terminating...
 #
 EOF
 # Log Reporting
-if [ -e "${SMACK_DIR_BIN}/smack-terminate" ]; then
+if [ -e "${SMACK_BIN}/smack-terminate" ]; then
 	echo -e "\nTERMINATE: COMPLETE" >> $SMACK_INSTALL_LOG
 else
 	echo -e "\nTERMINATE: ERROR" >> $SMACK_INSTALL_LOG
 fi
 # ASSOCIATE FLOATING IP COMMAND 
 #-----------------------------------
-cat <<EOF > $SMACK_DIR_BIN/smack-setip
+cat <<EOF > $SMACK_BIN/smack-setip
 #!/bin/bash
 shopt -s expand_alias
 # Display Message
@@ -1042,24 +1085,24 @@ if [[ ${HELP} == "TRUE" ]]; then
 fi
 # Configure IP Here
 echo -e "Downloading and Reading Data\n"
-smack-download -c clusters -o "conf/\${NAME}-ip" -x "--output=$SMACK_DIR/tmp/\${NAME}-ip" 1> /dev/null
-declare new_ip="$(cat $SMACK_DIR/tmp/\${NAME}-ip)"
+smack-download -c clusters -o "conf/\${NAME}-ip" -x "--output=$SMACK_MAIN/tmp/\${NAME}-ip" 1> /dev/null
+declare new_ip="$(cat $SMACK_MAIN/tmp/\${NAME}-ip)"
 echo -e "\${NAME} IP Found: ${new_ip}"
 if [[ "$MASTER" == "TRUE" ]]; then
-        cat "${SMACK_DIR}/spark/spark-latest/conf/spark-env.sh" |  sed -r "s/SPARK_MASTER_IP=[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/SPARK_MASTER_IP=${new_ip}/g" > ${SMACK_DIR}/spark/spark-latest/conf/spark-env.sh
+        cat "${SMACK_MAIN}/spark/spark-latest/conf/spark-env.sh" |  sed -r "s/SPARK_MASTER_IP=[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/SPARK_MASTER_IP=${new_ip}/g" > ${SMACK_MAIN}/spark/spark-latest/conf/spark-env.sh
         echo -e "\nWriting Master IP Data"
 fi
-rm "$SMACK_DIR/tmp/\${NAME}-ip"
+rm "$SMACK_MAIN/tmp/\${NAME}-ip"
 EOF
 # Log Reporting
-if [ -e "${SMACK_DIR_BIN}/smack-setip" ]; then
+if [ -e "${SMACK_BIN}/smack-setip" ]; then
 	echo -e "\nIP CONFIG: COMPLETE" >> $SMACK_INSTALL_LOG
 else
 	echo -e "\nIP CONFIG: ERROR" >> $SMACK_INSTALL_LOG
 fi
 # ASSOCIATE FLOATING IP COMMAND 
 #-----------------------------------
-cat <<EOF > $SMACK_DIR_BIN/smack-setip
+cat <<EOF > $SMACK_BIN/smack-setip
 #!/bin/bash
 shopt -s expand_alias
 # Display Message
@@ -1090,23 +1133,23 @@ fi
 echo -e "Downloading and Reading Data\n"
 echo $(hostname -i) > ${NAME}-ip
 smack-upload -c clusters -o "conf/\${NAME}-ip" -f "${NAME}-ip" 1> /dev/null
-declare new_ip="$(cat $SMACK_DIR/tmp/\${NAME}-ip)"
+declare new_ip="$(cat $SMACK_MAIN/tmp/\${NAME}-ip)"
 echo -e "\${NAME} IP Set: ${new_ip}"
 if [[ "$MASTER" == "TRUE" ]]; then
-        cat "${SMACK_DIR}/spark/spark-latest/conf/spark-env.sh" |  sed -r "s/SPARK_MASTER_IP=[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/SPARK_MASTER_IP=${new_ip}/g" > ${SMACK_DIR}/spark/spark-latest/conf/spark-env.sh
+        cat "${SMACK_MAIN}/spark/spark-latest/conf/spark-env.sh" |  sed -r "s/SPARK_MASTER_IP=[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/SPARK_MASTER_IP=${new_ip}/g" > ${SMACK_MAIN}/spark/spark-latest/conf/spark-env.sh
         echo -e "\nWriting Master IP Data"
 fi
-rm "$SMACK_DIR/tmp/\${NAME}-ip"
+rm "$SMACK_MAIN/tmp/\${NAME}-ip"
 EOF
 # Log Reporting
-if [ -e "${SMACK_DIR_BIN}/smack-setip" ]; then
+if [ -e "${SMACK_BIN}/smack-setip" ]; then
         echo -e "\nIP CONFIG: COMPLETE" >> $SMACK_INSTALL_LOG
 else
         echo -e "\nIP CONFIG: ERROR" >> $SMACK_INSTALL_LOG
 fi
 # UPLOAD FILE TO CONTAINER COMMAND
 #-----------------------------------
-cat <<EOF > $SMACK_DIR_BIN/smack-upload
+cat <<EOF > $SMACK_BIN/smack-upload
 #!/bin/bash
 # SMACK -  Make Upload Utility
 # Display Message
@@ -1174,14 +1217,14 @@ swift upload "\${HEADERS}" --object-name "\${NAME}" "\${CONTAINER}" "\${FILE}" 2
 echo -e "\nUploading Object \${NAME} Complete.\n"
 EOF
 # Log Reporting
-if [ -e "${SMACK_DIR_BIN}/smack-upload" ]; then
+if [ -e "${SMACK_BIN}/smack-upload" ]; then
 	echo -e "\nSWIFT UPLOAD: COMPLETE" >> $SMACK_INSTALL_LOG
 else
 	echo -e "\nSWIFT UPLOAD: ERROR" >> $SMACK_INSTALL_LOG
 fi
 # DOWNLOAD FILE FROM CONTAINER COMMAND
 #-----------------------------------
-cat <<EOF > $SMACK_DIR_BIN/smack-download
+cat <<EOF > $SMACK_BIN/smack-download
 #!/bin/bash
 # Display Message
 clear
@@ -1238,14 +1281,14 @@ fi
 echo -e "Downloading \${OBJECT} Complete."
 EOF
 # Log Reporting
-if [ -e "${SMACK_DIR_BIN}/smack-download" ]; then
+if [ -e "${SMACK_BIN}/smack-download" ]; then
 	echo -e "\nSWIFT DOWNLOAD: COMPLETE" >> $SMACK_INSTALL_LOG
 else
 	echo -e "\nSWIFT DOWNLOAD: ERROR" >> $SMACK_INSTALL_LOG
 fi
 # LIST CONTAINERS FROM OBJECT STORAGE COMMAND
 #-----------------------------------
-cat <<EOF > ${SMACK_DIR_BIN}/smack-lsdb
+cat <<EOF > ${SMACK_BIN}/smack-lsdb
 #!/bin/bash
 # Display Message
 clear
@@ -1307,14 +1350,14 @@ while [[ "\${CONTAINER}" != "quit" ]]; do
 done
 EOF
 # Log Reporting
-if [ -e "${SMACK_DIR_BIN}/smack-lsdb" ]; then
+if [ -e "${SMACK_BIN}/smack-lsdb" ]; then
 	echo -e "\nSWIFT LIST CONTAINER: COMPLETE" >> $SMACK_INSTALL_LOG
 else
 	echo -e "\nSWIFT LIST CONTAINER: ERROR" >> $SMACK_INSTALL_LOG
 fi
 # MAKE CONTAINERS FROM OBJECT STORAGE COMMAND
 #-----------------------------------
-cat <<EOF > $SMACK_DIR_BIN/smack-mkdb
+cat <<EOF > $SMACK_BIN/smack-mkdb
 #!/bin/bash
 # Display Message
 clear
@@ -1354,14 +1397,14 @@ swift post "\${CONTAINER}" 2> /dev/null
 echo -e "\nContainer Successfully Created"
 EOF
 # Log Reporting
-if [ -e "${SMACK_DIR_BIN}/smack-mkdb" ]; then
+if [ -e "${SMACK_BIN}/smack-mkdb" ]; then
 	echo -e "\nSWIFT MAKE CONTAINER: COMPLETE" >> $SMACK_INSTALL_LOG
 else
 	echo -e "\nSWIFT MAKE CONTAINER: ERROR" >> $SMACK_INSTALL_LOG
 fi
 # ADD SKELETON SETUP FILE ONTO SERVER
 #-----------------------------------
-cat <<EOF > $SMACK_DIR/skel/setup-node.sh
+cat <<EOF > $SMACK_MAIN/skel/setup-node.sh
 #!/bin/bash
 #--------------------------------------------------------
 # 				SMACK ENERGY FORECASTING 
@@ -1395,25 +1438,21 @@ cat <<EOF > $SMACK_DIR/skel/setup-node.sh
 #
 #-------------------------------------------------------
 EOF
-# SET PERMISSIONS FOR COMMANDS
-#-----------------------------------
-# SMACK Directory
-chmod 700 ${SMACK_DIR_BIN}
-chmod 700 ${SMACK_DIR}/skel
-chmod 700 ${SMACK_DIR_LOG}
-chmod 700 ${SMACK_DIR_TMP}
-chmod +x ${SMACK_DIR_BIN}/*
-# CRON Directory
-chmod 700 ${CRON_PATH}
-chmod 700 ${CRON_PATH}/bin
-chmod 700 ${CRON_PATH}/log
-chmod +x ${CRON_PATH}/bin/*
-chown -R centos ${SMACK_DIR}
-# Log Reporting
-echo -e "\nPERMISSIONS: COMPLETE" >> ${SMACK_INSTALL_LOG}
-# SET FILE FOR COMPLETION
-#-----------------------------------
-touch $SMACK_LOAD
-echo -e "\n### INSTALL: COMPLETE ###" >> ${SMACK_INSTALL_LOG}
-fi
-# FINISHED
+
+# SETUP PERMISSIONS
+chmod +x ${SMACK_BIN}/*
+chown -R centos ${SMACK_MAIN}
+chown -R centos ${SMACK_HOME}
+# Set Cluster Information
+source /usr/local/smack/smack-env.sh
+smack-setip -n api
+echo -e "\n### PERMISSIONS: GENERATED @ $(date -u)" >> ${TMP_LOG}
+
+### CLEANUP AND CLOSE
+echo -e "\n------ INSTALLATION PROCEDURE COMPLETE ------" >> ${TMP_LOG}
+# -- LOG REPORTS
+cat ${TMP_LOG} >> ${SMACK_LOG}/install_log
+# -- CLEANUP TMP FILES
+rm -rf /tmp/*
+# -- Reboot System for User
+reboot

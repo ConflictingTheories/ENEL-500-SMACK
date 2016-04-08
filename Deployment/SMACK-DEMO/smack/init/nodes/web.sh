@@ -152,7 +152,7 @@ R -e "devtools::install_github('rstudio/leaflet')"
 R -e "install.packages('jsonlite', repos='http://cran.stat.sfu.ca/')"
 R -e "install.packages('reshape', repos='http://cran.stat.sfu.ca/')"
 R -e "install.packages('xlsx', repos='http://cran.stat.sfu.ca/')"
-
+R -e "devtools::install_github('mages/googleVis')"
 # install shiny-server daemon
 mkdir /tmp/shiny
 cd /tmp/shiny

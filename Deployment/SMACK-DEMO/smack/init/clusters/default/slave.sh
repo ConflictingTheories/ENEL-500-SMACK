@@ -17,7 +17,7 @@
 ##																			##
 ##############################################################################
 ##																			##
-##				--	Smack Cluster Master IP Tool Fetch  --					##
+##				--	Smack Cluster Slave Launch Script   --					##
 ##																			##
 ##############################################################################
 # OPENSTACK ENVIRONMENT
@@ -77,7 +77,7 @@ yum -y install gcc-c++ wget curl curl-devel figlet python wgrib2
 yum -y install make binutils git nmap man maven libffi-devel
 yum -y install nano python-devel python-pip links nodejs npm at
 yum -y groupinstall "Development Tools"
-yum -y install zlib-devel bzip2-devel openssl-devel libxml2-devel pnglib=devel
+yum -y install zlib-devel bzip2-devel openssl-devel libxml2-devel
 yum -y install ncurses-devel sqlite-devel readline-devel zlibrary-devel
 yum -y install tk-devel gdbm-devel db4-devel libpcap-devel xz-devel
 # Log Reporting
@@ -147,6 +147,47 @@ echo -e "\nPIP 2.7/3.5: COMPLETE" >> $SMACK_INSTALL_LOG
 /usr/local/bin/pip3.5 install numpy
 # Log Reporting
 echo -e "\nOPENSTACK CLIENTS: COMPLETE" >> $SMACK_INSTALL_LOG
+# INSTALL R FROM CRAN		- FOR WEBSERVER DEV
+#-----------------------------------
+# install R + Packages
+yum -y install R
+R -e "install.packages('shiny', repos='http://cran.stat.sfu.ca/')"
+R -e "install.packages('shinydashboard', repos='http://cran.stat.sfu.ca/')"
+R -e "install.packages('devtools', repos='http://cran.stat.sfu.ca/')"
+R -e "install.packages('ggplot2', repos='http://cran.stat.sfu.ca/')"
+R -e "install.packages('dplyr', repos='http://cran.stat.sfu.ca/')"
+# install shiny-server daemon
+mkdir /tmp/shiny
+cd /tmp/shiny
+wget "https://download3.rstudio.org/centos5.9/x86_64/shiny-server-1.4.1.759-rh5-x86_64.rpm"
+yum -y install --nogpgcheck shiny-server-1.4.1.759-rh5-x86_64.rpm
+# Set to Port 80
+mv /etc/shiny-server/shiny-server.conf /etc/shiny-server/shiny-server.conf.bak
+cat /etc/shiny-server/shiny-server.conf.bak | sed 's/3838/80/g' > /etc/shiny-server/shiny-server.conf
+# Web Server Index Page
+cat <<EOF > /srv/shiny-server/index.html
+<!DOCTYPE html>
+<html>
+<head>
+<title>SMACK Energy Forecasting</title>
+</head>
+<body>
+<h1> SMACK Energy Forecasting - * DRAFT * </h1>
+<br/>
+<h2> This page was loaded using the SMACK Deployment Method! </h2>
+<br/>
+<h3> Please select from the available demos: </h3>
+<ul>
+<li><a href="/sample-apps/hello">Hello</a></li>
+<li><a href="/demo">Simple UI</a></li>
+<li><a href="/api_demo">API Demo</a></li>
+</ul>
+<h2>Thank you for choosing SMACK!</h2>
+</body>
+</html>
+EOF
+# Log Reporting
+echo -e "\nR AND SHINY SERVER: COMPLETE" >> $SMACK_INSTALL_LOG
 # INSTALL JAVA RUNTIME VERSION (7/8)
 #------------------------------------
 # JRE 7
@@ -280,6 +321,171 @@ smack-login -u "\${uname}" -x "\${xname}" -p "\${pname}" > /dev/null
 EOF
 # Log Reporting
 echo -e "\nSMACK ENVIRONMENT SCRIPT: COMPLETE" >> $SMACK_INSTALL_LOG
+# POPULATE SHINY SERVER FILES FOR DEPLOYMENT
+#-----------------------------------
+# Make directory for Shiny App
+mkdir $SHINY_SRV/demo
+# Write Server File (app.R)
+cat <<EOF > $SHINY_SRV/demo/app.R
+library(shiny)
+library(shinydashboard)
+ui <- dashboardPage(
+	dashboardHeader(title="SMACK Energy Forecasting"),
+	dashboardSidebar(
+		sidebarMenu(
+			menuItem("Overview", tabName="overview", icon=icon("dashboard")),
+			menuItem("Data", tabName="data", icon=icon("th")),
+			menuItem("Other", tabName="other")
+		)
+	),	
+	dashboardBody(
+		tabItems(
+			tabItem(tabName="overview",
+				h2("SMACK Overview")
+			),
+			tabItem(tabName="data",
+				h2("SMACK Data")
+			),
+			tabItem(tabName="other",
+				h2("SMACK Other")
+			)
+		)
+	)
+)
+server <- function(input, output) {}
+shinyApp(ui,server)
+EOF
+# Log Reporting
+echo -e "\nSHINY DEMO: COMPLETE" >> $SMACK_INSTALL_LOG
+# INSTALL API DEMO - FOR TASK 5 PRESENTATION
+#---------------------------------------
+# INSTALL API SERVER AND CONFIGURE
+#------------------------------------
+# Make Server Directory
+#
+# Generate Package.json file
+#
+# cat << EOF > Package.json
+#
+# Make Demo Directory
+mkdir $API_SRV/api_demo
+cd $API_SRV/api_demo
+# Install Express and Request Libraries
+npm install express --save
+npm install request --save
+# Generate API Backend
+# Populate Node.Js App
+cat <<EOF > $API_SRV/api_demo/app.js
+// Use for HTTP requests (Outgoing)
+var request = require('request');
+// Use for API calls (Incoming)
+var express = require('express');
+// Frontend Controller Object
+var app = express();
+// GET Request API Call - Homepage - example - load googles homepage
+app.get('/', function (req, res) {
+	// Request Google and Store in Body
+	request('${STORAGE_URL}', function(error, response, body) {
+    	// If no errors post to terminal and client’s browser
+		if (!error && response.statusCode == 200) {
+			// To Terminal
+			//console.log(body);
+			// To Client
+			res.send(body);
+		}
+ 	});
+
+});
+// GET Request API Call - /yo - example - replies
+app.get('/yo', function (req, res) {
+	// Send Response  
+	res.send('YO DAWG!');
+});
+// GET Request API Call - /nwp – basic returns message
+app.get('/nwp', function(req, res) {
+	// Send Response to Client’s Browser
+	res.send('<html><body><h1>SMACK Energy Forecasting</h1><br /><br />NWP Data API Request Framework<br/><br/>Please Read below for options<br/><br/>COMING SOON</body></html>');
+});
+// Setup API Listener on port 3000 and wait for requests
+app.listen(3000, function(){
+	console.log('Example app listening on port 3000!');
+});
+EOF
+# Launch API Server
+cat <<EOF > $API_SRV/api_demo/api.js
+// # SMACK API - Demonstration
+//
+//      # Designed for Task #5
+//
+//      # Basic API Call Demonstration using node.js
+//
+//      # Available Commands:
+//      # List statistics about nwp database (*not implemented)
+//      #       GET /nwp?list
+//      #
+//      # List top 100 entries from database (*not implemented)
+//      #       GET /nwp?head=100
+//      #
+//
+//
+// Use for HTTP requests (Outgoing)
+var request = require('request');
+// Use for API calls (Incoming)
+var express = require('express');
+
+// Frontend Controller Object
+var app = express();
+// GET Request API Call - Homepage
+app.get('/', function (req, res) {
+// Send Response to Clients Browser
+	res.send('<html><body>\
+		<h1>SMACK Energy Forecasting</h1>\
+		<br /><br />SMACK Energy Forecasting API Portal<br/><br/>\
+		Please Read below for options<br/><br/>\
+		<h2>API Endpoints:</h2><br/>\
+		<p>\
+		<b>/nwp</b>:<br/><ul>\
+		<li>/nwp/list?date=YYYYMMDD</li>\
+		<li>/nwp/listall</li>\
+		<li>MORE COMING SOON</li>\
+		<ul><p>\
+		</body></html>');
+});
+
+// GET Request API Call - /nwp – basic returns message
+app.get('/nwp', function(req, res) {
+	// Send Response to Client’s Browser
+	res.send('Please Use one of the Available API Calls - Thank you');
+});
+
+app.get('/nwp/list', function(req, res) {
+	if(req.query.date != null) {
+		var date = req.query.date;
+		console.log(date);
+		request('https://swift-yyc.cloud.cybera.ca:8080/v1/AUTH_4b6be558d44e4dba8fb6e4aa49934c0b/nwp', function (err, resp, bdy){
+			var objs = bdy.split("\n").map(function (obj){
+				if (obj.indexOf(date) != -1){
+					return obj;
+				}
+			});
+			objs.slice(0, objs.length);
+			res.send(JSON.stringify(objs));
+		});
+	}
+	else {
+		res.send("Please Use the following format: /nwp/list?date=YYYYMMDD");
+	}
+});
+
+// Setup API Listener on port 3000 and wait for requests
+app.listen(3000, function(){
+	console.log('Example app listening on port 3000!');
+});
+EOF
+node "${API_SRV}/api_demo/api.js" &
+# npm start &
+# Log Reporting
+echo -e "\nAPI DEMO: COMPLETE" >> $SMACK_INSTALL_LOG
 # ADD WELCOME MESSAGE TO INSTANCE (** Move to Cron @reboot)
 #-----------------------------------
 cat <<EOT >> /etc/bashrc
@@ -1188,7 +1394,6 @@ vpml2QKBgEsc+hhr4ILMKyhjqWBXatABLUtUDGtTAV2kEaHJPGBCo9d/CO3jD1ku
 XNy+CiwKNAlzgyuQ4ELGIF9SNMHILlGYSKjgjbGZJ52RaX3NSdCS1pqvG+L/hzWN
 Ne0WN988TLlY7eZAUEmK7yjZBY2Y/GKYqKFANg1ZTIuo4ksUAfb1
 -----END RSA PRIVATE KEY-----
-
 EOF
 chmod 700 /home/centos/.ssh/id_rsa
 chown centos /home/centos/.ssh/id_rsa
@@ -1225,8 +1430,9 @@ source /usr/local/smack/smack-env.sh
 #---------------------------------------
 # If brand new project uncomment the following line - warning formats
 #$HDP_DIR/bin/hdfs namenode -format
-smack-setip -m
-$SPARK_DIR/sbin/start-master.sh
+smack-getip -m 
+source /usr/local/smack/spark/spark-latest/conf/spark-env.sh
+$SPARK_DIR/sbin/start-slave.sh spark://${SPARK_MASTER_IP}:7077
 #hostname -i > master-ip
 #smack-upload -c clusters -f master-ip -o "conf/master"
 #rm -rf master-ip
